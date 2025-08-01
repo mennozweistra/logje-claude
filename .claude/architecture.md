@@ -26,7 +26,8 @@ This document contains architectural instructions and guidance for the Logje hea
 
 ### Frontend Technology
 - **Laravel Livewire**: Component-based interfaces with server-side rendering
-- **Livewire Flux**: State management for complex component interactions
+- **Livewire Flux**: Centralized state management for cross-component data flow
+- **Livewire Volt**: Single-file components with functional PHP syntax
 - **Blade Templates**: Laravel's templating engine for component views
 - **Tailwind CSS**: Utility-first CSS framework for responsive design
 - **Alpine.js**: Minimal JavaScript for enhanced interactions
@@ -52,9 +53,11 @@ This document contains architectural instructions and guidance for the Logje hea
 - **Command Pattern**: Artisan commands for batch operations
 
 ### Livewire Patterns
-- **Component-Based Architecture**: Reusable Livewire components
-- **Event-Driven Communication**: Component-to-component communication
-- **State Management**: Server-side state with reactive updates
+- **Component-Based Architecture**: Traditional class-based and Volt functional components
+- **Flux State Management**: Centralized store for shared application state
+- **Event-Driven Communication**: Component-to-component communication via Flux
+- **Single-File Components**: Volt components for rapid development
+- **Reactive Updates**: Server-side state with real-time UI synchronization
 
 ## Component Structure
 
@@ -106,11 +109,12 @@ app/
 ## Integration Guidelines
 
 ### Livewire Integration
-- Use Livewire components for interactive forms and real-time updates
-- Implement proper validation in Livewire components
-- Use Livewire Flux for state management across components
-- Use Livewire events for component communication
-- Repository pattern integration within Livewire components
+- **Traditional Components**: Use for complex, reusable UI components
+- **Volt Components**: Use for simple forms and page-level components  
+- **Flux State Management**: Centralized state for measurement data, date selection, and UI state
+- **Reactive Patterns**: Components automatically update when Flux state changes
+- **Repository Integration**: Inject repositories into components for data access
+- **Validation**: Use Laravel validation within both traditional and Volt components
 
 ### Authentication Integration
 - Use Laravel's built-in authentication system

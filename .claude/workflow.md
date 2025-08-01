@@ -58,7 +58,8 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
   - Execute all steps in the test plan including:
     - Unit tests
     - Feature tests  
-    - Browser tests (via MCP tools)
+    - Browser tests (via MCP tools or Laravel Dusk)
+  - **E2E Test Rule**: Only create e2e tests when the actual features exist - no premature test creation
 - **Transition from**: Started
 
 ### 5. Review
@@ -117,6 +118,7 @@ Tasks and steps can be referenced using the format `<task>.<step>`:
 - Document all work in the appropriate task entry
 - Document resolved tool issues in `tools.md`
 - When user requests archival, move completed tasks to `tasks-archive/tasks-archive-<yyyy-mm-dd>.md`
+- **E2E Testing Rule**: Create e2e tests only when building actual features, never create premature or speculative e2e tests
 
 ## Timestamp Format
 

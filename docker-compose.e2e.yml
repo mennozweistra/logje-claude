@@ -1,0 +1,83 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logje-app-e2e
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+      - vendor:/var/www/html/vendor
+      - node_modules:/var/www/html/node_modules
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+      - selenium
+    environment:
+      - APP_ENV=testing
+      - APP_URL=http://logje-app-e2e
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=logje_testing
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+      - DUSK_DRIVER_URL=http://selenium:4444/wd/hub
+    networks:
+      - logje-e2e-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: logje-mysql-e2e
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: logje_testing
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_USER: logje
+    volumes:
+      - mysql_e2e_data:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    networks:
+      - logje-e2e-network
+
+  selenium:
+    image: selenium/standalone-chrome:latest
+    container_name: logje-selenium
+    restart: unless-stopped
+    ports:
+      - "4444:4444"
+      - "7900:7900"  # VNC server for debugging
+    environment:
+      - SE_VNC_NO_PASSWORD=1
+      - SE_NODE_MAX_SESSIONS=2
+    shm_size: 2gb
+    networks:
+      - logje-e2e-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: logje-phpmyadmin-e2e
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: password
+    depends_on:
+      - mysql
+    networks:
+      - logje-e2e-network
+
+volumes:
+  mysql_e2e_data:
+  vendor:
+  node_modules:
+
+networks:
+  logje-e2e-network:
+    driver: bridge
