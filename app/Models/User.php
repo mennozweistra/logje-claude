@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -44,5 +45,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get all measurements for this user
+     */
+    public function measurements(): HasMany
+    {
+        return $this->hasMany(Measurement::class);
+    }
+
+    /**
+     * Get measurements for a specific date
+     */
+    public function measurementsForDate($date): HasMany
+    {
+        return $this->measurements()->whereDate('date', $date);
+    }
+
+    /**
+     * Get measurements of a specific type
+     */
+    public function measurementsOfType($type): HasMany
+    {
+        return $this->measurements()->ofType($type);
     }
 }

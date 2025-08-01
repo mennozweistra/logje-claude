@@ -72,6 +72,7 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
 - **Requirements**: 
   - Review timestamp must be set (local time via bash)
   - All testing completed successfully
+  - **Issues Summary**: Must include explicit "Issues Found" section listing any problems discovered during task and their fixes
 - **Transition from**: Testing
 
 ### 6. Completed

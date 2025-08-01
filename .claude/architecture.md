@@ -46,7 +46,7 @@ This document contains architectural instructions and guidance for the Logje hea
 ## Design Patterns
 
 ### Laravel Patterns
-- **Repository Pattern**: Data access abstraction
+- **Repository Pattern**: Data access layer with concrete classes (no interfaces for YAGNI compliance)
 - **Service Layer Pattern**: Business logic encapsulation
 - **Observer Pattern**: Model events and listeners
 - **Factory Pattern**: Model factories for testing
@@ -70,8 +70,7 @@ app/
 │   └── Middleware/        # Request middleware
 ├── Models/                # Eloquent models
 ├── Services/              # Business logic services
-├── Repositories/          # Data access repositories (Repository pattern)
-├── Contracts/             # Repository interfaces
+├── Repositories/          # Data access repositories (concrete classes)
 └── Observers/             # Model observers
 ```
 
@@ -128,6 +127,14 @@ app/
 - **Laravel Dusk**: Browser testing for complete user workflows
 - **Playwright**: Additional e2e testing capabilities
 - **Docker**: Consistent testing environment matching production
+
+### Testing Philosophy
+- **No Mocking Business Logic**: Test real implementations with real database interactions
+- **Public Interface Testing**: Test services/controllers that use repositories, not repositories directly
+- **Database State Management**: Use `DatabaseTransactions` or `RefreshDatabase` for test isolation
+- **Integration Over Unit**: Prefer integration tests that verify real system behavior
+- **Repository Testing**: Skip direct repository testing (CRUD operations) or use real database
+- **Service Testing**: Focus on testing business logic in service classes with real dependencies
 
 ## Coding Standards
 
