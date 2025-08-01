@@ -16,19 +16,28 @@ class MeasurementsSeeder extends Seeder
         $measurements = [];
         $today = Carbon::today();
         
+        // Get user IDs
+        $testUser = DB::table('users')->where('email', 'test@example.com')->value('id');
+        $sarahUser = DB::table('users')->where('email', 'sarah@example.com')->value('id');
+        
+        if (!$testUser || !$sarahUser) {
+            $this->command->error('Required users not found. Please run UserSeeder first.');
+            return;
+        }
+        
         // Get measurement type IDs
         $glucoseTypeId = DB::table('measurement_types')->where('slug', 'glucose')->value('id');
         $weightTypeId = DB::table('measurement_types')->where('slug', 'weight')->value('id');
         $exerciseTypeId = DB::table('measurement_types')->where('slug', 'exercise')->value('id');
         $notesTypeId = DB::table('measurement_types')->where('slug', 'notes')->value('id');
         
-        // Create measurements for the last 7 days for user 1 (Test User)
+        // Create measurements for the last 7 days for test user
         for ($i = 6; $i >= 0; $i--) {
             $date = $today->copy()->subDays($i);
             
             // Morning glucose reading
             $measurements[] = [
-                'user_id' => 1,
+                'user_id' => $testUser,
                 'measurement_type_id' => $glucoseTypeId,
                 'value' => rand(90, 120),
                 'is_fasting' => true,
@@ -42,7 +51,7 @@ class MeasurementsSeeder extends Seeder
             
             // Evening weight
             $measurements[] = [
-                'user_id' => 1,
+                'user_id' => $testUser,
                 'measurement_type_id' => $weightTypeId,
                 'value' => round(75.0 + (rand(-10, 10) / 10), 1),
                 'is_fasting' => null,
@@ -65,7 +74,7 @@ class MeasurementsSeeder extends Seeder
                 $exercise = $exercises[array_rand($exercises)];
                 
                 $measurements[] = [
-                    'user_id' => 1,
+                    'user_id' => $testUser,
                     'measurement_type_id' => $exerciseTypeId,
                     'value' => null,
                     'is_fasting' => null,
@@ -89,7 +98,7 @@ class MeasurementsSeeder extends Seeder
                 ];
                 
                 $measurements[] = [
-                    'user_id' => 1,
+                    'user_id' => $testUser,
                     'measurement_type_id' => $notesTypeId,
                     'value' => null,
                     'is_fasting' => null,
@@ -105,7 +114,7 @@ class MeasurementsSeeder extends Seeder
         
         // Add some measurements for user 2 (Sarah Johnson) for today
         $measurements[] = [
-            'user_id' => 2,
+            'user_id' => $sarahUser,
             'measurement_type_id' => $glucoseTypeId,
             'value' => 105,
             'is_fasting' => true,
@@ -118,7 +127,7 @@ class MeasurementsSeeder extends Seeder
         ];
         
         $measurements[] = [
-            'user_id' => 2,
+            'user_id' => $sarahUser,
             'measurement_type_id' => $exerciseTypeId,
             'value' => null,
             'is_fasting' => null,

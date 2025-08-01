@@ -14,6 +14,7 @@ class MeasurementType extends Model
         'name',
         'slug',
         'description',
+        'unit',
     ];
 
     /**
