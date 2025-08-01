@@ -36,11 +36,16 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
 - **Requirements**: Task description and basic requirements defined
 
 ### 2. Planned
-- **When**: After AI has analyzed and planned the task in detail
+- **When**: After AI has analyzed and planned the task in detail, AND reviewed it against current state
 - **Requirements**: 
   - Implementation plan section completed with detailed implementation steps
   - Test plan section completed with verification steps broken down into numbered steps
   - Task broken down to fit within target duration (15 minutes)
+  - **Pre-Implementation Review**: Task reviewed against:
+    * Current requirements.md for any requirement changes
+    * Current architecture.md for architectural alignment
+    * State of implementation from completed previous tasks
+    * Existing code/files that may have been created or modified
 - **Transition from**: Todo
 
 ### 3. Started
@@ -107,6 +112,12 @@ Tasks and steps can be referenced using the format `<task>.<step>`:
 - Assign sequential task numbers (1, 2, 3, etc.) to new tasks
 - Number all implementation and test plan steps for easy reference
 - Use the `<task>.<step>` format when referencing specific steps
+- **BEFORE moving from Todo to Started**: ALWAYS review task against current state:
+  * Check `./.claude/requirements.md` for any requirement changes since task creation
+  * Check `./.claude/architecture.md` for architectural alignment
+  * Review what previous completed tasks have implemented/changed
+  * Verify existing code/files haven't made steps obsolete
+  * Update implementation and test steps if needed
 - Review requirements in `./.claude/requirements.md` during implementation
 - Follow architectural guidance in `./.claude/architecture.md`  
 - Consult `./.claude/tools.md` for tool usage patterns

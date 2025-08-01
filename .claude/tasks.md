@@ -81,8 +81,8 @@ This file tracks all tasks for the project following the workflow defined in `./
 - **Completed**: 2025-08-01 21:14:54
 - **Duration**: 4m 2s
 
-### [ ] 3 - Database Seeders and Sample Data
-- **Status**: Review
+### [x] 3 - Database Seeders and Sample Data
+- **Status**: Completed
 - **Description**: Create comprehensive seeders for all database tables to provide consistent development and testing data.
 - **Implementation Plan**: 
   1. [x] Create UserSeeder with realistic test user accounts
@@ -101,27 +101,28 @@ This file tracks all tasks for the project following the workflow defined in `./
   7. [x] Test database reset and re-seeding workflow
 - **Started**: 2025-08-01 21:15:12
 - **Review**: 2025-08-01 21:17:34
-- **Completed**: 
-- **Duration**: 
+- **Completed**: 2025-08-01 21:19:09
+- **Duration**: 3m 57s
 
 ### [ ] 4 - Eloquent Models and Repository Pattern
 - **Status**: Todo
-- **Description**: Create Eloquent models for User, Measurement, and MeasurementType with proper relationships. Implement repository pattern with interfaces and concrete implementations for data access abstraction.
+- **Description**: Create Eloquent models for MeasurementType and Measurement with proper relationships, extend User model, and implement repository pattern with interfaces for data access abstraction.
 - **Implementation Plan**: 
-  1. [ ] Create User model with measurement relationship
-  2. [ ] Create MeasurementType model with measurements relationship
-  3. [ ] Create Measurement model with polymorphic attributes handling
+  1. [ ] Create MeasurementType model with measurements relationship
+  2. [ ] Create Measurement model with nullable fields and SoftDeletes trait
+  3. [ ] Extend User model with measurements relationship
   4. [ ] Define repository interfaces in app/Contracts directory
-  5. [ ] Implement concrete repository classes
-  6. [ ] Configure service provider for dependency injection
-  7. [ ] Add model factories for testing
-  8. [ ] Implement model observers if needed
+  5. [ ] Implement concrete repository classes for each model
+  6. [ ] Configure RepositoryServiceProvider for dependency injection
+  7. [ ] Update existing factory classes with proper model definitions
+  8. [ ] Add model observers for measurement validation if needed
 - **Test Plan**: 
-  1. [ ] Test model relationships work correctly
-  2. [ ] Verify repository pattern dependency injection
-  3. [ ] Test model factories generate valid data
-  4. [ ] Confirm polymorphic attributes handle different measurement types
-  5. [ ] Verify soft deletes work on models
+  1. [ ] Test all model relationships work correctly (User->Measurements, MeasurementType->Measurements)
+  2. [ ] Verify repository pattern dependency injection in container
+  3. [ ] Test factory classes generate valid models with relationships
+  4. [ ] Confirm nullable fields handle different measurement types correctly
+  5. [ ] Verify SoftDeletes trait works on Measurement model
+  6. [ ] Test repository methods for common queries (by date, by user, by type)
 - **Started**: 
 - **Review**: 
 - **Completed**: 
