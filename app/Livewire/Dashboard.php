@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Repositories\MeasurementRepository;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Dashboard extends Component
@@ -46,6 +47,23 @@ class Dashboard extends Component
         if ($selected->isFuture()) {
             $this->selectedDate = Carbon::today()->format('Y-m-d');
         }
+    }
+
+    #[On('measurement-added')]
+    #[On('measurement-updated')]
+    public function refreshMeasurements()
+    {
+        // This will trigger a re-render and fetch fresh measurements
+    }
+
+    public function editMeasurement($measurementId)
+    {
+        $this->dispatch('edit-measurement', measurementId: $measurementId);
+    }
+
+    public function confirmDelete($measurementId)
+    {
+        $this->dispatch('confirm-delete-measurement', measurementId: $measurementId);
     }
 
     public function render(MeasurementRepository $measurementRepository)
