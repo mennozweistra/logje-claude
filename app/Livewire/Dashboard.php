@@ -45,21 +45,20 @@ class Dashboard extends Component
         }
     }
 
-    #[On('measurement-added')]
-    #[On('measurement-updated')]
+    #[On('measurement-saved')]
     public function refreshMeasurements()
     {
         // This will trigger a re-render and fetch fresh measurements
     }
 
-    public function editMeasurement($measurementId)
+    public function openAddMeasurement($type)
     {
-        $this->dispatch('edit-measurement', measurementId: $measurementId);
+        $this->dispatch('open-add-measurement', $type, $this->selectedDate);
     }
 
-    public function confirmDelete($measurementId)
+    public function openEditMeasurement($measurementId)
     {
-        $this->dispatch('confirm-delete-measurement', measurementId: $measurementId);
+        $this->dispatch('open-edit-measurement', $measurementId);
     }
 
     public function clearFilters()

@@ -9,12 +9,15 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Validation\ValidationException;
 
-class EditMeasurement extends Component
+class MeasurementModal extends Component
 {
+    // Modal state
+    public bool $showModal = false;
+    public string $mode = 'add'; // 'add' or 'edit'
+    public string $selectedDate = '';
+    public string $selectedType = '';
     public ?int $measurementId = null;
     public $measurement = null;
-    public bool $showEditForm = false;
-    public bool $showDeleteConfirm = false;
     
     // Glucose fields
     public string $glucoseValue = '';
@@ -37,8 +40,28 @@ class EditMeasurement extends Component
     public string $notesTime = '';
     public string $notesContent = '';
 
-    #[On('edit-measurement')]
-    public function startEdit($measurementId, MeasurementRepository $measurementRepository)
+    // Delete confirmation
+    public bool $showDeleteConfirm = false;
+
+    public function mount()
+    {
+        $this->selectedDate = Carbon::today()->format('Y-m-d');
+    }
+
+    #[On('open-add-measurement')]
+    public function openAddMeasurement($type, $date = null)
+    {
+        $this->mode = 'add';
+        $this->selectedType = $type;
+        $this->selectedDate = $date ?? Carbon::today()->format('Y-m-d');
+        $this->showModal = true;
+        $this->showDeleteConfirm = false;
+        $this->resetFormFields();
+        $this->setCurrentTime();
+    }
+
+    #[On('open-edit-measurement')]
+    public function openEditMeasurement($measurementId, MeasurementRepository $measurementRepository)
     {
         $this->measurement = $measurementRepository->find($measurementId);
         
@@ -47,46 +70,31 @@ class EditMeasurement extends Component
             return;
         }
 
+        $this->mode = 'edit';
         $this->measurementId = $measurementId;
-        $this->showEditForm = true;
+        $this->selectedType = $this->measurement->measurementType->slug;
+        $this->selectedDate = $this->measurement->date->format('Y-m-d');
+        $this->showModal = true;
         $this->showDeleteConfirm = false;
         $this->loadMeasurementData();
     }
 
-    #[On('confirm-delete-measurement')]
-    public function confirmDeleteFromDashboard($measurementId, MeasurementRepository $measurementRepository)
+    public function setCurrentTime()
     {
-        $this->measurement = $measurementRepository->find($measurementId);
-        
-        if (!$this->measurement || $this->measurement->user_id !== auth()->id()) {
-            session()->flash('error', 'Measurement not found.');
-            return;
-        }
-
-        $this->measurementId = $measurementId;
-        $this->showDeleteConfirm = true;
-        $this->showEditForm = false;
-    }
-
-    public function confirmDelete()
-    {
-        if (!$this->measurement) {
-            session()->flash('error', 'Measurement not found.');
-            return;
-        }
-
-        $this->showDeleteConfirm = true;
-        $this->showEditForm = false;
+        $currentTime = Carbon::now()->format('H:i');
+        $this->glucoseTime = $currentTime;
+        $this->weightTime = $currentTime;
+        $this->exerciseTime = $currentTime;
+        $this->notesTime = $currentTime;
     }
 
     public function loadMeasurementData()
     {
         if (!$this->measurement) return;
 
-        $type = $this->measurement->measurementType->slug;
         $time = $this->measurement->created_at->format('H:i');
 
-        switch ($type) {
+        switch ($this->selectedType) {
             case 'glucose':
                 $this->glucoseValue = $this->measurement->value ?? '';
                 $this->isFasting = $this->measurement->is_fasting ?? false;
@@ -114,72 +122,107 @@ class EditMeasurement extends Component
         }
     }
 
-    public function update(MeasurementRepository $measurementRepository)
+    public function save(MeasurementRepository $measurementRepository, MeasurementTypeRepository $measurementTypeRepository)
     {
         try {
-            if (!$this->measurement) {
-                session()->flash('error', 'Measurement not found.');
-                return;
+            if ($this->mode === 'edit') {
+                $this->updateMeasurement($measurementRepository);
+            } else {
+                $this->createMeasurement($measurementRepository, $measurementTypeRepository);
             }
-
-            $type = $this->measurement->measurementType->slug;
-            $data = [];
-
-            // Validate using enhanced validation rules
-            $this->validateMeasurementUpdate($type);
-
-            switch ($type) {
-                case 'glucose':
-                    $data['value'] = $this->glucoseValue;
-                    $data['is_fasting'] = $this->isFasting;
-                    $data['notes'] = $this->glucoseNotes;
-                    $newTimestamp = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->glucoseTime);
-                    $data['created_at'] = $newTimestamp;
-                    break;
-
-                case 'weight':
-                    $data['value'] = $this->weightValue;
-                    $data['notes'] = $this->weightNotes;
-                    $newTimestamp = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->weightTime);
-                    $data['created_at'] = $newTimestamp;
-                    break;
-
-                case 'exercise':
-                    $data['description'] = $this->exerciseDescription;
-                    $data['duration'] = $this->exerciseDuration;
-                    $data['notes'] = $this->exerciseNotes;
-                    $newTimestamp = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->exerciseTime);
-                    $data['created_at'] = $newTimestamp;
-                    break;
-
-                case 'notes':
-                    $data['notes'] = $this->notesContent;
-                    $newTimestamp = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->notesTime);
-                    $data['created_at'] = $newTimestamp;
-                    break;
-            }
-
-            // Check for duplicate timestamps (excluding current measurement)
-            $this->checkDuplicateTimestampForUpdate($newTimestamp, $this->measurement->measurement_type_id);
-
-            $measurementRepository->update($this->measurementId, $data);
-            session()->flash('success', 'Measurement updated successfully!');
-            $this->cancel();
-            $this->dispatch('measurement-updated');
-            
         } catch (ValidationException $e) {
-            // Re-throw validation exceptions to show field errors
             throw $e;
         } catch (\Exception $e) {
-            session()->flash('error', 'Failed to update measurement: ' . $e->getMessage());
+            session()->flash('error', 'Failed to save measurement: ' . $e->getMessage());
         }
     }
 
-    private function validateMeasurementUpdate(string $type): void
+    private function createMeasurement(MeasurementRepository $measurementRepository, MeasurementTypeRepository $measurementTypeRepository)
     {
-        switch ($type) {
+        $measurementType = $measurementTypeRepository->findBySlug($this->selectedType);
+        
+        if (!$measurementType) {
+            session()->flash('error', 'Invalid measurement type selected.');
+            return;
+        }
+
+        $this->validateMeasurement();
+        
+        $data = [
+            'user_id' => auth()->id(),
+            'measurement_type_id' => $measurementType->id,
+            'date' => $this->selectedDate,
+        ];
+
+        $data = array_merge($data, $this->getMeasurementData());
+
+        // Check for duplicate timestamps
+        $this->checkDuplicateTimestamp($data['created_at'], $measurementType->id);
+
+        $measurementRepository->create($data);
+        session()->flash('success', 'Measurement added successfully!');
+        $this->cancel();
+        $this->dispatch('measurement-saved');
+    }
+
+    private function updateMeasurement(MeasurementRepository $measurementRepository)
+    {
+        if (!$this->measurement) {
+            session()->flash('error', 'Measurement not found.');
+            return;
+        }
+
+        $this->validateMeasurement();
+        $data = $this->getMeasurementData();
+
+        // Check for duplicate timestamps (excluding current measurement)
+        $this->checkDuplicateTimestampForUpdate($data['created_at'], $this->measurement->measurement_type_id);
+
+        $measurementRepository->update($this->measurementId, $data);
+        session()->flash('success', 'Measurement updated successfully!');
+        $this->cancel();
+        $this->dispatch('measurement-saved');
+    }
+
+    private function getMeasurementData(): array
+    {
+        $data = [];
+
+        switch ($this->selectedType) {
             case 'glucose':
-                $this->validate([
+                $data['value'] = $this->glucoseValue;
+                $data['is_fasting'] = $this->isFasting;
+                $data['notes'] = $this->glucoseNotes;
+                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->glucoseTime);
+                break;
+
+            case 'weight':
+                $data['value'] = $this->weightValue;
+                $data['notes'] = $this->weightNotes;
+                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->weightTime);
+                break;
+
+            case 'exercise':
+                $data['description'] = $this->exerciseDescription;
+                $data['duration'] = $this->exerciseDuration;
+                $data['notes'] = $this->exerciseNotes;
+                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->exerciseTime);
+                break;
+
+            case 'notes':
+                $data['notes'] = $this->notesContent;
+                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->notesTime);
+                break;
+        }
+
+        return $data;
+    }
+
+    private function validateMeasurement(): array
+    {
+        switch ($this->selectedType) {
+            case 'glucose':
+                return $this->validate([
                     'glucoseValue' => [
                         'required',
                         'numeric',
@@ -199,10 +242,9 @@ class EditMeasurement extends Component
                     'glucoseTime.date_format' => 'Please enter a valid time in HH:MM format.',
                     'glucoseNotes.max' => 'Notes cannot exceed 1000 characters.',
                 ]);
-                break;
                 
             case 'weight':
-                $this->validate([
+                return $this->validate([
                     'weightValue' => [
                         'required',
                         'numeric',
@@ -222,10 +264,9 @@ class EditMeasurement extends Component
                     'weightTime.date_format' => 'Please enter a valid time in HH:MM format.',
                     'weightNotes.max' => 'Notes cannot exceed 1000 characters.',
                 ]);
-                break;
                 
             case 'exercise':
-                $this->validate([
+                return $this->validate([
                     'exerciseDescription' => [
                         'required',
                         'string',
@@ -254,10 +295,9 @@ class EditMeasurement extends Component
                     'exerciseTime.date_format' => 'Please enter a valid time in HH:MM format.',
                     'exerciseNotes.max' => 'Notes cannot exceed 1000 characters.',
                 ]);
-                break;
                 
             case 'notes':
-                $this->validate([
+                return $this->validate([
                     'notesContent' => [
                         'required',
                         'string',
@@ -272,7 +312,21 @@ class EditMeasurement extends Component
                     'notesTime.required' => 'Time is required.',
                     'notesTime.date_format' => 'Please enter a valid time in HH:MM format.',
                 ]);
-                break;
+                
+            default:
+                throw new \InvalidArgumentException('Invalid measurement type: ' . $this->selectedType);
+        }
+    }
+
+    private function checkDuplicateTimestamp($timestamp, $measurementTypeId)
+    {
+        $existingMeasurement = \App\Models\Measurement::where('user_id', auth()->id())
+            ->where('measurement_type_id', $measurementTypeId)
+            ->where('created_at', $timestamp)
+            ->first();
+            
+        if ($existingMeasurement) {
+            throw new \Exception('A measurement of this type already exists at this exact time. Please choose a different time.');
         }
     }
 
@@ -281,12 +335,22 @@ class EditMeasurement extends Component
         $existingMeasurement = \App\Models\Measurement::where('user_id', auth()->id())
             ->where('measurement_type_id', $measurementTypeId)
             ->where('created_at', $timestamp)
-            ->where('id', '!=', $this->measurementId) // Exclude current measurement
+            ->where('id', '!=', $this->measurementId)
             ->first();
             
         if ($existingMeasurement) {
             throw new \Exception('A measurement of this type already exists at this exact time. Please choose a different time.');
         }
+    }
+
+    public function confirmDelete()
+    {
+        if (!$this->measurement) {
+            session()->flash('error', 'Measurement not found.');
+            return;
+        }
+
+        $this->showDeleteConfirm = true;
     }
 
     public function delete(MeasurementRepository $measurementRepository)
@@ -300,7 +364,7 @@ class EditMeasurement extends Component
             $measurementRepository->delete($this->measurementId);
             session()->flash('success', 'Measurement deleted successfully!');
             $this->cancel();
-            $this->dispatch('measurement-updated');
+            $this->dispatch('measurement-saved');
         } catch (\Exception $e) {
             session()->flash('error', 'Failed to delete measurement. Please try again.');
         }
@@ -308,15 +372,35 @@ class EditMeasurement extends Component
 
     public function cancel()
     {
-        $this->reset(['measurementId', 'measurement', 'showEditForm', 'showDeleteConfirm',
-                     'glucoseValue', 'isFasting', 'glucoseTime', 'glucoseNotes',
-                     'weightValue', 'weightTime', 'weightNotes', 
-                     'exerciseDescription', 'exerciseDuration', 'exerciseTime', 'exerciseNotes',
-                     'notesTime', 'notesContent']);
+        $this->showModal = false;
+        $this->showDeleteConfirm = false;
+        $this->resetFields();
     }
 
-    public function render()
+    private function resetFields()
     {
-        return view('livewire.edit-measurement');
+        $this->reset(['measurementId', 'measurement', 'selectedType',
+                     'glucoseValue', 'isFasting', 'glucoseNotes',
+                     'weightValue', 'weightNotes', 
+                     'exerciseDescription', 'exerciseDuration', 'exerciseNotes',
+                     'notesContent']);
+    }
+    
+    private function resetFormFields()
+    {
+        $this->reset(['measurementId', 'measurement',
+                     'glucoseValue', 'isFasting', 'glucoseNotes',
+                     'weightValue', 'weightNotes', 
+                     'exerciseDescription', 'exerciseDuration', 'exerciseNotes',
+                     'notesContent']);
+    }
+
+    public function render(MeasurementTypeRepository $measurementTypeRepository)
+    {
+        $measurementTypes = $measurementTypeRepository->getAll();
+        
+        return view('livewire.measurement-modal', [
+            'measurementTypes' => $measurementTypes,
+        ]);
     }
 }

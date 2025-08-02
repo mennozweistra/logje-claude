@@ -42,7 +42,28 @@
     </div>
 
     {{-- Add Measurement Section --}}
-    @livewire('add-measurement', ['date' => $selectedDate])
+    <div class="bg-white rounded-lg shadow p-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            @php
+                // Reorder measurement types: Weight, Glucose, Exercise, Notes
+                $measurementTypes = [
+                    ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
+                    ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
+                    ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
+                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
+                ];
+            @endphp
+            @foreach ($measurementTypes as $type)
+                <button 
+                    wire:click="openAddMeasurement('{{ $type['slug'] }}')"
+                    class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[100px]"
+                >
+                    <div class="text-2xl mb-2">{{ $type['icon'] }}</div>
+                    <span class="text-sm font-medium text-gray-900 text-center">{{ $type['name'] }}</span>
+                </button>
+            @endforeach
+        </div>
+    </div>
 
 
     {{-- Measurements --}}
@@ -81,7 +102,7 @@
             <div class="space-y-2">
                 @foreach($measurements as $measurement)
                     <div class="border border-gray-200 rounded-lg p-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                         wire:click="editMeasurement({{ $measurement->id }})">
+                         wire:click="openEditMeasurement({{ $measurement->id }})">
                         <div class="flex items-baseline space-x-3">
                             {{-- Icon --}}
                             <div class="text-lg">
@@ -160,6 +181,6 @@
         @endif
     </div>
 
-    {{-- Edit Measurement Component --}}
-    @livewire('edit-measurement')
+    {{-- Unified Measurement Modal --}}
+    @livewire('measurement-modal')
 </div>
