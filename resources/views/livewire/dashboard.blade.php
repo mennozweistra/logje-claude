@@ -69,7 +69,7 @@
     {{-- Measurements --}}
     <div class="bg-white rounded-lg shadow p-6">
         <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Measurements</h2>
+            <h2 class="text-lg font-semibold text-gray-900 mb-4 text-center">Measurements</h2>
             
             {{-- Simple Measurement Type Filters - Aligned with buttons --}}
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -99,13 +99,13 @@
 
         {{-- Measurements Display --}}
         @if($measurements->count() > 0)
-            <div class="space-y-2">
-                @foreach($measurements as $measurement)
-                    <div class="border border-gray-200 rounded-lg p-3 cursor-pointer hover:bg-gray-50 transition-colors"
-                         wire:click="openEditMeasurement({{ $measurement->id }})">
-                        <div class="flex items-baseline space-x-3">
+            <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
+                <tbody>
+                    @foreach($measurements as $measurement)
+                        <tr class="border-t border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+                            wire:click="openEditMeasurement({{ $measurement->id }})">
                             {{-- Icon --}}
-                            <div class="text-lg">
+                            <td class="py-3 px-1 text-lg leading-none">
                                 @switch($measurement->measurementType->slug)
                                     @case('glucose')
                                         🩸
@@ -122,54 +122,69 @@
                                     @default
                                         📊
                                 @endswitch
-                            </div>
+                            </td>
                             
                             {{-- Time --}}
-                            <span class="text-sm font-mono text-gray-700 min-w-[45px]">{{ $measurement->created_at->format('H:i') }}</span>
+                            <td class="py-3 px-1 text-sm font-mono text-black leading-none">
+                                {{ $measurement->created_at->format('H:i') }}
+                            </td>
                             
-                            {{-- Content --}}
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-baseline space-x-2 text-sm">
-                                    @switch($measurement->measurementType->slug)
-                                        @case('weight')
-                                            <span class="text-gray-600">Weight:</span>
-                                            <span class="font-medium text-gray-900">{{ $measurement->value }} kg</span>
-                                            @if($measurement->notes)
-                                                <span class="text-gray-600 truncate">{{ $measurement->notes }}</span>
-                                            @endif
-                                            @break
-                                        @case('glucose')
-                                            <span class="text-gray-600">Glucose:</span>
-                                            <span class="font-medium text-gray-900">{{ $measurement->value }} mmol/L</span>
-                                            @if($measurement->is_fasting)
-                                                <span class="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full">Fasting</span>
-                                            @endif
-                                            @if($measurement->notes)
-                                                <span class="text-gray-600 truncate">{{ $measurement->notes }}</span>
-                                            @endif
-                                            @break
-                                        @case('exercise')
-                                            <span class="text-gray-600">Exercise:</span>
-                                            @if($measurement->duration)
-                                                <span class="font-semibold text-blue-600">{{ $measurement->duration }}min</span>
-                                                <span class="text-gray-400">•</span>
-                                            @endif
-                                            <span class="font-medium text-gray-900">{{ $measurement->description }}</span>
-                                            @if($measurement->notes)
-                                                <span class="text-gray-600 truncate">{{ $measurement->notes }}</span>
-                                            @endif
-                                            @break
-                                        @case('notes')
-                                            <span class="text-gray-600">Note:</span>
-                                            <span class="text-gray-600 truncate">{{ $measurement->notes }}</span>
-                                            @break
-                                    @endswitch
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
+                            {{-- Type --}}
+                            <td class="py-3 px-1 text-sm font-mono text-black leading-none">
+                                @switch($measurement->measurementType->slug)
+                                    @case('weight')
+                                        Weight:
+                                        @break
+                                    @case('glucose')
+                                        Glucose:
+                                        @break
+                                    @case('exercise')
+                                        Exercise:
+                                        @break
+                                    @case('notes')
+                                        Note:
+                                        @break
+                                @endswitch
+                            </td>
+                            
+                            {{-- Value --}}
+                            <td class="py-3 px-1 text-sm font-mono text-black leading-none @if($measurement->measurementType->slug === 'notes') hidden @endif">
+                                @switch($measurement->measurementType->slug)
+                                    @case('weight')
+                                        <span>{{ $measurement->value }} kg</span>
+                                        @break
+                                    @case('glucose')
+                                        <span>{{ $measurement->value }} mmol/L</span>
+                                        @if($measurement->is_fasting)
+                                            <span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full font-sans">Fasting</span>
+                                        @endif
+                                        @break
+                                    @case('exercise')
+                                        @if($measurement->duration)
+                                            <span>{{ $measurement->duration }} min</span>
+                                            <span class="text-gray-400 mx-2">•</span>
+                                        @endif
+                                        <span>{{ $measurement->description }}</span>
+                                        @break
+                                @endswitch
+                            </td>
+                            
+                            {{-- Notes --}}
+                            @if($measurement->measurementType->slug === 'notes')
+                                <td class="py-3 px-3 text-sm font-mono text-black leading-none col-span-2" colspan="2">
+                                    <span class="truncate">{{ $measurement->notes }}</span>
+                                </td>
+                            @else
+                                <td class="py-3 px-3 text-sm font-mono text-black leading-none">
+                                    @if($measurement->notes)
+                                        <span class="truncate">{{ $measurement->notes }}</span>
+                                    @endif
+                                </td>
+                            @endif
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         @else
             <div class="text-center py-8">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

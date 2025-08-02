@@ -4,7 +4,39 @@ This document lists project-specific tools and their command-line instructions. 
 
 ## Development Tools
 
-<!-- Development environment tools and commands -->
+### Docker Development Environment
+
+**Primary Development Setup:**
+```bash
+# Start all services (app, database, phpmyadmin)
+docker compose up -d
+
+# Stop all services
+docker compose down
+
+# View running containers
+docker compose ps
+
+# View application logs
+docker compose logs app
+
+# Access application shell
+docker compose exec app bash
+
+# Access database
+docker compose exec mysql mysql -u logje -p logje
+```
+
+**Service URLs:**
+- Application: http://localhost:8000
+- phpMyAdmin: http://localhost:8080
+- MySQL: localhost:3306
+
+**Development Workflow:**
+- Use `docker compose up -d` to start development environment
+- Laravel app runs in container with live code mounting
+- Database data persists in Docker volumes
+- No need for local PHP/MySQL installation
 
 ## Testing Tools
 
