@@ -1,0 +1,11 @@
+# Playwright Test Artifacts
+screenshots/
+videos/
+reports/
+results.json
+test-results/
+
+# But keep the directories
+!screenshots/.gitkeep
+!videos/.gitkeep
+!reports/.gitkeep
