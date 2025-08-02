@@ -54,7 +54,7 @@ class EditMeasurement extends Component
     }
 
     #[On('confirm-delete-measurement')]
-    public function confirmDelete($measurementId, MeasurementRepository $measurementRepository)
+    public function confirmDeleteFromDashboard($measurementId, MeasurementRepository $measurementRepository)
     {
         $this->measurement = $measurementRepository->find($measurementId);
         
@@ -64,6 +64,17 @@ class EditMeasurement extends Component
         }
 
         $this->measurementId = $measurementId;
+        $this->showDeleteConfirm = true;
+        $this->showEditForm = false;
+    }
+
+    public function confirmDelete()
+    {
+        if (!$this->measurement) {
+            session()->flash('error', 'Measurement not found.');
+            return;
+        }
+
         $this->showDeleteConfirm = true;
         $this->showEditForm = false;
     }

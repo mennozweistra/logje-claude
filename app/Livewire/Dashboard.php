@@ -90,7 +90,7 @@ class Dashboard extends Component
 
         return view('livewire.dashboard', [
             'measurements' => $measurements,
-            'selectedDateFormatted' => Carbon::parse($this->selectedDate)->format('l, F j, Y'),
+            'selectedDateFormatted' => Carbon::parse($this->selectedDate)->format('l, j-m-Y'),
             'isToday' => Carbon::parse($this->selectedDate)->isToday(),
         ]);
     }

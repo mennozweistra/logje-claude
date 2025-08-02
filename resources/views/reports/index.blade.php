@@ -15,22 +15,17 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="start-date" class="block text-sm font-medium text-gray-700">Start Date</label>
-                                <input type="date" id="start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <input type="date" id="start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" onchange="updateCharts()">
                             </div>
                             <div>
                                 <label for="end-date" class="block text-sm font-medium text-gray-700">End Date</label>
-                                <input type="date" id="end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <input type="date" id="end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" onchange="updateCharts()">
                             </div>
                         </div>
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                            <div class="flex flex-wrap gap-2">
-                                <button onclick="setDateRange(7)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">7 days</button>
-                                <button onclick="setDateRange(30)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">30 days</button>
-                                <button onclick="setDateRange(90)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">90 days</button>
-                            </div>
-                            <button onclick="updateCharts()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 w-full sm:w-auto">
-                                Update Charts
-                            </button>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="setDateRange(7)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">7 days</button>
+                            <button onclick="setDateRange(30)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">30 days</button>
+                            <button onclick="setDateRange(90)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">90 days</button>
                         </div>
                     </div>
                 </div>
@@ -158,7 +153,7 @@
         function initializeDateRange() {
             const endDate = new Date();
             const startDate = new Date();
-            startDate.setDate(endDate.getDate() - 30);
+            startDate.setDate(endDate.getDate() - 7);
 
             document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
             document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
@@ -171,6 +166,9 @@
 
             document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
             document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
+            
+            // Auto-refresh charts after setting date range
+            updateCharts();
         }
 
         function initializeCharts() {
@@ -214,7 +212,7 @@
                             time: {
                                 parser: 'yyyy-MM-dd',
                                 displayFormats: {
-                                    day: 'MMM dd'
+                                    day: 'dd-MM'
                                 }
                             }
                         },
@@ -260,7 +258,7 @@
                             time: {
                                 parser: 'yyyy-MM-dd',
                                 displayFormats: {
-                                    day: 'MMM dd'
+                                    day: 'dd-MM'
                                 }
                             }
                         },
@@ -296,7 +294,7 @@
                             time: {
                                 parser: 'yyyy-MM-dd',
                                 displayFormats: {
-                                    day: 'MMM dd'
+                                    day: 'dd-MM'
                                 }
                             }
                         },

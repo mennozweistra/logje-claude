@@ -11,24 +11,22 @@
             </div>
 
             {{-- Navigation Buttons --}}
-            <div class="flex items-center justify-center space-x-2">
+            <div class="flex items-center justify-center space-x-3">
                 <button wire:click="previousDay" 
-                        class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors">
+                        class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors min-w-[40px] h-[40px] flex items-center justify-center">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
 
-                @if(!$isToday)
-                    <button wire:click="goToToday" 
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                        Today
-                    </button>
-                @endif
+                <button wire:click="goToToday" 
+                        class="px-4 py-2 text-white rounded-lg transition-colors text-sm font-medium min-w-[80px] h-[40px] flex items-center justify-center {{ $isToday ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700' }}">
+                    Today
+                </button>
 
                 <button wire:click="nextDay" 
                         @if($isToday) disabled @endif
-                        class="p-2 rounded-lg transition-colors {{ $isToday ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200' }}">
+                        class="p-2 rounded-lg transition-colors min-w-[40px] h-[40px] flex items-center justify-center {{ $isToday ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -55,7 +53,7 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Measurements</h2>
             
             {{-- Simple Measurement Type Filters --}}
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap gap-4 items-center">
                 @php
                     $types = [
                         ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
@@ -65,13 +63,13 @@
                     ];
                 @endphp
                 @foreach($types as $type)
-                    <label class="flex items-center cursor-pointer">
+                    <label class="flex items-center cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
                         <input type="checkbox" 
                                wire:model.live="filterTypes"
                                value="{{ $type['slug'] }}"
-                               class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0">
-                        <span class="ml-2 flex items-center text-sm text-gray-700">
-                            <span class="mr-1">{{ $type['icon'] }}</span>
+                               class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 mr-2">
+                        <span class="flex items-center text-sm text-gray-700">
+                            <span class="mr-2">{{ $type['icon'] }}</span>
                             {{ $type['name'] }}
                         </span>
                     </label>
@@ -83,11 +81,11 @@
         @if($measurements->count() > 0)
             <div class="space-y-2">
                 @foreach($measurements as $measurement)
-                    <div class="border border-gray-200 rounded-lg p-3">
+                    <div class="border border-gray-200 rounded-lg p-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                         wire:click="editMeasurement({{ $measurement->id }})">
                         <div class="flex items-center justify-between">
-                            {{-- Time and Icon --}}
+                            {{-- Icon and Time --}}
                             <div class="flex items-center space-x-3">
-                                <span class="text-sm font-mono text-gray-700 min-w-[45px]">{{ $measurement->created_at->format('H:i') }}</span>
                                 <div class="text-lg">
                                     @switch($measurement->measurementType->slug)
                                         @case('glucose')
@@ -106,6 +104,7 @@
                                             📊
                                     @endswitch
                                 </div>
+                                <span class="text-sm font-mono text-gray-700 min-w-[45px]">{{ $measurement->created_at->format('H:i') }}</span>
                                 
                                 {{-- Measurement Details --}}
                                 <div class="flex-1 min-w-0">
@@ -132,19 +131,10 @@
                                 </div>
                             </div>
                             
-                            {{-- Edit and Delete Buttons --}}
-                            <div class="flex items-center space-x-1 ml-2">
+                            {{-- Quick Delete Button --}}
+                            <div class="ml-2">
                                 <button 
-                                    wire:click="editMeasurement({{ $measurement->id }})"
-                                    class="p-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
-                                    title="Edit measurement"
-                                >
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </button>
-                                <button 
-                                    wire:click="confirmDelete({{ $measurement->id }})"
+                                    wire:click.stop="confirmDelete({{ $measurement->id }})"
                                     class="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
                                     title="Delete measurement"
                                 >
