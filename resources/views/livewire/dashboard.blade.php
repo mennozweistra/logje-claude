@@ -50,8 +50,8 @@
         <div class="mb-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Measurements</h2>
             
-            {{-- Simple Measurement Type Filters --}}
-            <div class="flex flex-wrap gap-4 items-center">
+            {{-- Simple Measurement Type Filters - Aligned with buttons --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @php
                     // Reorder filters to match buttons: Weight, Glucose, Exercise, Notes
                     $types = [
@@ -62,7 +62,7 @@
                     ];
                 @endphp
                 @foreach($types as $type)
-                    <label class="flex items-center cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                    <label class="flex items-center justify-center cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
                         <input type="checkbox" 
                                wire:model.live="filterTypes"
                                value="{{ $type['slug'] }}"
@@ -130,9 +130,10 @@
                                         @case('exercise')
                                             <span class="text-gray-600">Exercise:</span>
                                             @if($measurement->duration)
-                                                <span class="font-medium text-gray-900">{{ $measurement->duration }}min</span>
+                                                <span class="font-semibold text-blue-600">{{ $measurement->duration }}min</span>
+                                                <span class="text-gray-400">•</span>
                                             @endif
-                                            <span class="text-gray-900">{{ $measurement->description }}</span>
+                                            <span class="font-medium text-gray-900">{{ $measurement->description }}</span>
                                             @if($measurement->notes)
                                                 <span class="text-gray-600 truncate">{{ $measurement->notes }}</span>
                                             @endif

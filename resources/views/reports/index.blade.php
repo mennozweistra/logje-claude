@@ -137,28 +137,57 @@
 
         // Initialize charts on page load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded - initializing reports');
             initializeDateRange();
             initializeCharts();
             // Delay chart update to ensure DOM is fully ready
-            setTimeout(updateCharts, 100);
+            setTimeout(updateCharts, 300);
         });
         
         // Also initialize on window load as fallback
         window.addEventListener('load', function() {
+            console.log('Window load - checking reports initialization');
             if (!document.getElementById('start-date').value || !document.getElementById('end-date').value) {
+                console.log('Dates not set, initializing...');
                 initializeDateRange();
             }
             // Ensure charts are loaded
-            setTimeout(updateCharts, 200);
+            setTimeout(updateCharts, 500);
         });
 
+        // Additional initialization for SPA navigation
+        function ensureInitialized() {
+            console.log('Ensuring reports initialization');
+            if (!document.getElementById('start-date').value || !document.getElementById('end-date').value) {
+                initializeDateRange();
+            }
+            if (typeof Chart !== 'undefined' && (!glucoseChart || !weightChart)) {
+                initializeCharts();
+            }
+            setTimeout(updateCharts, 300);
+        }
+
+        // Run initialization multiple times to catch navigation scenarios
+        setTimeout(ensureInitialized, 100);
+        setTimeout(ensureInitialized, 500);
+        setTimeout(ensureInitialized, 1000);
+
         function initializeDateRange() {
+            console.log('Initializing date range');
             const endDate = new Date();
             const startDate = new Date();
             startDate.setDate(endDate.getDate() - 7);
 
-            document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
-            document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
+            const startElement = document.getElementById('start-date');
+            const endElement = document.getElementById('end-date');
+
+            if (startElement && endElement) {
+                endElement.value = endDate.toISOString().split('T')[0];
+                startElement.value = startDate.toISOString().split('T')[0];
+                console.log('Date range set:', startElement.value, 'to', endElement.value);
+            } else {
+                console.error('Date input elements not found');
+            }
         }
 
         function setDateRange(days) {
