@@ -25,13 +25,26 @@
                                 <label for="glucoseValue" class="block text-sm font-medium text-gray-700">Blood Glucose (mmol/L)</label>
                                 <input 
                                     type="number" 
-                                    step="0.1" 
+                                    step="0.01" 
+                                    min="0.1"
+                                    max="50"
                                     id="glucoseValue"
-                                    wire:model="glucoseValue"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    wire:model.live.debounce.500ms="glucoseValue"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('glucoseValue') border-red-500 @enderror"
                                     required
                                 >
-                                @error('glucoseValue') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                @error('glucoseValue') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                                @if($glucoseValue && is_numeric($glucoseValue))
+                                    @if($glucoseValue < 0.1)
+                                        <span class="text-red-500 text-xs mt-1 block">Value must be at least 0.1 mmol/L</span>
+                                    @elseif($glucoseValue > 50)
+                                        <span class="text-red-500 text-xs mt-1 block">Value seems too high (max 50 mmol/L)</span>
+                                    @elseif($glucoseValue >= 15)
+                                        <span class="text-yellow-600 text-xs mt-1 block">⚠️ High glucose reading - please verify</span>
+                                    @elseif($glucoseValue >= 3.9 && $glucoseValue <= 7.8)
+                                        <span class="text-green-600 text-xs mt-1 block">✓ Normal range</span>
+                                    @endif
+                                @endif
                             </div>
 
                             <div>
@@ -39,11 +52,11 @@
                                 <input 
                                     type="time" 
                                     id="glucoseTime"
-                                    wire:model="glucoseTime"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    wire:model.live.debounce.500ms="glucoseTime"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('glucoseTime') border-red-500 @enderror"
                                     required
                                 >
-                                @error('glucoseTime') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                                @error('glucoseTime') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
@@ -51,7 +64,7 @@
                             <input 
                                 type="checkbox" 
                                 id="isFasting"
-                                wire:model="isFasting"
+                                wire:model.defer="isFasting"
                                 class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                             >
                             <label for="isFasting" class="ml-2 block text-sm text-gray-900">
@@ -63,10 +76,15 @@
                             <label for="glucoseNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
                             <textarea 
                                 id="glucoseNotes"
-                                wire:model="glucoseNotes"
+                                wire:model.live.debounce.500ms="glucoseNotes"
                                 rows="3"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                maxlength="1000"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('glucoseNotes') border-red-500 @enderror"
                             ></textarea>
+                            @error('glucoseNotes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @if($glucoseNotes)
+                                <span class="text-gray-500 text-xs mt-1 block">{{ strlen($glucoseNotes) }}/1000 characters</span>
+                            @endif
                         </div>
 
                     @elseif ($measurement->measurementType->slug === 'weight')
@@ -78,7 +96,7 @@
                                     type="number" 
                                     step="0.1" 
                                     id="weightValue"
-                                    wire:model="weightValue"
+                                    wire:model.defer="weightValue"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     required
                                 >
@@ -90,7 +108,7 @@
                                 <input 
                                     type="time" 
                                     id="weightTime"
-                                    wire:model="weightTime"
+                                    wire:model.defer="weightTime"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     required
                                 >
@@ -102,7 +120,7 @@
                             <label for="weightNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
                             <textarea 
                                 id="weightNotes"
-                                wire:model="weightNotes"
+                                wire:model.debounce.500ms="weightNotes"
                                 rows="3"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             ></textarea>
@@ -116,7 +134,7 @@
                                 <input 
                                     type="text" 
                                     id="exerciseDescription"
-                                    wire:model="exerciseDescription"
+                                    wire:model.defer="exerciseDescription"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     required
                                 >
@@ -128,7 +146,7 @@
                                 <input 
                                     type="time" 
                                     id="exerciseTime"
-                                    wire:model="exerciseTime"
+                                    wire:model.defer="exerciseTime"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                     required
                                 >
@@ -141,7 +159,7 @@
                             <input 
                                 type="number" 
                                 id="exerciseDuration"
-                                wire:model="exerciseDuration"
+                                wire:model.defer="exerciseDuration"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 min="1"
                                 required
@@ -153,7 +171,7 @@
                             <label for="exerciseNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
                             <textarea 
                                 id="exerciseNotes"
-                                wire:model="exerciseNotes"
+                                wire:model.debounce.500ms="exerciseNotes"
                                 rows="3"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             ></textarea>
@@ -166,7 +184,7 @@
                             <input 
                                 type="time" 
                                 id="notesTime"
-                                wire:model="notesTime"
+                                wire:model.defer="notesTime"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 required
                             >
@@ -177,7 +195,7 @@
                             <label for="notesContent" class="block text-sm font-medium text-gray-700">Daily Notes</label>
                             <textarea 
                                 id="notesContent"
-                                wire:model="notesContent"
+                                wire:model.debounce.500ms="notesContent"
                                 rows="5"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 required

@@ -7,6 +7,7 @@ use App\Repositories\MeasurementTypeRepository;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Illuminate\Validation\ValidationException;
 
 class EditMeasurement extends Component
 {
@@ -104,69 +105,176 @@ class EditMeasurement extends Component
 
     public function update(MeasurementRepository $measurementRepository)
     {
-        if (!$this->measurement) {
-            session()->flash('error', 'Measurement not found.');
-            return;
-        }
-
-        $type = $this->measurement->measurementType->slug;
-        $data = [];
-
-        switch ($type) {
-            case 'glucose':
-                $this->validate([
-                    'glucoseValue' => 'required|numeric|min:0|max:50',
-                    'glucoseTime' => 'required',
-                ]);
-                
-                $data['value'] = $this->glucoseValue;
-                $data['is_fasting'] = $this->isFasting;
-                $data['notes'] = $this->glucoseNotes;
-                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->glucoseTime);
-                break;
-
-            case 'weight':
-                $this->validate([
-                    'weightValue' => 'required|numeric|min:0|max:500',
-                    'weightTime' => 'required',
-                ]);
-                
-                $data['value'] = $this->weightValue;
-                $data['notes'] = $this->weightNotes;
-                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->weightTime);
-                break;
-
-            case 'exercise':
-                $this->validate([
-                    'exerciseDescription' => 'required|string|max:255',
-                    'exerciseDuration' => 'required|integer|min:1|max:1440',
-                    'exerciseTime' => 'required',
-                ]);
-                
-                $data['description'] = $this->exerciseDescription;
-                $data['duration'] = $this->exerciseDuration;
-                $data['notes'] = $this->exerciseNotes;
-                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->exerciseTime);
-                break;
-
-            case 'notes':
-                $this->validate([
-                    'notesContent' => 'required|string|max:1000',
-                    'notesTime' => 'required',
-                ]);
-                
-                $data['notes'] = $this->notesContent;
-                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->notesTime);
-                break;
-        }
-
         try {
+            if (!$this->measurement) {
+                session()->flash('error', 'Measurement not found.');
+                return;
+            }
+
+            $type = $this->measurement->measurementType->slug;
+            $data = [];
+
+            // Validate using enhanced validation rules
+            $this->validateMeasurementUpdate($type);
+
+            switch ($type) {
+                case 'glucose':
+                    $data['value'] = $this->glucoseValue;
+                    $data['is_fasting'] = $this->isFasting;
+                    $data['notes'] = $this->glucoseNotes;
+                    $newTimestamp = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->glucoseTime);
+                    $data['created_at'] = $newTimestamp;
+                    break;
+
+                case 'weight':
+                    $data['value'] = $this->weightValue;
+                    $data['notes'] = $this->weightNotes;
+                    $newTimestamp = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->weightTime);
+                    $data['created_at'] = $newTimestamp;
+                    break;
+
+                case 'exercise':
+                    $data['description'] = $this->exerciseDescription;
+                    $data['duration'] = $this->exerciseDuration;
+                    $data['notes'] = $this->exerciseNotes;
+                    $newTimestamp = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->exerciseTime);
+                    $data['created_at'] = $newTimestamp;
+                    break;
+
+                case 'notes':
+                    $data['notes'] = $this->notesContent;
+                    $newTimestamp = Carbon::createFromFormat('Y-m-d H:i', $this->measurement->date->format('Y-m-d') . ' ' . $this->notesTime);
+                    $data['created_at'] = $newTimestamp;
+                    break;
+            }
+
+            // Check for duplicate timestamps (excluding current measurement)
+            $this->checkDuplicateTimestampForUpdate($newTimestamp, $this->measurement->measurement_type_id);
+
             $measurementRepository->update($this->measurementId, $data);
             session()->flash('success', 'Measurement updated successfully!');
             $this->cancel();
             $this->dispatch('measurement-updated');
+            
+        } catch (ValidationException $e) {
+            // Re-throw validation exceptions to show field errors
+            throw $e;
         } catch (\Exception $e) {
-            session()->flash('error', 'Failed to update measurement. Please try again.');
+            session()->flash('error', 'Failed to update measurement: ' . $e->getMessage());
+        }
+    }
+
+    private function validateMeasurementUpdate(string $type): void
+    {
+        switch ($type) {
+            case 'glucose':
+                $this->validate([
+                    'glucoseValue' => [
+                        'required',
+                        'numeric',
+                        'min:0.1',
+                        'max:50',
+                        'regex:/^\d+(\.\d{1,2})?$/',
+                    ],
+                    'glucoseTime' => 'required|date_format:H:i',
+                    'glucoseNotes' => 'nullable|string|max:1000',
+                ], [
+                    'glucoseValue.required' => 'Blood glucose level is required.',
+                    'glucoseValue.numeric' => 'Blood glucose level must be a number.',
+                    'glucoseValue.min' => 'Blood glucose level must be at least 0.1 mmol/L.',
+                    'glucoseValue.max' => 'Blood glucose level seems too high (max 50 mmol/L). Please check your reading.',
+                    'glucoseValue.regex' => 'Blood glucose level can have at most 2 decimal places.',
+                    'glucoseTime.required' => 'Time is required.',
+                    'glucoseTime.date_format' => 'Please enter a valid time in HH:MM format.',
+                    'glucoseNotes.max' => 'Notes cannot exceed 1000 characters.',
+                ]);
+                break;
+                
+            case 'weight':
+                $this->validate([
+                    'weightValue' => [
+                        'required',
+                        'numeric',
+                        'min:0.1',
+                        'max:500',
+                        'regex:/^\d+(\.\d{1,2})?$/',
+                    ],
+                    'weightTime' => 'required|date_format:H:i',
+                    'weightNotes' => 'nullable|string|max:1000',
+                ], [
+                    'weightValue.required' => 'Weight is required.',
+                    'weightValue.numeric' => 'Weight must be a number.',
+                    'weightValue.min' => 'Weight must be at least 0.1 kg.',
+                    'weightValue.max' => 'Weight seems too high (max 500 kg). Please check your reading.',
+                    'weightValue.regex' => 'Weight can have at most 2 decimal places.',
+                    'weightTime.required' => 'Time is required.',
+                    'weightTime.date_format' => 'Please enter a valid time in HH:MM format.',
+                    'weightNotes.max' => 'Notes cannot exceed 1000 characters.',
+                ]);
+                break;
+                
+            case 'exercise':
+                $this->validate([
+                    'exerciseDescription' => [
+                        'required',
+                        'string',
+                        'min:2',
+                        'max:255',
+                        'regex:/^[\w\s\-\.,!]+$/',
+                    ],
+                    'exerciseDuration' => [
+                        'required',
+                        'integer',
+                        'min:1',
+                        'max:1440',
+                    ],
+                    'exerciseTime' => 'required|date_format:H:i',
+                    'exerciseNotes' => 'nullable|string|max:1000',
+                ], [
+                    'exerciseDescription.required' => 'Exercise description is required.',
+                    'exerciseDescription.min' => 'Exercise description must be at least 2 characters.',
+                    'exerciseDescription.max' => 'Exercise description cannot exceed 255 characters.',
+                    'exerciseDescription.regex' => 'Exercise description contains invalid characters.',
+                    'exerciseDuration.required' => 'Exercise duration is required.',
+                    'exerciseDuration.integer' => 'Exercise duration must be a whole number of minutes.',
+                    'exerciseDuration.min' => 'Exercise duration must be at least 1 minute.',
+                    'exerciseDuration.max' => 'Exercise duration cannot exceed 24 hours (1440 minutes).',
+                    'exerciseTime.required' => 'Time is required.',
+                    'exerciseTime.date_format' => 'Please enter a valid time in HH:MM format.',
+                    'exerciseNotes.max' => 'Notes cannot exceed 1000 characters.',
+                ]);
+                break;
+                
+            case 'notes':
+                $this->validate([
+                    'notesContent' => [
+                        'required',
+                        'string',
+                        'min:1',
+                        'max:2000',
+                    ],
+                    'notesTime' => 'required|date_format:H:i',
+                ], [
+                    'notesContent.required' => 'Daily notes content is required.',
+                    'notesContent.min' => 'Daily notes must contain at least some content.',
+                    'notesContent.max' => 'Daily notes cannot exceed 2000 characters.',
+                    'notesTime.required' => 'Time is required.',
+                    'notesTime.date_format' => 'Please enter a valid time in HH:MM format.',
+                ]);
+                break;
+        }
+    }
+
+    private function checkDuplicateTimestampForUpdate($timestamp, $measurementTypeId)
+    {
+        $existingMeasurement = \App\Models\Measurement::where('user_id', auth()->id())
+            ->where('measurement_type_id', $measurementTypeId)
+            ->where('created_at', $timestamp)
+            ->where('id', '!=', $this->measurementId) // Exclude current measurement
+            ->first();
+            
+        if ($existingMeasurement) {
+            throw new \Exception('A measurement of this type already exists at this exact time. Please choose a different time.');
         }
     }
 

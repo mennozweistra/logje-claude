@@ -76,7 +76,7 @@
                                 type="number" 
                                 step="0.1" 
                                 id="glucoseValue"
-                                wire:model="glucoseValue"
+                                wire:model.defer="glucoseValue"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 placeholder="e.g., 5.5"
                                 required
@@ -89,7 +89,7 @@
                             <input 
                                 type="time" 
                                 id="glucoseTime"
-                                wire:model="glucoseTime"
+                                wire:model.defer="glucoseTime"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 required
                             >
@@ -101,7 +101,7 @@
                         <input 
                             type="checkbox" 
                             id="isFasting"
-                            wire:model="isFasting"
+                            wire:model.defer="isFasting"
                             class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         >
                         <label for="isFasting" class="ml-2 block text-sm text-gray-900">
@@ -113,11 +113,16 @@
                         <label for="glucoseNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
                         <textarea 
                             id="glucoseNotes"
-                            wire:model="glucoseNotes"
+                            wire:model.live.debounce.500ms="glucoseNotes"
                             rows="3"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Any additional notes..."
+                            maxlength="1000"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('glucoseNotes') border-red-500 @enderror"
+                            placeholder="Any additional notes... (max 1000 characters)"
                         ></textarea>
+                        @error('glucoseNotes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @if($glucoseNotes)
+                            <span class="text-gray-500 text-xs mt-1 block">{{ strlen($glucoseNotes) }}/1000 characters</span>
+                        @endif
                     </div>
 
                 @elseif ($selectedType === 'weight')
@@ -127,14 +132,25 @@
                             <label for="weightValue" class="block text-sm font-medium text-gray-700">Weight (kg)</label>
                             <input 
                                 type="number" 
-                                step="0.1" 
+                                step="0.01" 
+                                min="0.1"
+                                max="500"
                                 id="weightValue"
-                                wire:model="weightValue"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                placeholder="e.g., 70.5"
+                                wire:model.live.debounce.500ms="weightValue"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('weightValue') border-red-500 @enderror"
+                                placeholder="0.1 - 500.0 kg"
                                 required
                             >
-                            @error('weightValue') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            @error('weightValue') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @if($weightValue && is_numeric($weightValue))
+                                @if($weightValue < 0.1)
+                                    <span class="text-red-500 text-xs mt-1 block">Weight must be at least 0.1 kg</span>
+                                @elseif($weightValue > 500)
+                                    <span class="text-red-500 text-xs mt-1 block">Weight seems too high (max 500 kg)</span>
+                                @elseif($weightValue >= 40 && $weightValue <= 120)
+                                    <span class="text-green-600 text-xs mt-1 block">✓ Normal adult range</span>
+                                @endif
+                            @endif
                         </div>
 
                         <div>
@@ -142,11 +158,11 @@
                             <input 
                                 type="time" 
                                 id="weightTime"
-                                wire:model="weightTime"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                wire:model.live.debounce.500ms="weightTime"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('weightTime') border-red-500 @enderror"
                                 required
                             >
-                            @error('weightTime') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            @error('weightTime') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -154,11 +170,16 @@
                         <label for="weightNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
                         <textarea 
                             id="weightNotes"
-                            wire:model="weightNotes"
+                            wire:model.live.debounce.500ms="weightNotes"
                             rows="3"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Any additional notes..."
+                            maxlength="1000"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('weightNotes') border-red-500 @enderror"
+                            placeholder="Any additional notes... (max 1000 characters)"
                         ></textarea>
+                        @error('weightNotes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @if($weightNotes)
+                            <span class="text-gray-500 text-xs mt-1 block">{{ strlen($weightNotes) }}/1000 characters</span>
+                        @endif
                     </div>
 
                 @elseif ($selectedType === 'exercise')
@@ -169,12 +190,17 @@
                             <input 
                                 type="text" 
                                 id="exerciseDescription"
-                                wire:model="exerciseDescription"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                wire:model.live.debounce.500ms="exerciseDescription"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('exerciseDescription') border-red-500 @enderror"
                                 placeholder="e.g., Walking, Running, Gym workout"
+                                minlength="2"
+                                maxlength="255"
                                 required
                             >
-                            @error('exerciseDescription') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            @error('exerciseDescription') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @if($exerciseDescription)
+                                <span class="text-gray-500 text-xs mt-1 block">{{ strlen($exerciseDescription) }}/255 characters</span>
+                            @endif
                         </div>
 
                         <div>
@@ -182,11 +208,11 @@
                             <input 
                                 type="time" 
                                 id="exerciseTime"
-                                wire:model="exerciseTime"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                wire:model.live.debounce.500ms="exerciseTime"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('exerciseTime') border-red-500 @enderror"
                                 required
                             >
-                            @error('exerciseTime') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            @error('exerciseTime') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -195,24 +221,39 @@
                         <input 
                             type="number" 
                             id="exerciseDuration"
-                            wire:model="exerciseDuration"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="e.g., 30"
+                            wire:model.live.debounce.500ms="exerciseDuration"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('exerciseDuration') border-red-500 @enderror"
+                            placeholder="1 - 1440 minutes"
                             min="1"
+                            max="1440"
                             required
                         >
-                        @error('exerciseDuration') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        @error('exerciseDuration') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @if($exerciseDuration && is_numeric($exerciseDuration))
+                            @if($exerciseDuration < 1)
+                                <span class="text-red-500 text-xs mt-1 block">Duration must be at least 1 minute</span>
+                            @elseif($exerciseDuration > 1440)
+                                <span class="text-red-500 text-xs mt-1 block">Duration cannot exceed 24 hours (1440 minutes)</span>
+                            @elseif($exerciseDuration >= 30 && $exerciseDuration <= 90)
+                                <span class="text-green-600 text-xs mt-1 block">✓ Good workout duration</span>
+                            @endif
+                        @endif
                     </div>
 
                     <div>
                         <label for="exerciseNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
                         <textarea 
                             id="exerciseNotes"
-                            wire:model="exerciseNotes"
+                            wire:model.live.debounce.500ms="exerciseNotes"
                             rows="3"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Any additional notes..."
+                            maxlength="1000"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('exerciseNotes') border-red-500 @enderror"
+                            placeholder="Any additional notes... (max 1000 characters)"
                         ></textarea>
+                        @error('exerciseNotes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @if($exerciseNotes)
+                            <span class="text-gray-500 text-xs mt-1 block">{{ strlen($exerciseNotes) }}/1000 characters</span>
+                        @endif
                     </div>
 
                 @elseif ($selectedType === 'notes')
@@ -222,24 +263,29 @@
                         <input 
                             type="time" 
                             id="notesTime"
-                            wire:model="notesTime"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            wire:model.live.debounce.500ms="notesTime"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('notesTime') border-red-500 @enderror"
                             required
                         >
-                        @error('notesTime') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        @error('notesTime') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
                         <label for="notesContent" class="block text-sm font-medium text-gray-700">Daily Notes</label>
                         <textarea 
                             id="notesContent"
-                            wire:model="notesContent"
+                            wire:model.live.debounce.500ms="notesContent"
                             rows="5"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Write your daily notes here..."
+                            minlength="1"
+                            maxlength="2000"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('notesContent') border-red-500 @enderror"
+                            placeholder="Write your daily notes here... (max 2000 characters)"
                             required
                         ></textarea>
-                        @error('notesContent') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        @error('notesContent') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @if($notesContent)
+                            <span class="text-gray-500 text-xs mt-1 block">{{ strlen($notesContent) }}/2000 characters</span>
+                        @endif
                     </div>
                 @endif
 
@@ -254,9 +300,17 @@
                     </button>
                     <button 
                         type="submit"
-                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                        wire:loading.attr="disabled"
                     >
-                        Save Measurement
+                        <span wire:loading.remove>Save Measurement</span>
+                        <span wire:loading class="flex items-center">
+                            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Saving...
+                        </span>
                     </button>
                 </div>
             </form>

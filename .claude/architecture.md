@@ -136,6 +136,14 @@ app/
 - **Repository Testing**: Skip direct repository testing (CRUD operations) or use real database
 - **Service Testing**: Focus on testing business logic in service classes with real dependencies
 
+### Playwright Testing Standards
+- **Mandatory Assertions**: All Playwright tests MUST use `expect()` assertions to verify UI state and behavior
+- **No Conditional Logic**: Tests MUST NOT use `if` statements to conditionally execute test steps
+- **Fail-Fast Principle**: Tests MUST fail immediately when expected UI elements are not found
+- **Explicit Element Selection**: Use specific selectors (`getByRole`, `getByText`, etc.) instead of generic CSS selectors
+- **Step Verification**: Each test step MUST be verified with assertions before proceeding to the next step
+- **No Silent Failures**: Tests that skip actions due to missing elements are considered invalid and must be rewritten
+
 ## Coding Standards
 
 ### Laravel Standards

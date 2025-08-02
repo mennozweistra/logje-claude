@@ -94,6 +94,9 @@ npx playwright test --project=chromium-ui
 # Specific test file in visible browser
 npx playwright test --project=chromium-ui dashboard-comprehensive.spec.js
 
+# Interactive UI mode (RECOMMENDED for test review and debugging)
+npx playwright test --ui
+
 # Debug mode (step-by-step with browser open)
 npx playwright test --project=chromium-ui --debug dashboard-comprehensive.spec.js -g "dashboard structure"
 
@@ -104,6 +107,24 @@ SLOWMO=1500 npx playwright test --project=chromium-ui measurement-crud.spec.js -
 # Custom slowdown values (in milliseconds)
 SLOWMO=500  npx playwright test --project=chromium-ui   # 500ms delay between actions
 SLOWMO=2000 npx playwright test --project=chromium-ui   # 2 second delay between actions
+```
+
+**Sequential Test Execution (prevents browser window overlap):**
+```bash
+# Run tests one at a time using workers flag (recommended for UI review)
+npx playwright test --project=chromium-ui --workers=1
+
+# Alternative: Use environment variable
+PLAYWRIGHT_WORKERS=1 npx playwright test --project=chromium-ui
+
+# Sequential with slow motion for detailed observation
+PLAYWRIGHT_WORKERS=1 SLOWMO=1000 npx playwright test --project=chromium-ui
+
+# Run specific test file sequentially
+npx playwright test --project=chromium-ui measurement-crud.spec.js --workers=1
+
+# Sequential execution with specific test pattern
+npx playwright test --project=chromium-ui --workers=1 -g "create.*measurement"
 ```
 
 **Run Tests Headless (for CI/CD):**

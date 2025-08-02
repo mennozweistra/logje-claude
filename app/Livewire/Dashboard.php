@@ -11,6 +11,10 @@ class Dashboard extends Component
 {
     public string $selectedDate;
     public bool $detailedView = false;
+    public string $search = '';
+    public array $filterTypes = [];
+    public string $sortBy = 'newest';
+    public int $dateRange = 1; // days to look back
 
     public function mount(MeasurementRepository $measurementRepository)
     {
@@ -66,12 +70,37 @@ class Dashboard extends Component
         $this->dispatch('confirm-delete-measurement', measurementId: $measurementId);
     }
 
+    public function clearFilters()
+    {
+        $this->search = '';
+        $this->filterTypes = [];
+        $this->sortBy = 'newest';
+        $this->dateRange = 1;
+    }
+
     public function render(MeasurementRepository $measurementRepository)
     {
-        $measurements = $measurementRepository->getByUserAndDate(
-            auth()->id(),
-            $this->selectedDate
-        );
+        // Get measurements based on current filters
+        if ($this->search || !empty($this->filterTypes) || $this->dateRange != 1) {
+            // Use search and filter with date range
+            $startDate = Carbon::parse($this->selectedDate)->subDays($this->dateRange - 1);
+            $endDate = Carbon::parse($this->selectedDate);
+            
+            $measurements = $measurementRepository->searchAndFilter(
+                auth()->id(),
+                $this->search,
+                $this->filterTypes,
+                $startDate,
+                $endDate,
+                $this->sortBy
+            );
+        } else {
+            // Show only today's measurements when no filters applied
+            $measurements = $measurementRepository->getByUserAndDate(
+                auth()->id(),
+                $this->selectedDate
+            );
+        }
 
         return view('livewire.dashboard', [
             'measurements' => $measurements,

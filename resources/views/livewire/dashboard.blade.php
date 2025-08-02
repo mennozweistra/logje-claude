@@ -38,10 +38,94 @@
             {{-- Date Picker --}}
             <div class="flex justify-center md:justify-end">
                 <input type="date" 
-                       wire:model.live="selectedDate"
+                       wire:model.lazy="selectedDate"
                        max="{{ date('Y-m-d') }}"
                        class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             </div>
+        </div>
+    </div>
+
+    {{-- Search and Filter --}}
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="space-y-4">
+            <!-- Search Input -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <div class="flex-1">
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search measurements</label>
+                    <input type="text" 
+                           id="search"
+                           wire:model.debounce.300ms="search"
+                           placeholder="Search by notes, type, or value..."
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <!-- Date Range -->
+                <div class="sm:w-48">
+                    <label for="dateRange" class="block text-sm font-medium text-gray-700 mb-1">Date range</label>
+                    <select id="dateRange" 
+                            wire:model="dateRange"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="1">Today only</option>
+                        <option value="7">Last 7 days</option>
+                        <option value="14">Last 2 weeks</option>
+                        <option value="30">Last month</option>
+                        <option value="90">Last 3 months</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter and Sort Row -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <!-- Type Filters -->
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Measurement types</label>
+                    <div class="flex flex-wrap gap-2">
+                        @php
+                            $types = [
+                                ['slug' => 'glucose', 'name' => 'Blood Glucose', 'color' => 'bg-red-100 text-red-800'],
+                                ['slug' => 'weight', 'name' => 'Weight', 'color' => 'bg-blue-100 text-blue-800'],
+                                ['slug' => 'exercise', 'name' => 'Exercise', 'color' => 'bg-green-100 text-green-800'],
+                                ['slug' => 'notes', 'name' => 'Notes', 'color' => 'bg-purple-100 text-purple-800']
+                            ];
+                        @endphp
+                        @foreach($types as $type)
+                            <label class="flex items-center">
+                                <input type="checkbox" 
+                                       wire:model="filterTypes"
+                                       value="{{ $type['slug'] }}"
+                                       class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2 px-2 py-1 text-xs font-medium rounded-full {{ $type['color'] }}">
+                                    {{ $type['name'] }}
+                                </span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                <!-- Sort Options -->
+                <div class="sm:w-48">
+                    <label for="sortBy" class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
+                    <select id="sortBy" 
+                            wire:model="sortBy"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="value_high">Highest value</option>
+                        <option value="value_low">Lowest value</option>
+                        <option value="type">By type</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Clear Filters Button -->
+            @if($search || $filterTypes || $dateRange != 1 || $sortBy != 'newest')
+                <div class="flex justify-end">
+                    <button wire:click="clearFilters"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                        Clear all filters
+                    </button>
+                </div>
+            @endif
         </div>
     </div>
 

@@ -31,8 +31,8 @@ class MeasurementsSeeder extends Seeder
         $exerciseTypeId = DB::table('measurement_types')->where('slug', 'exercise')->value('id');
         $notesTypeId = DB::table('measurement_types')->where('slug', 'notes')->value('id');
         
-        // Create measurements for the last 7 days for test user
-        for ($i = 6; $i >= 0; $i--) {
+        // Create measurements for the last 10 days for test user
+        for ($i = 9; $i >= 0; $i--) {
             $date = $today->copy()->subDays($i);
             
             // Morning glucose reading
