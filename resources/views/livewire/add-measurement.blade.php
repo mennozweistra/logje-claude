@@ -16,10 +16,17 @@
         <div class="bg-white rounded-lg shadow p-4">
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                @foreach ($measurementTypes as $type)
+                @php
+                    // Reorder measurement types: Weight, Glucose, Exercise, Notes
+                    $orderedTypes = collect($measurementTypes)->sortBy(function($type) {
+                        $order = ['weight' => 1, 'glucose' => 2, 'exercise' => 3, 'notes' => 4];
+                        return $order[$type->slug] ?? 5;
+                    });
+                @endphp
+                @foreach ($orderedTypes as $type)
                     <button 
                         wire:click="selectType('{{ $type->slug }}')"
-                        class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                        class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[100px]"
                     >
                         <div class="text-2xl mb-2">
                             @switch($type->slug)
@@ -39,10 +46,7 @@
                                     📊
                             @endswitch
                         </div>
-                        <span class="text-sm font-medium text-gray-900">{{ $type->name }}</span>
-                        @if ($type->unit)
-                            <span class="text-xs text-gray-500">({{ $type->unit }})</span>
-                        @endif
+                        <span class="text-sm font-medium text-gray-900 text-center">{{ $type->name }}</span>
                     </button>
                 @endforeach
             </div>

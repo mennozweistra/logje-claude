@@ -319,24 +319,24 @@ All completed tasks have been moved to: `./.claude/tasks-archive/2025-08-02-comp
 
 ## Additional UI/UX Refinements
 
-### [ ] 26 - Remove "Today" Text to Prevent Header Layout Jump
-- **Status**: Todo
+### [x] 26 - Remove "Today" Text to Prevent Header Layout Jump
+- **Status**: Review
 - **Description**: Remove the green "Today" text below the date header that causes layout jumping when switching between today and other dates.
 - **Implementation Plan**: 
-  1. [ ] Remove the "Today" text span from dashboard header
-  2. [ ] Ensure header height remains consistent
-  3. [ ] Test navigation between dates for layout stability
+  1. [x] Remove the "Today" text span from dashboard header
+  2. [x] Ensure header height remains consistent
+  3. [x] Test navigation between dates for layout stability
 - **Test Plan**: 
-  1. [ ] Verify header doesn't jump when changing dates
-  2. [ ] Test switching from today to other dates
-  3. [ ] Confirm layout remains stable
-- **Started**: 
-- **Review**: 
+  1. [x] Verify header doesn't jump when changing dates
+  2. [x] Test switching from today to other dates
+  3. [x] Confirm layout remains stable
+- **Started**: 2025-08-02 20:00:00
+- **Review**: 2025-08-02 20:05:00
 - **Completed**: 
 - **Duration**: 
 
-### [ ] 27 - Fix Date Picker to Use Dutch Dash Separator
-- **Status**: Todo
+### [x] 27 - Fix Date Picker to Use Dutch Dash Separator
+- **Status**: Review
 - **Description**: Change the date picker in the top right corner from American format (/) to Dutch format with dash (-) separator.
 - **Implementation Plan**: 
   1. [ ] Update date picker display format
@@ -351,8 +351,8 @@ All completed tasks have been moved to: `./.claude/tasks-archive/2025-08-02-comp
 - **Completed**: 
 - **Duration**: 
 
-### [ ] 28 - Improve Measurement Button Alignment and Remove Units
-- **Status**: Todo
+### [x] 28 - Improve Measurement Button Alignment and Remove Units
+- **Status**: Review
 - **Description**: Center icons and text in measurement buttons, remove unit displays (mmol/L, kg) to ensure consistent alignment across all buttons.
 - **Implementation Plan**: 
   1. [ ] Remove unit text from measurement buttons
@@ -537,6 +537,151 @@ All completed tasks have been moved to: `./.claude/tasks-archive/2025-08-02-comp
 - **Completed**: 
 - **Duration**: 
 
+### [ ] 39 - Fix Dashboard Date Selector to Use Dutch dd-mm-yyyy Format
+- **Status**: Todo
+- **Description**: Update the dashboard date selector to use Dutch notation (dd-mm-yyyy) instead of American format (mm/dd/yyyy) with proper dash separators.
+- **Implementation Plan**: 
+  1. [ ] Locate dashboard date selector implementation
+  2. [ ] Change from American mm/dd/yyyy to Dutch dd-mm-yyyy format
+  3. [ ] Replace slash separators with dash separators
+  4. [ ] Test date selection and display functionality
+  5. [ ] Ensure consistency with other date displays
+- **Test Plan**: 
+  1. [ ] Verify date selector shows dd-mm-yyyy format
+  2. [ ] Test date selection works correctly with new format
+  3. [ ] Confirm dash separators are used consistently
+  4. [ ] Verify no American date format remains
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+### [ ] 40 - Fix Day Title to Show Leading Zero (dd-mm-yyyy)
+- **Status**: Todo
+- **Description**: Update the day title display to show days with leading zeros (01, 02, etc.) instead of single digits (1, 2) for proper dd-mm-yyyy formatting.
+- **Implementation Plan**: 
+  1. [ ] Update date formatting in dashboard title
+  2. [ ] Change from 'j-m-Y' to 'd-m-Y' format for leading zeros
+  3. [ ] Test with different dates to verify leading zeros
+  4. [ ] Ensure consistency with Dutch date format standards
+- **Test Plan**: 
+  1. [ ] Verify days 1-9 show with leading zeros (01-09)
+  2. [ ] Test month formatting shows leading zeros (01-12)
+  3. [ ] Confirm full format is dd-mm-yyyy
+  4. [ ] Test with various dates throughout the year
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+### [ ] 41 - Fix Navigation Buttons to Always Stay in Same Position
+- **Status**: Todo
+- **Description**: Prevent navigation buttons from moving based on the length of the day and date string by using fixed positioning or consistent layout.
+- **Implementation Plan**: 
+  1. [ ] Analyze current layout causing button movement
+  2. [ ] Implement fixed positioning or flex layout with consistent spacing
+  3. [ ] Test with different date string lengths
+  4. [ ] Ensure buttons stay in exact same position
+- **Test Plan**: 
+  1. [ ] Test navigation across different days/months
+  2. [ ] Verify buttons don't move with varying date string lengths
+  3. [ ] Confirm consistent positioning across all dates
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+### [ ] 42 - Improve Exercise Entry Display Format
+- **Status**: Todo
+- **Description**: Update exercise entries to show: icon, time, "Exercise:", duration, then description for better information hierarchy.
+- **Implementation Plan**: 
+  1. [ ] Update exercise entry template
+  2. [ ] Reorder elements: icon → time → "Exercise:" → duration → description
+  3. [ ] Test with existing exercise entries
+  4. [ ] Ensure consistent formatting
+- **Test Plan**: 
+  1. [ ] Verify exercise entries show duration prominently
+  2. [ ] Test with different exercise types and durations
+  3. [ ] Confirm improved readability
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+### [ ] 43 - Implement Columnar Layout for All Measurements
+- **Status**: Todo
+- **Description**: Align all measurements in columns with: icon, time, "Type:", value, description for better visual organization and scanning.
+- **Implementation Plan**: 
+  1. [ ] Design columnar layout structure
+  2. [ ] Implement CSS grid or flexbox for consistent alignment
+  3. [ ] Update all measurement type displays
+  4. [ ] Test with various content lengths
+  5. [ ] Ensure responsive behavior
+- **Test Plan**: 
+  1. [ ] Verify all measurements align in clean columns
+  2. [ ] Test with different data lengths
+  3. [ ] Confirm readability and visual hierarchy
+  4. [ ] Test responsive behavior on mobile
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+### [ ] 44 - Fix Dashboard Date Selector American Format
+- **Status**: Todo
+- **Description**: Fix the date selector in the top right of dashboard that still shows American date format instead of Dutch format.
+- **Implementation Plan**: 
+  1. [ ] Locate dashboard date selector implementation
+  2. [ ] Update to use Dutch dd-mm-yyyy format display
+  3. [ ] Ensure proper date parsing and selection
+  4. [ ] Test date selection functionality
+- **Test Plan**: 
+  1. [ ] Verify date selector shows Dutch format
+  2. [ ] Test date selection works correctly
+  3. [ ] Confirm no American format remains
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+### [ ] 45 - Align Filter Selectors with Button Positions
+- **Status**: Todo
+- **Description**: Center the 4 filter selector checkboxes to align with the same positions as the 4 measurement button icons/text for visual consistency.
+- **Implementation Plan**: 
+  1. [ ] Analyze current button layout and positioning
+  2. [ ] Update filter selector layout to match button grid structure
+  3. [ ] Ensure filter checkboxes align with corresponding button positions
+  4. [ ] Test visual alignment across different screen sizes
+  5. [ ] Maintain functionality while improving visual consistency
+- **Test Plan**: 
+  1. [ ] Verify filter selectors align with button positions
+  2. [ ] Test that Weight filter aligns with Weight button
+  3. [ ] Confirm Glucose, Exercise, Notes filters align with respective buttons
+  4. [ ] Test responsive behavior maintains alignment
+  5. [ ] Verify filter functionality remains intact
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+### [ ] 46 - Remove Delete Buttons from Dashboard Measurement List
+- **Status**: Todo
+- **Description**: Remove the delete buttons from dashboard measurement entries since delete functionality should only be available in the edit screen.
+- **Implementation Plan**: 
+  1. [ ] Remove delete button column from measurement grid layout
+  2. [ ] Update grid layout to remove the delete button column
+  3. [ ] Ensure measurement entries remain clickable for editing
+  4. [ ] Test that delete functionality is still available in edit screen
+- **Test Plan**: 
+  1. [ ] Verify no delete buttons appear in measurement list
+  2. [ ] Test that clicking measurements opens edit screen
+  3. [ ] Confirm delete functionality works in edit screen
+  4. [ ] Verify clean dashboard appearance
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
 ---
 
-*Tasks 26-38 ready for implementation. Estimated total duration: ~3 hours*
+*Tasks 26-46 ready for implementation. Estimated total duration: ~4.5 hours*

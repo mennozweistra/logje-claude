@@ -139,15 +139,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeDateRange();
             initializeCharts();
-            updateCharts();
+            // Delay chart update to ensure DOM is fully ready
+            setTimeout(updateCharts, 100);
         });
         
         // Also initialize on window load as fallback
         window.addEventListener('load', function() {
             if (!document.getElementById('start-date').value || !document.getElementById('end-date').value) {
                 initializeDateRange();
-                updateCharts();
             }
+            // Ensure charts are loaded
+            setTimeout(updateCharts, 200);
         });
 
         function initializeDateRange() {
