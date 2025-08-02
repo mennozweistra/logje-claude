@@ -94,7 +94,7 @@ test.describe('Measurement CRUD Operations', () => {
     await expect(page.locator('h2:has-text("Dashboard")')).toBeVisible();
     
     // Click the exercise measurement type button
-    await page.getByRole('button', { name: '🏃‍♂️ Exercise' }).click();
+    await page.getByRole('button', { name: '🏸 Exercise' }).click();
     
     // Verify the exercise form opened
     await expect(page.locator('h3:has-text("Add Exercise Measurement")')).toBeVisible();

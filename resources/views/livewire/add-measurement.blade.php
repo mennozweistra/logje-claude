@@ -13,9 +13,7 @@
 
     @if (!$showForm)
         <!-- Measurement Type Selection -->
-        <div class="bg-white rounded-lg shadow p-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Measurement</h3>
-            <p class="text-sm text-gray-600 mb-4">Select the type of measurement you'd like to add for {{ \Carbon\Carbon::parse($selectedDate)->format('l, F j, Y') }}:</p>
+        <div class="bg-white rounded-lg shadow p-4">
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @foreach ($measurementTypes as $type)
@@ -32,7 +30,7 @@
                                     ⚖️
                                     @break
                                 @case('exercise')
-                                    🏃‍♂️
+                                    🏸
                                     @break
                                 @case('notes')
                                     📝

@@ -10,11 +10,7 @@ use Livewire\Component;
 class Dashboard extends Component
 {
     public string $selectedDate;
-    public bool $detailedView = false;
-    public string $search = '';
     public array $filterTypes = [];
-    public string $sortBy = 'newest';
-    public int $dateRange = 1; // days to look back
 
     public function mount(MeasurementRepository $measurementRepository)
     {
@@ -39,10 +35,6 @@ class Dashboard extends Component
         $this->selectedDate = Carbon::today()->format('Y-m-d');
     }
 
-    public function toggleView()
-    {
-        $this->detailedView = !$this->detailedView;
-    }
 
     public function updatedSelectedDate()
     {
@@ -72,30 +64,24 @@ class Dashboard extends Component
 
     public function clearFilters()
     {
-        $this->search = '';
         $this->filterTypes = [];
-        $this->sortBy = 'newest';
-        $this->dateRange = 1;
     }
 
     public function render(MeasurementRepository $measurementRepository)
     {
         // Get measurements based on current filters
-        if ($this->search || !empty($this->filterTypes) || $this->dateRange != 1) {
-            // Use search and filter with date range
-            $startDate = Carbon::parse($this->selectedDate)->subDays($this->dateRange - 1);
-            $endDate = Carbon::parse($this->selectedDate);
-            
+        if (!empty($this->filterTypes)) {
+            // Use type filtering
             $measurements = $measurementRepository->searchAndFilter(
                 auth()->id(),
-                $this->search,
+                '', // no search
                 $this->filterTypes,
-                $startDate,
-                $endDate,
-                $this->sortBy
+                Carbon::parse($this->selectedDate),
+                Carbon::parse($this->selectedDate),
+                'newest'
             );
         } else {
-            // Show only today's measurements when no filters applied
+            // Show all today's measurements when no filters applied
             $measurements = $measurementRepository->getByUserAndDate(
                 auth()->id(),
                 $this->selectedDate

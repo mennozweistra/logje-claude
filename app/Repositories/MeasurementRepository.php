@@ -21,7 +21,7 @@ class MeasurementRepository
         return Measurement::where('user_id', $userId)
             ->whereDate('date', $date)
             ->with('measurementType')
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 
