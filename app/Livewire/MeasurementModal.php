@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Repositories\MeasurementRepository;
 use App\Repositories\MeasurementTypeRepository;
+use App\Models\Medication;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -39,6 +40,11 @@ class MeasurementModal extends Component
     // Notes fields
     public string $notesTime = '';
     public string $notesContent = '';
+
+    // Medication fields
+    public string $medicationTime = '';
+    public array $selectedMedications = [];
+    public string $medicationNotes = '';
 
     // Delete confirmation
     public bool $showDeleteConfirm = false;
@@ -86,6 +92,7 @@ class MeasurementModal extends Component
         $this->weightTime = $currentTime;
         $this->exerciseTime = $currentTime;
         $this->notesTime = $currentTime;
+        $this->medicationTime = $currentTime;
     }
 
     public function loadMeasurementData()
@@ -118,6 +125,12 @@ class MeasurementModal extends Component
             case 'notes':
                 $this->notesTime = $time;
                 $this->notesContent = $this->measurement->notes ?? '';
+                break;
+
+            case 'medication':
+                $this->medicationTime = $time;
+                $this->medicationNotes = $this->measurement->notes ?? '';
+                $this->selectedMedications = $this->measurement->medications->pluck('id')->toArray();
                 break;
         }
     }
@@ -159,7 +172,13 @@ class MeasurementModal extends Component
         // Check for duplicate timestamps
         $this->checkDuplicateTimestamp($data['created_at'], $measurementType->id);
 
-        $measurementRepository->create($data);
+        $measurement = $measurementRepository->create($data);
+        
+        // Handle medication relationships
+        if ($this->selectedType === 'medication' && !empty($this->selectedMedications)) {
+            $measurement->medications()->sync($this->selectedMedications);
+        }
+        
         session()->flash('success', 'Measurement added successfully!');
         $this->cancel();
         $this->dispatch('measurement-saved');
@@ -178,7 +197,13 @@ class MeasurementModal extends Component
         // Check for duplicate timestamps (excluding current measurement)
         $this->checkDuplicateTimestampForUpdate($data['created_at'], $this->measurement->measurement_type_id);
 
-        $measurementRepository->update($this->measurementId, $data);
+        $measurement = $measurementRepository->update($this->measurementId, $data);
+        
+        // Handle medication relationships
+        if ($this->selectedType === 'medication') {
+            $this->measurement->medications()->sync($this->selectedMedications);
+        }
+        
         session()->flash('success', 'Measurement updated successfully!');
         $this->cancel();
         $this->dispatch('measurement-saved');
@@ -212,6 +237,11 @@ class MeasurementModal extends Component
             case 'notes':
                 $data['notes'] = $this->notesContent;
                 $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->notesTime);
+                break;
+
+            case 'medication':
+                $data['notes'] = $this->medicationNotes;
+                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->medicationTime);
                 break;
         }
 
@@ -312,6 +342,25 @@ class MeasurementModal extends Component
                     'notesTime.required' => 'Time is required.',
                     'notesTime.date_format' => 'Please enter a valid time in HH:MM format.',
                 ]);
+
+            case 'medication':
+                return $this->validate([
+                    'selectedMedications' => [
+                        'required',
+                        'array',
+                        'min:1',
+                    ],
+                    'selectedMedications.*' => 'exists:medications,id',
+                    'medicationTime' => 'required|date_format:H:i',
+                    'medicationNotes' => 'nullable|string|max:1000',
+                ], [
+                    'selectedMedications.required' => 'Please select at least one medication.',
+                    'selectedMedications.min' => 'Please select at least one medication.',
+                    'selectedMedications.*.exists' => 'Selected medication is invalid.',
+                    'medicationTime.required' => 'Time is required.',
+                    'medicationTime.date_format' => 'Please enter a valid time in HH:MM format.',
+                    'medicationNotes.max' => 'Notes cannot exceed 1000 characters.',
+                ]);
                 
             default:
                 throw new \InvalidArgumentException('Invalid measurement type: ' . $this->selectedType);
@@ -383,7 +432,7 @@ class MeasurementModal extends Component
                      'glucoseValue', 'isFasting', 'glucoseNotes',
                      'weightValue', 'weightNotes', 
                      'exerciseDescription', 'exerciseDuration', 'exerciseNotes',
-                     'notesContent']);
+                     'notesContent', 'selectedMedications', 'medicationNotes']);
     }
     
     private function resetFormFields()
@@ -392,15 +441,17 @@ class MeasurementModal extends Component
                      'glucoseValue', 'isFasting', 'glucoseNotes',
                      'weightValue', 'weightNotes', 
                      'exerciseDescription', 'exerciseDuration', 'exerciseNotes',
-                     'notesContent']);
+                     'notesContent', 'selectedMedications', 'medicationNotes']);
     }
 
     public function render(MeasurementTypeRepository $measurementTypeRepository)
     {
         $measurementTypes = $measurementTypeRepository->getAll();
+        $medications = Medication::all();
         
         return view('livewire.measurement-modal', [
             'measurementTypes' => $measurementTypes,
+            'medications' => $medications,
         ]);
     }
 }

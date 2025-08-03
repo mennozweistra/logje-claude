@@ -1,6 +1,6 @@
 <?php
 
-use App\Livewire\AddMeasurement;
+use App\Livewire\MeasurementModal;
 use App\Models\MeasurementType;
 use App\Models\User;
 use Carbon\Carbon;
@@ -8,59 +8,41 @@ use Livewire\Livewire;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    $this->glucoseType = MeasurementType::factory()->create([
-        'name' => 'Blood Glucose',
-        'slug' => 'glucose',
-        'unit' => 'mmol/L'
-    ]);
-    $this->weightType = MeasurementType::factory()->create([
-        'name' => 'Weight',
-        'slug' => 'weight',
-        'unit' => 'kg'
-    ]);
-    $this->exerciseType = MeasurementType::factory()->create([
-        'name' => 'Exercise',
-        'slug' => 'exercise',
-        'unit' => 'minutes'
-    ]);
-    $this->notesType = MeasurementType::factory()->create([
-        'name' => 'Notes',
-        'slug' => 'notes'
-    ]);
+    $this->glucoseType = MeasurementType::where('slug', 'glucose')->first();
+    $this->weightType = MeasurementType::where('slug', 'weight')->first();
+    $this->exerciseType = MeasurementType::where('slug', 'exercise')->first();
+    $this->notesType = MeasurementType::where('slug', 'notes')->first();
 });
 
-it('can render the add measurement component', function () {
+it('can render the measurement modal component', function () {
     $component = Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
+        ->test(MeasurementModal::class)
         ->assertStatus(200);
 
-    $component->assertViewIs('livewire.add-measurement');
-    $component->assertSee('Add New Measurement');
+    $component->assertViewIs('livewire.measurement-modal');
 });
 
-it('shows measurement type selection by default', function () {
+it('starts with modal closed by default', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->assertSet('showForm', false)
-        ->assertSee('Blood Glucose')
-        ->assertSee('Weight')
-        ->assertSee('Exercise')
-        ->assertSee('Notes');
+        ->test(MeasurementModal::class)
+        ->assertSet('showModal', false)
+        ->assertSet('selectedType', '');
 });
 
-it('can select glucose measurement type', function () {
+it('can open glucose measurement modal', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'glucose')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'glucose')
         ->assertSet('selectedType', 'glucose')
-        ->assertSet('showForm', true)
-        ->assertSee('Blood Glucose (mmol/L)');
+        ->assertSet('showModal', true)
+        ->assertSet('mode', 'add')
+        ->assertSee('Add Glucose Measurement');
 });
 
 it('can save glucose measurement', function () {
     $component = Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'glucose')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'glucose')
         ->set('glucoseValue', '5.5')
         ->set('glucoseTime', '08:00')
         ->set('isFasting', true)
@@ -68,7 +50,7 @@ it('can save glucose measurement', function () {
         ->call('save');
 
     $component->assertHasNoErrors();
-    $component->assertDispatched('measurement-added');
+    $component->assertDispatched('measurement-saved');
 
     $this->assertDatabaseHas('measurements', [
         'user_id' => $this->user->id,
@@ -80,14 +62,14 @@ it('can save glucose measurement', function () {
 
 it('can save weight measurement', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'weight')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'weight')
         ->set('weightValue', '75.2')
         ->set('weightTime', '07:30')
         ->set('weightNotes', 'Morning weight')
         ->call('save')
         ->assertHasNoErrors()
-        ->assertDispatched('measurement-added');
+        ->assertDispatched('measurement-saved');
 
     $this->assertDatabaseHas('measurements', [
         'user_id' => $this->user->id,
@@ -98,15 +80,15 @@ it('can save weight measurement', function () {
 
 it('can save exercise measurement', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'exercise')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'exercise')
         ->set('exerciseDuration', '45')
         ->set('exerciseDescription', 'Running')
         ->set('exerciseTime', '18:00')
         ->set('exerciseNotes', 'Evening run')
         ->call('save')
         ->assertHasNoErrors()
-        ->assertDispatched('measurement-added');
+        ->assertDispatched('measurement-saved');
 
     $this->assertDatabaseHas('measurements', [
         'user_id' => $this->user->id,
@@ -118,13 +100,13 @@ it('can save exercise measurement', function () {
 
 it('can save notes measurement', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'notes')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'notes')
         ->set('notesTime', '12:00')
         ->set('notesContent', 'Feeling great today!')
         ->call('save')
         ->assertHasNoErrors()
-        ->assertDispatched('measurement-added');
+        ->assertDispatched('measurement-saved');
 
     $this->assertDatabaseHas('measurements', [
         'user_id' => $this->user->id,
@@ -134,8 +116,8 @@ it('can save notes measurement', function () {
 
 it('validates glucose value is required', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'glucose')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'glucose')
         ->set('glucoseValue', '')
         ->call('save')
         ->assertHasErrors(['glucoseValue' => 'required']);
@@ -143,8 +125,8 @@ it('validates glucose value is required', function () {
 
 it('validates glucose value is numeric', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'glucose')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'glucose')
         ->set('glucoseValue', 'not-a-number')
         ->call('save')
         ->assertHasErrors(['glucoseValue' => 'numeric']);
@@ -152,8 +134,8 @@ it('validates glucose value is numeric', function () {
 
 it('validates glucose value range', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'glucose')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'glucose')
         ->set('glucoseValue', '100')
         ->call('save')
         ->assertHasErrors(['glucoseValue' => 'max']);
@@ -161,8 +143,8 @@ it('validates glucose value range', function () {
 
 it('validates weight value is required', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'weight')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'weight')
         ->set('weightValue', '')
         ->call('save')
         ->assertHasErrors(['weightValue' => 'required']);
@@ -170,8 +152,8 @@ it('validates weight value is required', function () {
 
 it('validates exercise duration is required', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'exercise')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'exercise')
         ->set('exerciseDuration', '')
         ->set('exerciseDescription', 'Running')
         ->call('save')
@@ -180,8 +162,8 @@ it('validates exercise duration is required', function () {
 
 it('validates exercise type is required', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'exercise')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'exercise')
         ->set('exerciseDuration', '30')
         ->set('exerciseDescription', '')
         ->call('save')
@@ -190,27 +172,26 @@ it('validates exercise type is required', function () {
 
 it('validates notes content is required for notes type', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'notes')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'notes')
         ->set('notesContent', '')
         ->call('save')
         ->assertHasErrors(['notesContent' => 'required']);
 });
 
-it('can cancel and return to type selection', function () {
+it('can cancel and close modal', function () {
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'glucose')
-        ->assertSet('showForm', true)
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'glucose')
+        ->assertSet('showModal', true)
         ->call('cancel')
-        ->assertSet('showForm', false)
-        ->assertSet('selectedType', null);
+        ->assertSet('showModal', false);
 });
 
 it('pre-populates time with current time', function () {
     $component = Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'glucose');
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'glucose');
 
     $currentTime = Carbon::now()->format('H:i');
     $component->assertSet('glucoseTime', $currentTime);
@@ -219,8 +200,8 @@ it('pre-populates time with current time', function () {
 it('handles measurement repository errors gracefully', function () {
     // For now, just test that invalid data produces errors
     Livewire::actingAs($this->user)
-        ->test(AddMeasurement::class, ['selectedDate' => Carbon::today()->format('Y-m-d')])
-        ->call('selectType', 'glucose')
+        ->test(MeasurementModal::class)
+        ->call('openAddMeasurement', 'glucose')
         ->set('glucoseValue', '') // Invalid empty value
         ->call('save')
         ->assertHasErrors(['glucoseValue']);

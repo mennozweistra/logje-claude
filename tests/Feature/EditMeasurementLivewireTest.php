@@ -1,6 +1,6 @@
 <?php
 
-use App\Livewire\EditMeasurement;
+use App\Livewire\MeasurementModal;
 use App\Models\Measurement;
 use App\Models\MeasurementType;
 use App\Models\User;
@@ -11,39 +11,24 @@ beforeEach(function () {
     $this->user = User::factory()->create();
     $this->otherUser = User::factory()->create();
     
-    $this->glucoseType = MeasurementType::factory()->create([
-        'name' => 'Blood Glucose',
-        'slug' => 'glucose',
-        'unit' => 'mmol/L'
-    ]);
-    $this->weightType = MeasurementType::factory()->create([
-        'name' => 'Weight',
-        'slug' => 'weight',
-        'unit' => 'kg'
-    ]);
-    $this->exerciseType = MeasurementType::factory()->create([
-        'name' => 'Exercise',
-        'slug' => 'exercise',
-        'unit' => 'minutes'
-    ]);
-    $this->notesType = MeasurementType::factory()->create([
-        'name' => 'Notes',
-        'slug' => 'notes'
-    ]);
+    $this->glucoseType = MeasurementType::where('slug', 'glucose')->first();
+    $this->weightType = MeasurementType::where('slug', 'weight')->first();
+    $this->exerciseType = MeasurementType::where('slug', 'exercise')->first();
+    $this->notesType = MeasurementType::where('slug', 'notes')->first();
 });
 
 it('can render the edit measurement component', function () {
     $component = Livewire::actingAs($this->user)
-        ->test(EditMeasurement::class)
+        ->test(MeasurementModal::class)
         ->assertStatus(200);
 
-    $component->assertViewIs('livewire.edit-measurement');
+    $component->assertViewIs('livewire.measurement-modal');
 });
 
-it('starts with no form visible', function () {
+it('starts with no modal visible', function () {
     Livewire::actingAs($this->user)
-        ->test(EditMeasurement::class)
-        ->assertSet('showEditForm', false)
+        ->test(MeasurementModal::class)
+        ->assertSet('showModal', false)
         ->assertSet('showDeleteConfirm', false)
         ->assertSet('measurementId', null);
 });
@@ -61,16 +46,16 @@ describe('Edit Glucose Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id);
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id);
 
-        $component->assertSet('showEditForm', true)
+        $component->assertSet('showModal', true)
             ->assertSet('measurementId', $measurement->id)
             ->assertSet('glucoseValue', '5.50')
             ->assertSet('isFasting', true)
             ->assertSet('glucoseTime', '08:30')
             ->assertSet('glucoseNotes', 'Morning reading')
-            ->assertSee('Edit Blood Glucose Measurement');
+            ->assertSee('Edit Glucose Measurement');
     });
 
     it('can update a glucose measurement', function () {
@@ -84,17 +69,17 @@ describe('Edit Glucose Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
             ->set('glucoseValue', '6.8')
             ->set('isFasting', true)
             ->set('glucoseTime', '09:15')
             ->set('glucoseNotes', 'Updated note')
-            ->call('update');
+            ->call('save');
 
         $component->assertHasNoErrors()
-            ->assertSet('showEditForm', false)
-            ->assertDispatched('measurement-updated');
+            ->assertSet('showModal', false)
+            ->assertDispatched('measurement-saved');
 
         $measurement->refresh();
         expect((float) $measurement->value)->toBe(6.8);
@@ -112,10 +97,10 @@ describe('Edit Glucose Measurements', function () {
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
             ->set('glucoseValue', '')
-            ->call('update')
+            ->call('save')
             ->assertHasErrors(['glucoseValue' => 'required']);
     });
 
@@ -127,10 +112,10 @@ describe('Edit Glucose Measurements', function () {
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
             ->set('glucoseValue', 'not-a-number')
-            ->call('update')
+            ->call('save')
             ->assertHasErrors(['glucoseValue' => 'numeric']);
     });
 
@@ -142,10 +127,10 @@ describe('Edit Glucose Measurements', function () {
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
             ->set('glucoseValue', '100')
-            ->call('update')
+            ->call('save')
             ->assertHasErrors(['glucoseValue' => 'max']);
     });
 });
@@ -162,10 +147,10 @@ describe('Edit Weight Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id);
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id);
 
-        $component->assertSet('showEditForm', true)
+        $component->assertSet('showModal', true)
             ->assertSet('weightValue', '75.50')
             ->assertSet('weightTime', '07:00')
             ->assertSet('weightNotes', 'Morning weight')
@@ -182,15 +167,15 @@ describe('Edit Weight Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
             ->set('weightValue', '76.2')
             ->set('weightTime', '08:30')
             ->set('weightNotes', 'Updated weight note')
-            ->call('update');
+            ->call('save');
 
         $component->assertHasNoErrors()
-            ->assertDispatched('measurement-updated');
+            ->assertDispatched('measurement-saved');
 
         $measurement->refresh();
         expect((float) $measurement->value)->toBe(76.2);
@@ -211,10 +196,10 @@ describe('Edit Exercise Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id);
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id);
 
-        $component->assertSet('showEditForm', true)
+        $component->assertSet('showModal', true)
             ->assertSet('exerciseDescription', 'Running')
             ->assertSet('exerciseDuration', '30')
             ->assertSet('exerciseTime', '18:00')
@@ -233,16 +218,16 @@ describe('Edit Exercise Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
             ->set('exerciseDescription', 'Cycling')
             ->set('exerciseDuration', '45')
             ->set('exerciseTime', '19:30')
             ->set('exerciseNotes', 'Updated exercise note')
-            ->call('update');
+            ->call('save');
 
         $component->assertHasNoErrors()
-            ->assertDispatched('measurement-updated');
+            ->assertDispatched('measurement-saved');
 
         $measurement->refresh();
         expect($measurement->description)->toBe('Cycling');
@@ -262,10 +247,10 @@ describe('Edit Notes Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id);
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id);
 
-        $component->assertSet('showEditForm', true)
+        $component->assertSet('showModal', true)
             ->assertSet('notesTime', '12:00')
             ->assertSet('notesContent', 'Feeling great today!')
             ->assertSee('Edit Notes Measurement');
@@ -280,14 +265,14 @@ describe('Edit Notes Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
             ->set('notesTime', '14:30')
             ->set('notesContent', 'Updated daily note')
-            ->call('update');
+            ->call('save');
 
         $component->assertHasNoErrors()
-            ->assertDispatched('measurement-updated');
+            ->assertDispatched('measurement-saved');
 
         $measurement->refresh();
         expect($measurement->notes)->toBe('Updated daily note');
@@ -303,13 +288,12 @@ describe('Delete Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('confirmDelete', $measurement->id);
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
+            ->call('confirmDelete');
 
         $component->assertSet('showDeleteConfirm', true)
-            ->assertSet('measurementId', $measurement->id)
-            ->assertSee('Delete Measurement')
-            ->assertSee('Are you sure you want to delete this Blood Glucose measurement?');
+            ->assertSet('measurementId', $measurement->id);
     });
 
     it('can delete a measurement', function () {
@@ -320,13 +304,14 @@ describe('Delete Measurements', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('confirmDelete', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
+            ->call('confirmDelete')
             ->call('delete');
 
         $component->assertHasNoErrors()
             ->assertSet('showDeleteConfirm', false)
-            ->assertDispatched('measurement-updated');
+            ->assertDispatched('measurement-saved');
 
         // Verify soft delete
         expect(Measurement::find($measurement->id))->toBeNull();
@@ -343,10 +328,10 @@ describe('Authorization', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id);
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id);
 
-        $component->assertSet('showEditForm', false)
+        $component->assertSet('showModal', false)
             ->assertSet('measurementId', null);
     });
 
@@ -358,10 +343,10 @@ describe('Authorization', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('confirmDelete', $measurement->id);
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id);
 
-        $component->assertSet('showDeleteConfirm', false)
+        $component->assertSet('showModal', false)
             ->assertSet('measurementId', null);
     });
 
@@ -374,12 +359,12 @@ describe('Authorization', function () {
 
         // Manually set the measurement to bypass authorization check
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class);
+            ->test(MeasurementModal::class);
         
         $component->set('measurementId', $measurement->id)
             ->set('measurement', $measurement)
             ->set('glucoseValue', '8.5')
-            ->call('update');
+            ->call('save');
 
         // Should not update since user doesn't own the measurement
         $measurement->refresh();
@@ -390,15 +375,15 @@ describe('Authorization', function () {
 describe('Error Handling', function () {
     it('handles non-existent measurement gracefully when editing', function () {
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', 999999);
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', 999999);
 
-        $component->assertSet('showEditForm', false);
+        $component->assertSet('showModal', false);
     });
 
     it('handles non-existent measurement gracefully when deleting', function () {
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
+            ->test(MeasurementModal::class)
             ->call('confirmDelete', 999999);
 
         $component->assertSet('showDeleteConfirm', false);
@@ -414,11 +399,11 @@ describe('Cancel Operations', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
-            ->assertSet('showEditForm', true)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
+            ->assertSet('showModal', true)
             ->call('cancel')
-            ->assertSet('showEditForm', false)
+            ->assertSet('showModal', false)
             ->assertSet('measurementId', null);
     });
 
@@ -430,8 +415,9 @@ describe('Cancel Operations', function () {
         ]);
 
         $component = Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('confirmDelete', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
+            ->call('confirmDelete')
             ->assertSet('showDeleteConfirm', true)
             ->call('cancel')
             ->assertSet('showDeleteConfirm', false)

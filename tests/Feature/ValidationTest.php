@@ -1,7 +1,6 @@
 <?php
 
-use App\Livewire\AddMeasurement;
-use App\Livewire\EditMeasurement;
+use App\Livewire\MeasurementModal;
 use App\Models\Measurement;
 use App\Models\MeasurementType;
 use App\Models\User;
@@ -10,32 +9,17 @@ use Livewire\Livewire;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    $this->glucoseType = MeasurementType::factory()->create([
-        'name' => 'Blood Glucose',
-        'slug' => 'glucose',
-        'unit' => 'mmol/L'
-    ]);
-    $this->weightType = MeasurementType::factory()->create([
-        'name' => 'Weight',
-        'slug' => 'weight',
-        'unit' => 'kg'
-    ]);
-    $this->exerciseType = MeasurementType::factory()->create([
-        'name' => 'Exercise',
-        'slug' => 'exercise',
-        'unit' => 'minutes'
-    ]);
-    $this->notesType = MeasurementType::factory()->create([
-        'name' => 'Notes',
-        'slug' => 'notes'
-    ]);
+    $this->glucoseType = MeasurementType::where('slug', 'glucose')->first();
+    $this->weightType = MeasurementType::where('slug', 'weight')->first();
+    $this->exerciseType = MeasurementType::where('slug', 'exercise')->first();
+    $this->notesType = MeasurementType::where('slug', 'notes')->first();
 });
 
 describe('Glucose Validation', function () {
     it('validates glucose value is required', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '')
             ->set('glucoseTime', '08:30')
             ->call('save')
@@ -44,8 +28,8 @@ describe('Glucose Validation', function () {
 
     it('validates glucose value is numeric', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', 'not-a-number')
             ->set('glucoseTime', '08:30')
             ->call('save')
@@ -54,8 +38,8 @@ describe('Glucose Validation', function () {
 
     it('validates glucose value minimum', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '0.05')
             ->set('glucoseTime', '08:30')
             ->call('save')
@@ -64,8 +48,8 @@ describe('Glucose Validation', function () {
 
     it('validates glucose value maximum', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '55.0')
             ->set('glucoseTime', '08:30')
             ->call('save')
@@ -74,8 +58,8 @@ describe('Glucose Validation', function () {
 
     it('validates glucose value decimal places', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '5.555')
             ->set('glucoseTime', '08:30')
             ->call('save')
@@ -84,8 +68,8 @@ describe('Glucose Validation', function () {
 
     it('accepts valid glucose values', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '5.5')
             ->set('glucoseTime', '08:30')
             ->call('save')
@@ -94,8 +78,8 @@ describe('Glucose Validation', function () {
 
     it('validates glucose time format', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '5.5')
             ->set('glucoseTime', '25:70')
             ->call('save')
@@ -106,8 +90,8 @@ describe('Glucose Validation', function () {
 describe('Weight Validation', function () {
     it('validates weight value is required', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'weight')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'weight')
             ->set('weightValue', '')
             ->set('weightTime', '08:30')
             ->call('save')
@@ -116,8 +100,8 @@ describe('Weight Validation', function () {
 
     it('validates weight minimum', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'weight')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'weight')
             ->set('weightValue', '0.05')
             ->set('weightTime', '08:30')
             ->call('save')
@@ -126,8 +110,8 @@ describe('Weight Validation', function () {
 
     it('validates weight maximum', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'weight')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'weight')
             ->set('weightValue', '600')
             ->set('weightTime', '08:30')
             ->call('save')
@@ -136,8 +120,8 @@ describe('Weight Validation', function () {
 
     it('accepts valid weight values', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'weight')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'weight')
             ->set('weightValue', '75.5')
             ->set('weightTime', '08:30')
             ->call('save')
@@ -148,8 +132,8 @@ describe('Weight Validation', function () {
 describe('Exercise Validation', function () {
     it('validates exercise description is required', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', '')
             ->set('exerciseDuration', '30')
             ->set('exerciseTime', '18:00')
@@ -159,8 +143,8 @@ describe('Exercise Validation', function () {
 
     it('validates exercise description minimum length', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', 'A')
             ->set('exerciseDuration', '30')
             ->set('exerciseTime', '18:00')
@@ -172,8 +156,8 @@ describe('Exercise Validation', function () {
         $longDescription = str_repeat('A', 256);
         
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', $longDescription)
             ->set('exerciseDuration', '30')
             ->set('exerciseTime', '18:00')
@@ -183,8 +167,8 @@ describe('Exercise Validation', function () {
 
     it('validates exercise description format', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', 'Running @#$%^')
             ->set('exerciseDuration', '30')
             ->set('exerciseTime', '18:00')
@@ -194,8 +178,8 @@ describe('Exercise Validation', function () {
 
     it('validates exercise duration is required', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', 'Running')
             ->set('exerciseDuration', '')
             ->set('exerciseTime', '18:00')
@@ -205,8 +189,8 @@ describe('Exercise Validation', function () {
 
     it('validates exercise duration minimum', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', 'Running')
             ->set('exerciseDuration', '0')
             ->set('exerciseTime', '18:00')
@@ -216,8 +200,8 @@ describe('Exercise Validation', function () {
 
     it('validates exercise duration maximum', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', 'Running')
             ->set('exerciseDuration', '1500')
             ->set('exerciseTime', '18:00')
@@ -227,8 +211,8 @@ describe('Exercise Validation', function () {
 
     it('accepts valid exercise data', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', 'Running')
             ->set('exerciseDuration', '30')
             ->set('exerciseTime', '18:00')
@@ -240,8 +224,8 @@ describe('Exercise Validation', function () {
 describe('Notes Validation', function () {
     it('validates notes content is required', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'notes')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'notes')
             ->set('notesContent', '')
             ->set('notesTime', '20:00')
             ->call('save')
@@ -250,8 +234,8 @@ describe('Notes Validation', function () {
 
     it('validates notes content minimum length', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'notes')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'notes')
             ->set('notesContent', '')
             ->set('notesTime', '20:00')
             ->call('save')
@@ -262,8 +246,8 @@ describe('Notes Validation', function () {
         $longContent = str_repeat('A', 2001);
         
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'notes')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'notes')
             ->set('notesContent', $longContent)
             ->set('notesTime', '20:00')
             ->call('save')
@@ -272,8 +256,8 @@ describe('Notes Validation', function () {
 
     it('accepts valid notes content', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'notes')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'notes')
             ->set('notesContent', 'Feeling great today!')
             ->set('notesTime', '20:00')
             ->call('save')
@@ -296,8 +280,8 @@ describe('Duplicate Timestamp Prevention', function () {
         $initialCount = Measurement::count();
         
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '6.2')
             ->set('glucoseTime', '08:30')
             ->call('save');
@@ -318,8 +302,8 @@ describe('Duplicate Timestamp Prevention', function () {
 
         // Create another at different time
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '6.2')
             ->set('glucoseTime', '08:31')
             ->call('save')
@@ -336,10 +320,10 @@ describe('Edit Validation', function () {
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement->id)
             ->set('glucoseValue', '100')
-            ->call('update')
+            ->call('save')
             ->assertHasErrors(['glucoseValue' => 'max']);
     });
 
@@ -363,10 +347,10 @@ describe('Edit Validation', function () {
 
         // Try to edit measurement2 to have same time as measurement1
         Livewire::actingAs($this->user)
-            ->test(EditMeasurement::class)
-            ->call('startEdit', $measurement2->id)
+            ->test(MeasurementModal::class)
+            ->call('openEditMeasurement', $measurement2->id)
             ->set('glucoseTime', '08:30')
-            ->call('update');
+            ->call('save');
             
         // Verify measurement2 was not updated to the conflicting time
         $measurement2->refresh();
@@ -377,8 +361,8 @@ describe('Edit Validation', function () {
 describe('Error Message Display', function () {
     it('displays user-friendly error messages', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'glucose')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
             ->set('glucoseValue', '100')
             ->call('save')
             ->assertSee('Blood glucose level seems too high (max 50 mmol/L). Please check your reading.');
@@ -386,8 +370,8 @@ describe('Error Message Display', function () {
 
     it('displays validation errors for multiple fields', function () {
         Livewire::actingAs($this->user)
-            ->test(AddMeasurement::class)
-            ->call('selectType', 'exercise')
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'exercise')
             ->set('exerciseDescription', 'A')
             ->set('exerciseDuration', '0')
             ->call('save')

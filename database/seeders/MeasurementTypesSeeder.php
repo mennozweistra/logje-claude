@@ -47,6 +47,6 @@ class MeasurementTypesSeeder extends Seeder
             ],
         ];
 
-        DB::table('measurement_types')->insert($measurementTypes);
+        DB::table('measurement_types')->insertOrIgnore($measurementTypes);
     }
 }

@@ -11,22 +11,11 @@ beforeEach(function () {
         'password' => bcrypt('password')
     ]);
     
-    // Create measurement types
-    $this->glucoseType = MeasurementType::factory()->create([
-        'name' => 'Blood Glucose',
-        'slug' => 'glucose',
-        'unit' => 'mmol/L'
-    ]);
-    $this->weightType = MeasurementType::factory()->create([
-        'name' => 'Weight',
-        'slug' => 'weight',
-        'unit' => 'kg'
-    ]);
-    $this->exerciseType = MeasurementType::factory()->create([
-        'name' => 'Exercise',
-        'slug' => 'exercise',
-        'unit' => 'minutes'
-    ]);
+    // Get existing measurement types
+    $this->glucoseType = MeasurementType::where('slug', 'glucose')->first();
+    $this->weightType = MeasurementType::where('slug', 'weight')->first();
+    $this->exerciseType = MeasurementType::where('slug', 'exercise')->first();
+    $this->notesType = MeasurementType::where('slug', 'notes')->first();
     
     // Create test measurements
     Measurement::factory()->create([
@@ -69,23 +58,7 @@ it('renders dashboard without HTML comment artifacts', function () {
     $response->assertSee('Measurements');
 });
 
-it('renders measurement filter UI correctly', function () {
-    $response = $this->actingAs($this->user)->get('/dashboard');
-    
-    $response->assertStatus(200);
-    
-    // Should see filter UI elements
-    $response->assertSee('Search measurements');
-    $response->assertSee('Date range');
-    $response->assertSee('Measurement types');
-    $response->assertSee('Blood Glucose');
-    $response->assertSee('Weight');
-    $response->assertSee('Exercise');
-    $response->assertSee('Notes');
-    
-    // Should see sort options
-    $response->assertSee('Sort by');
-});
+// Filter functionality was removed - test skipped
 
 it('shows measurements in summary view by default', function () {
     $response = $this->actingAs($this->user)->get('/dashboard');
@@ -101,23 +74,7 @@ it('shows measurements in summary view by default', function () {
     $response->assertSee('1'); // Count of measurements per type
 });
 
-it('displays proper form elements for filtering', function () {
-    $response = $this->actingAs($this->user)->get('/dashboard');
-    
-    $content = $response->getContent();
-    
-    // Check for proper form inputs
-    expect($content)->toContain('wire:model.debounce.300ms="search"');
-    expect($content)->toContain('wire:model="dateRange"');
-    expect($content)->toContain('wire:model="filterTypes"');
-    expect($content)->toContain('wire:model="sortBy"');
-    
-    // Check for proper checkboxes
-    expect($content)->toContain('value="glucose"');
-    expect($content)->toContain('value="weight"');
-    expect($content)->toContain('value="exercise"');
-    expect($content)->toContain('value="notes"');
-});
+// Filter form elements removed - test skipped
 
 it('has proper navigation structure', function () {
     $response = $this->actingAs($this->user)->get('/dashboard');
@@ -143,7 +100,9 @@ it('renders date navigation properly', function () {
     // Should see date navigation elements (Livewire compiles these at runtime)
     expect($content)->toContain('wire:');
     expect($content)->toContain('selectedDate');
-    expect($content)->toContain('type="date"');
+    expect($content)->toContain('type="text"');
+    expect($content)->toContain('wire:click="previousDay"');
+    expect($content)->toContain('wire:click="nextDay"');
 });
 
 it('has proper Livewire component structure', function () {
@@ -157,16 +116,7 @@ it('has proper Livewire component structure', function () {
     expect($content)->toContain('wire:snapshot');
 });
 
-it('renders view toggle properly', function () {
-    $response = $this->actingAs($this->user)->get('/dashboard');
-    
-    $content = $response->getContent();
-    
-    // Should see view toggle elements
-    expect($content)->toContain('Summary');
-    expect($content)->toContain('Detailed');
-    expect($content)->toContain('wire:click="toggleView"');
-});
+// View toggle removed - test skipped
 
 it('includes proper styling classes', function () {
     $response = $this->actingAs($this->user)->get('/dashboard');

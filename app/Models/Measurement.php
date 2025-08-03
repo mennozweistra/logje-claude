@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Measurement extends Model
@@ -61,5 +62,13 @@ class Measurement extends Model
         return $query->whereHas('measurementType', function ($q) use ($type) {
             $q->where('slug', $type);
         });
+    }
+
+    /**
+     * Get the medications associated with this measurement
+     */
+    public function medications(): BelongsToMany
+    {
+        return $this->belongsToMany(Medication::class);
     }
 }

@@ -10,7 +10,7 @@ class MeasurementRepository
     public function getByUser(int $userId): Collection
     {
         return Measurement::where('user_id', $userId)
-            ->with('measurementType')
+            ->with('measurementType', 'medications')
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -20,7 +20,7 @@ class MeasurementRepository
     {
         return Measurement::where('user_id', $userId)
             ->whereDate('date', $date)
-            ->with('measurementType')
+            ->with('measurementType', 'medications')
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -29,7 +29,7 @@ class MeasurementRepository
     {
         return Measurement::where('user_id', $userId)
             ->ofType($type)
-            ->with('measurementType')
+            ->with('measurementType', 'medications')
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -60,7 +60,7 @@ class MeasurementRepository
 
     public function find(int $id): ?Measurement
     {
-        return Measurement::with('measurementType', 'user')->find($id);
+        return Measurement::with('measurementType', 'medications', 'user')->find($id);
     }
 
     public function getUserMeasurementsByDateRange(int $userId, $startDate, $endDate): Collection
@@ -68,7 +68,7 @@ class MeasurementRepository
         return Measurement::where('user_id', $userId)
             ->whereDate('date', '>=', $startDate)
             ->whereDate('date', '<=', $endDate)
-            ->with('measurementType')
+            ->with('measurementType', 'medications')
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -80,7 +80,7 @@ class MeasurementRepository
             ->ofType($type)
             ->whereDate('date', '>=', $startDate)
             ->whereDate('date', '<=', $endDate)
-            ->with('measurementType')
+            ->with('measurementType', 'medications')
             ->orderBy('date', 'asc')
             ->orderBy('created_at', 'asc')
             ->get();
@@ -89,7 +89,7 @@ class MeasurementRepository
     public function searchAndFilter(int $userId, string $search = '', array $filterTypes = [], $startDate = null, $endDate = null, string $sortBy = 'newest'): Collection
     {
         $query = Measurement::where('user_id', $userId)
-            ->with('measurementType');
+            ->with('measurementType', 'medications');
 
         // Apply search filter
         if (!empty($search)) {

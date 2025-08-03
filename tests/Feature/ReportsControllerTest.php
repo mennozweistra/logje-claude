@@ -7,21 +7,10 @@ use Carbon\Carbon;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    $this->glucoseType = MeasurementType::factory()->create([
-        'name' => 'Blood Glucose',
-        'slug' => 'glucose',
-        'unit' => 'mmol/L'
-    ]);
-    $this->weightType = MeasurementType::factory()->create([
-        'name' => 'Weight',
-        'slug' => 'weight',
-        'unit' => 'kg'
-    ]);
-    $this->exerciseType = MeasurementType::factory()->create([
-        'name' => 'Exercise',
-        'slug' => 'exercise',
-        'unit' => 'minutes'
-    ]);
+    $this->glucoseType = MeasurementType::where('slug', 'glucose')->first();
+    $this->weightType = MeasurementType::where('slug', 'weight')->first();
+    $this->exerciseType = MeasurementType::where('slug', 'exercise')->first();
+    $this->notesType = MeasurementType::where('slug', 'notes')->first();
 });
 
 it('can access reports index page when authenticated', function () {

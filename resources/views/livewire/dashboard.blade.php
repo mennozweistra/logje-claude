@@ -44,14 +44,15 @@
 
     {{-- Add Measurement Section --}}
     <div class="bg-white rounded-lg shadow p-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
             @php
-                // Reorder measurement types: Weight, Glucose, Exercise, Notes
+                // Reorder measurement types: Weight, Glucose, Exercise, Notes, Medication
                 $measurementTypes = [
                     ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
                     ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
                     ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
-                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
+                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝'],
+                    ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊']
                 ];
             @endphp
             @foreach ($measurementTypes as $type)
@@ -73,14 +74,15 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-4 text-center">Measurements</h2>
             
             {{-- Simple Measurement Type Filters - Aligned with buttons --}}
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                 @php
-                    // Reorder filters to match buttons: Weight, Glucose, Exercise, Notes
+                    // Reorder filters to match buttons: Weight, Glucose, Exercise, Notes, Medication
                     $types = [
                         ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
                         ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
                         ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
-                        ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
+                        ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝'],
+                        ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊']
                     ];
                 @endphp
                 @foreach($types as $type)
@@ -120,6 +122,9 @@
                                     @case('notes')
                                         📝
                                         @break
+                                    @case('medication')
+                                        💊
+                                        @break
                                     @default
                                         📊
                                 @endswitch
@@ -145,6 +150,9 @@
                                     @case('notes')
                                         Note:
                                         @break
+                                    @case('medication')
+                                        Medication:
+                                        @break
                                 @endswitch
                             </td>
                             
@@ -166,6 +174,9 @@
                                             <span class="text-gray-400 mx-2">•</span>
                                         @endif
                                         <span>{{ $measurement->description }}</span>
+                                        @break
+                                    @case('medication')
+                                        <span>{{ $measurement->medications->sortBy('name')->pluck('name')->join(', ') }}</span>
                                         @break
                                 @endswitch
                             </td>

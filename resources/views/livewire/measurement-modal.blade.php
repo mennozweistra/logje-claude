@@ -267,6 +267,63 @@
                                 <span class="text-gray-500 text-xs mt-1 block">{{ strlen($notesContent) }}/2000 characters</span>
                             @endif
                         </div>
+
+                    @elseif ($selectedType === 'medication')
+                        <!-- Medication Form -->
+                        <div>
+                            <label for="medicationTime" class="block text-sm font-medium text-gray-700">Time</label>
+                            <input 
+                                type="time" 
+                                id="medicationTime"
+                                wire:model.live.debounce.500ms="medicationTime"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('medicationTime') border-red-500 @enderror"
+                                required
+                            >
+                            @error('medicationTime') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Select Medications</label>
+                            <div class="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-md p-3">
+                                @foreach($medications as $medication)
+                                    <div class="flex items-start">
+                                        <input 
+                                            type="checkbox" 
+                                            id="medication_{{ $medication->id }}"
+                                            wire:model.defer="selectedMedications"
+                                            value="{{ $medication->id }}"
+                                            class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-1"
+                                        >
+                                        <label for="medication_{{ $medication->id }}" class="ml-2 block text-sm">
+                                            <div class="font-medium text-gray-900">{{ $medication->name }}</div>
+                                            @if($medication->description)
+                                                <div class="text-gray-500 text-xs">{{ $medication->description }}</div>
+                                            @endif
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            @error('selectedMedications') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @if(empty($selectedMedications))
+                                <span class="text-gray-500 text-xs mt-1 block">Please select at least one medication</span>
+                            @endif
+                        </div>
+
+                        <div>
+                            <label for="medicationNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
+                            <textarea 
+                                id="medicationNotes"
+                                wire:model.live.debounce.500ms="medicationNotes"
+                                rows="3"
+                                maxlength="1000"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('medicationNotes') border-red-500 @enderror"
+                                placeholder="Any additional notes... (max 1000 characters)"
+                            ></textarea>
+                            @error('medicationNotes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @if($medicationNotes)
+                                <span class="text-gray-500 text-xs mt-1 block">{{ strlen($medicationNotes) }}/1000 characters</span>
+                            @endif
+                        </div>
                     @endif
 
                     <!-- Form Actions -->

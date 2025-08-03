@@ -8,16 +8,8 @@ use Carbon\Carbon;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    $this->glucoseType = MeasurementType::factory()->create([
-        'name' => 'Blood Glucose',
-        'slug' => 'glucose',
-        'unit' => 'mmol/L'
-    ]);
-    $this->weightType = MeasurementType::factory()->create([
-        'name' => 'Weight',
-        'slug' => 'weight',
-        'unit' => 'kg'
-    ]);
+    $this->glucoseType = MeasurementType::where('slug', 'glucose')->first();
+    $this->weightType = MeasurementType::where('slug', 'weight')->first();
     $this->repository = new MeasurementRepository();
 });
 
@@ -240,10 +232,7 @@ describe('Update Tests (Task 8)', function () {
     });
 
     it('can update exercise measurement', function () {
-        $exerciseType = MeasurementType::factory()->create([
-            'name' => 'Exercise',
-            'slug' => 'exercise'
-        ]);
+        $exerciseType = MeasurementType::where('slug', 'exercise')->first();
 
         $measurement = Measurement::factory()->create([
             'user_id' => $this->user->id,
@@ -267,10 +256,7 @@ describe('Update Tests (Task 8)', function () {
     });
 
     it('can update notes measurement', function () {
-        $notesType = MeasurementType::factory()->create([
-            'name' => 'Notes',
-            'slug' => 'notes'
-        ]);
+        $notesType = MeasurementType::where('slug', 'notes')->first();
 
         $measurement = Measurement::factory()->create([
             'user_id' => $this->user->id,
@@ -387,7 +373,7 @@ describe('Find Method Tests (Task 8)', function () {
         expect($foundMeasurement->id)->toBe($measurement->id);
         expect($foundMeasurement->measurementType)->not->toBeNull();
         expect($foundMeasurement->user)->not->toBeNull();
-        expect($foundMeasurement->measurementType->name)->toBe('Blood Glucose');
+        expect($foundMeasurement->measurementType->name)->toBe('Glucose');
         expect($foundMeasurement->user->id)->toBe($this->user->id);
     });
 
