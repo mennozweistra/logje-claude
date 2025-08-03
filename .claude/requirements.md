@@ -79,6 +79,7 @@ This document contains the requirements for the Logje health tracking web applic
 ### Performance
 - Fast loading times on mobile and desktop
 - Responsive design for various screen sizes
+- **Progressive Web App (PWA)**: Must be installable as a PWA with proper manifest and service worker
 - Online-only operation (no offline support required)
 
 ### Security

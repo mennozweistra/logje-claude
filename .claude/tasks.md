@@ -519,3 +519,59 @@ All remaining tasks completed on 2025-08-03:
 - **Review**: 2025-08-03 13:25:00
 - **Completed**: 2025-08-03 13:25:00
 - **Duration**: 30 minutes 
+
+---
+
+### [ ] 62 - Implement Progressive Web App (PWA) Functionality
+- **Status**: Review
+- **Description**: Implement PWA functionality to make the health tracking app installable as a Progressive Web App with proper manifest.json, service worker, and installation prompts. This will allow users to install the app on their devices for a native app-like experience.
+- **Implementation Plan**: 
+  1. [x] Create web app manifest (manifest.json) with app metadata, icons, and display settings
+  2. [x] Generate app icons in multiple sizes (192x192, 512x512, etc.) for various device screens
+  3. [x] Create service worker for basic caching strategy and offline functionality
+  4. [x] Add manifest link and service worker registration to main layout
+  5. [x] Implement PWA installation prompt/banner for supported browsers
+  6. [x] Configure PWA display mode (standalone) and theme colors
+  7. [x] Test PWA installation on desktop and mobile browsers
+  8. [x] Verify PWA meets installability criteria (HTTPS, manifest, service worker)
+- **Test Plan**: 
+  1. [x] Verify manifest.json is accessible and properly formatted
+  2. [x] Test app icon displays correctly in browser install prompts
+  3. [x] Verify service worker registers and caches basic resources
+  4. [x] Test PWA installation on Chrome desktop (install banner appears)
+  5. [x] Test PWA installation on mobile browsers (Android Chrome, iOS Safari)
+  6. [x] Verify installed app launches in standalone mode (no browser UI)
+  7. [x] Test app functionality works when launched as installed PWA
+  8. [x] Verify PWA meets Lighthouse installability requirements
+- **Started**: 2025-08-03 15:46:23
+- **Review**: 2025-08-03 15:53:00
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 63 - Fix Laravel Storage Permissions Issues Permanently with Docker
+- **Status**: Todo
+- **Description**: Solve the ongoing Laravel file permission issues permanently by configuring proper Docker setup with correct user/group permissions for development. This will allow seamless file editing and prevent permission denied errors when modifying Laravel files.
+- **Implementation Plan**: 
+  1. [ ] Check current Docker setup and identify permission issues
+  2. [ ] Configure Docker container to run with correct user/group (menno:menno)
+  3. [ ] Set proper ownership for Laravel directories (storage, bootstrap/cache, etc.)
+  4. [ ] Update Docker compose/run commands to use correct user mapping
+  5. [ ] Test file editing permissions after Docker changes
+  6. [ ] Document correct Docker commands for development workflow
+  7. [ ] Verify Laravel application still works correctly with new permissions
+  8. [ ] Update development documentation with permission solution
+- **Test Plan**: 
+  1. [ ] Start Laravel via Docker with new configuration
+  2. [ ] Test editing files in resources/views/ directory 
+  3. [ ] Test editing files in app/ directory
+  4. [ ] Verify Laravel storage directory permissions
+  5. [ ] Test file creation and deletion through Docker
+  6. [ ] Confirm Laravel application functionality remains intact
+  7. [ ] Test both development and production Docker scenarios
+  8. [ ] Verify no permission errors in logs
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
