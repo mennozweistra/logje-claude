@@ -74,14 +74,17 @@ if [ -n "$APP_KEY" ]; then\n\
     php artisan route:cache || true\n\
     \n\
     echo "Checking database connection..."\n\
-    # Wait for database to be ready (max 30 seconds)\n\
-    for i in {1..30}; do\n\
-        if php artisan db:show --database=mysql >/dev/null 2>&1; then\n\
+    # Wait for database to be ready (max 10 seconds)\n\
+    for i in {1..10}; do\n\
+        if php -r "try { new PDO(\\"mysql:host=$DB_HOST;port=$DB_PORT;dbname=$DB_DATABASE\\", \\"$DB_USERNAME\\", \\"$DB_PASSWORD\\"); echo \\"OK\\"; } catch(Exception $e) { exit(1); }" >/dev/null 2>&1; then\n\
             echo "Database connection successful"\n\
             break\n\
         fi\n\
-        echo "Waiting for database... ($i/30)"\n\
+        echo "Waiting for database... ($i/10)"\n\
         sleep 1\n\
+        if [ $i -eq 10 ]; then\n\
+            echo "Database connection timeout after 10 seconds"\n\
+        fi\n\
     done\n\
     \n\
     echo "Running database migrations..."\n\
