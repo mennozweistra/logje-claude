@@ -5,6 +5,8 @@ namespace App\Livewire;
 use App\Repositories\MeasurementRepository;
 use App\Repositories\MeasurementTypeRepository;
 use App\Models\Medication;
+use App\Models\Food;
+use App\Models\FoodMeasurement;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -45,6 +47,13 @@ class MeasurementModal extends Component
     public string $medicationTime = '';
     public array $selectedMedications = [];
     public string $medicationNotes = '';
+
+    // Food fields
+    public string $foodTime = '';
+    public array $foodEntries = []; // Array of [food_id => grams] pairs
+    public string $foodNotes = '';
+    public string $foodSearch = '';
+    public array $searchResults = [];
 
     // Delete confirmation
     public bool $showDeleteConfirm = false;
@@ -93,6 +102,7 @@ class MeasurementModal extends Component
         $this->exerciseTime = $currentTime;
         $this->notesTime = $currentTime;
         $this->medicationTime = $currentTime;
+        $this->foodTime = $currentTime;
     }
 
     public function loadMeasurementData()
@@ -131,6 +141,16 @@ class MeasurementModal extends Component
                 $this->medicationTime = $time;
                 $this->medicationNotes = $this->measurement->notes ?? '';
                 $this->selectedMedications = $this->measurement->medications->pluck('id')->toArray();
+                break;
+
+            case 'food':
+                $this->foodTime = $time;
+                $this->foodNotes = $this->measurement->notes ?? '';
+                // Load food entries from food_measurements
+                $this->foodEntries = [];
+                foreach ($this->measurement->foodMeasurements as $foodMeasurement) {
+                    $this->foodEntries[$foodMeasurement->food_id] = $foodMeasurement->grams_consumed;
+                }
                 break;
         }
     }
@@ -179,6 +199,22 @@ class MeasurementModal extends Component
             $measurement->medications()->sync($this->selectedMedications);
         }
         
+        // Handle food measurements
+        if ($this->selectedType === 'food' && !empty($this->foodEntries)) {
+            foreach ($this->foodEntries as $foodId => $grams) {
+                $food = Food::find($foodId);
+                if ($food) {
+                    FoodMeasurement::create([
+                        'measurement_id' => $measurement->id,
+                        'food_id' => $foodId,
+                        'grams_consumed' => $grams,
+                        'calculated_calories' => $food->calculateCalories($grams),
+                        'calculated_carbs' => $food->calculateCarbs($grams),
+                    ]);
+                }
+            }
+        }
+        
         session()->flash('success', 'Measurement added successfully!');
         $this->cancel();
         $this->dispatch('measurement-saved');
@@ -202,6 +238,26 @@ class MeasurementModal extends Component
         // Handle medication relationships
         if ($this->selectedType === 'medication') {
             $this->measurement->medications()->sync($this->selectedMedications);
+        }
+        
+        // Handle food measurements
+        if ($this->selectedType === 'food') {
+            // Delete existing food measurements
+            $this->measurement->foodMeasurements()->delete();
+            
+            // Create new food measurements
+            foreach ($this->foodEntries as $foodId => $grams) {
+                $food = Food::find($foodId);
+                if ($food) {
+                    FoodMeasurement::create([
+                        'measurement_id' => $this->measurement->id,
+                        'food_id' => $foodId,
+                        'grams_consumed' => $grams,
+                        'calculated_calories' => $food->calculateCalories($grams),
+                        'calculated_carbs' => $food->calculateCarbs($grams),
+                    ]);
+                }
+            }
         }
         
         session()->flash('success', 'Measurement updated successfully!');
@@ -242,6 +298,11 @@ class MeasurementModal extends Component
             case 'medication':
                 $data['notes'] = $this->medicationNotes;
                 $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->medicationTime);
+                break;
+
+            case 'food':
+                $data['notes'] = $this->foodNotes;
+                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->foodTime);
                 break;
         }
 
@@ -361,6 +422,34 @@ class MeasurementModal extends Component
                     'medicationTime.date_format' => 'Please enter a valid time in HH:MM format.',
                     'medicationNotes.max' => 'Notes cannot exceed 1000 characters.',
                 ]);
+
+            case 'food':
+                return $this->validate([
+                    'foodEntries' => [
+                        'required',
+                        'array',
+                        'min:1',
+                    ],
+                    'foodEntries.*' => [
+                        'required',
+                        'numeric',
+                        'min:1',
+                        'max:10000',
+                    ],
+                    'foodTime' => 'required|date_format:H:i',
+                    'foodNotes' => 'nullable|string|max:1000',
+                ], [
+                    'foodEntries.required' => 'At least one food item is required.',
+                    'foodEntries.array' => 'Food entries must be an array.',
+                    'foodEntries.min' => 'At least one food item must be selected.',
+                    'foodEntries.*.required' => 'Food amount is required.',
+                    'foodEntries.*.numeric' => 'Food amount must be a number.',
+                    'foodEntries.*.min' => 'Food amount must be at least 1 gram.',
+                    'foodEntries.*.max' => 'Food amount cannot exceed 10000 grams.',
+                    'foodTime.required' => 'Time is required.',
+                    'foodTime.date_format' => 'Please enter a valid time in HH:MM format.',
+                    'foodNotes.max' => 'Notes cannot exceed 1000 characters.',
+                ]);
                 
             default:
                 throw new \InvalidArgumentException('Invalid measurement type: ' . $this->selectedType);
@@ -441,17 +530,61 @@ class MeasurementModal extends Component
                      'glucoseValue', 'isFasting', 'glucoseNotes',
                      'weightValue', 'weightNotes', 
                      'exerciseDescription', 'exerciseDuration', 'exerciseNotes',
-                     'notesContent', 'selectedMedications', 'medicationNotes']);
+                     'notesContent', 'selectedMedications', 'medicationNotes',
+                     'foodEntries', 'foodNotes', 'foodSearch', 'searchResults']);
+    }
+
+    // Food-specific methods
+    public function updatedFoodSearch()
+    {
+        $this->searchFoods();
+    }
+
+    public function searchFoods()
+    {
+        if (strlen($this->foodSearch) >= 2) {
+            $this->searchResults = Food::search($this->foodSearch)->take(10)->toArray();
+        } else {
+            $this->searchResults = [];
+        }
+    }
+
+    public function addFood($foodId)
+    {
+        if (!array_key_exists($foodId, $this->foodEntries)) {
+            $this->foodEntries[$foodId] = 100; // Default to 100g
+        }
+        $this->foodSearch = '';
+        $this->searchResults = [];
+    }
+
+    public function removeFood($foodId)
+    {
+        unset($this->foodEntries[$foodId]);
+    }
+
+    public function updateFoodGrams($foodId, $grams)
+    {
+        if ($grams > 0) {
+            $this->foodEntries[$foodId] = $grams;
+        }
     }
 
     public function render(MeasurementTypeRepository $measurementTypeRepository)
     {
         $measurementTypes = $measurementTypeRepository->getAll();
         $medications = Medication::all();
+        $foods = collect();
+        
+        // Get foods for selected food entries
+        if (!empty($this->foodEntries)) {
+            $foods = Food::whereIn('id', array_keys($this->foodEntries))->get();
+        }
         
         return view('livewire.measurement-modal', [
             'measurementTypes' => $measurementTypes,
             'medications' => $medications,
+            'foods' => $foods,
         ]);
     }
 }

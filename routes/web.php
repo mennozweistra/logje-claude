@@ -21,6 +21,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     
     Route::get('settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
     Route::put('settings', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
+    
+    Route::get('food-management', function () {
+        return view('food-management');
+    })->name('food-management');
 });
 
 Route::view('profile', 'profile')

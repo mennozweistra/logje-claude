@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Measurement extends Model
@@ -70,5 +71,23 @@ class Measurement extends Model
     public function medications(): BelongsToMany
     {
         return $this->belongsToMany(Medication::class);
+    }
+
+    /**
+     * Get the food measurements associated with this measurement
+     */
+    public function foodMeasurements(): HasMany
+    {
+        return $this->hasMany(FoodMeasurement::class);
+    }
+
+    /**
+     * Get the foods associated with this measurement through food_measurements
+     */
+    public function foods(): BelongsToMany
+    {
+        return $this->belongsToMany(Food::class, 'food_measurements')
+            ->withPivot('grams_consumed', 'calculated_calories', 'calculated_carbs')
+            ->withTimestamps();
     }
 }

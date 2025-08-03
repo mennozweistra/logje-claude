@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MeasurementTypesSeeder::class,
             MedicationSeeder::class,
+            FoodSeeder::class,
             MeasurementsSeeder::class,
         ]);
     }

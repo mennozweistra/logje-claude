@@ -324,6 +324,117 @@
                                 <span class="text-gray-500 text-xs mt-1 block">{{ strlen($medicationNotes) }}/1000 characters</span>
                             @endif
                         </div>
+                    @elseif ($selectedType === 'food')
+                        <!-- Food Form -->
+                        <div>
+                            <label for="foodTime" class="block text-sm font-medium text-gray-700">Time</label>
+                            <input 
+                                type="time" 
+                                id="foodTime"
+                                wire:model.live.debounce.500ms="foodTime"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('foodTime') border-red-500 @enderror"
+                                required
+                            >
+                            @error('foodTime') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Food Search and Selection -->
+                        <div>
+                            <label for="foodSearch" class="block text-sm font-medium text-gray-700 mb-2">Search Foods</label>
+                            <input 
+                                type="text" 
+                                id="foodSearch"
+                                wire:model.live.debounce.300ms="foodSearch"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                placeholder="Search for food items..."
+                            >
+                            
+                            @if(!empty($searchResults))
+                                <div class="mt-2 max-h-40 overflow-y-auto border border-gray-200 rounded-md">
+                                    @foreach($searchResults as $food)
+                                        <div class="p-3 hover:bg-gray-50 border-b border-gray-100 cursor-pointer" 
+                                             wire:click="addFood({{ $food['id'] }})">
+                                            <div class="flex justify-between items-start">
+                                                <div class="flex-1">
+                                                    <div class="font-medium">{{ $food['name'] }}</div>
+                                                    <div class="text-sm text-gray-500">
+                                                        {{ $food['calories_per_100g'] }} cal/100g | {{ $food['carbs_per_100g'] }}g carbs/100g
+                                                    </div>
+                                                </div>
+                                                <div class="ml-2 text-xs text-blue-600 font-medium">
+                                                    + Add
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Selected Foods -->
+                        @if(!empty($foodEntries))
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Selected Foods</label>
+                                <p class="text-xs text-gray-500 mb-3">Enter the actual amount you consumed in grams. Nutritional values will be calculated automatically.</p>
+                                <div class="space-y-3 max-h-64 overflow-y-auto border border-gray-200 rounded-md p-3">
+                                    @foreach($foodEntries as $foodId => $grams)
+                                        @php
+                                            $food = App\Models\Food::find($foodId);
+                                        @endphp
+                                        @if($food)
+                                            <div class="flex items-center justify-between bg-gray-50 p-3 rounded-md">
+                                                <div class="flex-1">
+                                                    <div class="font-medium">{{ $food->name }}</div>
+                                                    <div class="text-sm text-gray-500">
+                                                        {{ number_format($food->calculateCalories($grams), 1) }} cal | 
+                                                        {{ number_format($food->calculateCarbs($grams), 1) }}g carbs
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center space-x-2">
+                                                    <input 
+                                                        type="number" 
+                                                        min="1" 
+                                                        max="10000"
+                                                        step="1"
+                                                        value="{{ $grams }}"
+                                                        wire:model.live.debounce.500ms="foodEntries.{{ $foodId }}"
+                                                        class="w-20 text-sm rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                                        placeholder="grams"
+                                                    >
+                                                    <span class="text-sm text-gray-500">g</span>
+                                                    <button 
+                                                        type="button"
+                                                        wire:click="removeFood({{ $foodId }})"
+                                                        class="text-red-600 hover:text-red-800"
+                                                    >
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                        @error('foodEntries') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+
+                        <div>
+                            <label for="foodNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
+                            <textarea 
+                                id="foodNotes"
+                                wire:model.live.debounce.500ms="foodNotes"
+                                rows="3"
+                                maxlength="1000"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('foodNotes') border-red-500 @enderror"
+                                placeholder="Any additional notes... (max 1000 characters)"
+                            ></textarea>
+                            @error('foodNotes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @if($foodNotes)
+                                <span class="text-gray-500 text-xs mt-1 block">{{ strlen($foodNotes) }}/1000 characters</span>
+                            @endif
+                        </div>
                     @endif
 
                     <!-- Form Actions -->

@@ -52,7 +52,8 @@
                     ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
                     ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
                     ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝'],
-                    ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊']
+                    ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊'],
+                    ['slug' => 'food', 'name' => 'Food', 'icon' => '🍎']
                 ];
             @endphp
             @foreach ($measurementTypes as $type)
@@ -76,13 +77,14 @@
             {{-- Simple Measurement Type Filters - Aligned with buttons --}}
             <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
                 @php
-                    // Reorder filters to match buttons: Weight, Glucose, Exercise, Notes, Medication
+                    // Reorder filters to match buttons: Weight, Glucose, Exercise, Notes, Medication, Food
                     $types = [
                         ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
                         ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
                         ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
                         ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝'],
-                        ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊']
+                        ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊'],
+                        ['slug' => 'food', 'name' => 'Food', 'icon' => '🍎']
                     ];
                 @endphp
                 @foreach($types as $type)
@@ -125,6 +127,9 @@
                                     @case('medication')
                                         💊
                                         @break
+                                    @case('food')
+                                        🍎
+                                        @break
                                     @default
                                         📊
                                 @endswitch
@@ -153,6 +158,9 @@
                                     @case('medication')
                                         Medication:
                                         @break
+                                    @case('food')
+                                        Food:
+                                        @break
                                 @endswitch
                             </td>
                             
@@ -177,6 +185,24 @@
                                         @break
                                     @case('medication')
                                         <span>{{ $measurement->medications->sortBy('name')->pluck('name')->join(', ') }}</span>
+                                        @break
+                                    @case('food')
+                                        @php
+                                            $totalCalories = $measurement->foodMeasurements->sum('calculated_calories');
+                                            $totalCarbs = $measurement->foodMeasurements->sum('calculated_carbs');
+                                            $foodItems = $measurement->foodMeasurements->map(function($fm) {
+                                                return $fm->food->name . ' (' . $fm->grams_consumed . 'g)';
+                                            })->take(2);
+                                        @endphp
+                                        <div class="space-y-1">
+                                            <div class="font-medium">{{ round($totalCalories) }} cal | {{ round($totalCarbs, 1) }}g carbs</div>
+                                            <div class="text-xs text-gray-600">
+                                                {{ $foodItems->join(', ') }}
+                                                @if($measurement->foodMeasurements->count() > 2)
+                                                    <span class="text-gray-500">+{{ $measurement->foodMeasurements->count() - 2 }} more</span>
+                                                @endif
+                                            </div>
+                                        </div>
                                         @break
                                 @endswitch
                             </td>
