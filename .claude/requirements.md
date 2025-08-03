@@ -6,26 +6,32 @@ This document contains the requirements for the Logje health tracking web applic
 
 ### Core Features
 - **Daily Measurement Tracking**: Users can record multiple daily health measurements including:
-  - Blood glucose levels (mmol/L) with optional fasting indicator
+  - Blood glucose levels (mmol/L, realistic 0-12 range) with optional fasting indicator
   - Weight measurements (kg)
   - Exercise activities (description and duration in minutes)
   - Daily notes (text entries with timestamps)
-  - Medication intake tracking (multiple medications per entry)
-  - Food consumption tracking with nutritional information
+  - Medication intake tracking (multiple medications per entry from predefined list)
+  - Food consumption tracking with nutritional information (calories and carbohydrates)
+- **Six Measurement Types**: Complete measurement system with Weight, Glucose, Medication, Food, Exercise, Notes
+- **Medication Database**: Predefined medication list (Rybelsus, Metformine, Amlodipine, Kaliumlosartan, Atorvastatine)
+- **Food Database**: Comprehensive food database with nutritional information per 100g
 - **Notes Support**: All measurement types can include optional notes for additional context
-- **Time-based Data Entry**: All measurements and notes include time of entry (24-hour format)
+- **Time-based Data Entry**: All measurements and notes include time of entry (24-hour format) with user-editable timestamps
 - **Historical Data Management**: Users can add, edit, and delete measurements/notes for past dates (no future dates)
-- **User Authentication**: Simple email/password authentication
+- **User Authentication**: Simple email/password authentication with secure session management
 - **Data Persistence**: Permanent data retention with MySQL database
 - **Cross-Platform Access**: Responsive web application for browsers and mobile devices
 
 ### Data Entry Interface
-- **Default View**: Today's date as default view
-- **Date Navigation**: Users can navigate to any past date for data entry/editing
-- **Auto-population**: Current time pre-filled for new measurements
+- **Default View**: Today's date as default view with Dutch date format (dd-mm-yyyy)
+- **Date Navigation**: Users can navigate to any past date for data entry/editing with previous/next buttons
+- **Auto-population**: Current time pre-filled for new measurements (editable by user)
 - **Multiple Entries**: Support multiple measurements per type per day
-- **Data Validation**: Prevent future date entries
+- **Data Validation**: Prevent future date entries with realistic glucose ranges (0-12 mmol/L)
 - **CRUD Operations**: Create, read, update, delete measurements for any past date
+- **Responsive Design**: 6-column grid layout for measurement type buttons, mobile-optimized
+- **Filtering System**: Collapsible measurement type filters for dashboard view
+- **Time Preservation**: User-entered times are preserved during measurement creation and editing
 
 ### Food Tracking Features
 
@@ -65,76 +71,131 @@ This document contains the requirements for the Logje health tracking web applic
 - **No Mixing**: Food database management is separate from daily food consumption tracking
 
 ### Reporting Features
-- **Progress Tracking**: Visual reports showing measurement trends over time
-- **Nutritional Tracking**: Daily calorie and carbohydrate consumption charts
-- **Historical Analysis**: Long-term data visualization (specifications to be defined later)
+- **Progress Tracking**: Visual reports showing measurement trends over time with Chart.js
+- **Nutritional Tracking**: Daily calorie and carbohydrate consumption charts with date range selection
+- **Historical Analysis**: Comprehensive data visualization with multiple chart types:
+  - Glucose data charts with trend analysis
+  - Weight tracking charts with progress visualization
+  - Exercise activity charts with duration tracking
+  - Nutrition charts with daily calorie and carbohydrate consumption
+- **Data Export**: CSV and PDF export functionality for all measurement data
+- **Interactive Charts**: Responsive charts with date range selection and filtering
 
 ### User Management
 - Single user accounts (no family/shared accounts)
-- Simple email/password authentication
-- User registration and login system
+- Simple email/password authentication with CSRF protection
+- Secure session management with extended lifetime (8 hours)
+- User registration temporarily disabled (can be re-enabled)
+- Production-ready authentication with anti-caching headers
 
 ## Non-Functional Requirements
 
 ### Performance
-- Fast loading times on mobile and desktop
-- Responsive design for various screen sizes
-- **Progressive Web App (PWA)**: Must be installable as a PWA with proper manifest and service worker
-- Online-only operation (no offline support required)
+- Fast loading times on mobile and desktop with optimized asset loading
+- Responsive design for various screen sizes with mobile-first approach
+- **Progressive Web App (PWA)**: Fully installable PWA with:
+  - Complete manifest.json with proper metadata and PNG icons
+  - Service worker for caching and offline capability
+  - Cross-browser compatibility (Chrome/Brave install prompts, Safari manual installation)
+  - Standalone display mode for native app experience
+- Optimized database queries and efficient Laravel Livewire components
 
 ### Security
-- Secure user authentication
+- Secure user authentication with Laravel's built-in security features
+- CSRF protection and secure session management
 - Data privacy protection for health information
-- Permanent data retention
+- HTTPS enforcement in production
+- Secure cookie configuration with SameSite protection
+- Anti-caching headers for authentication pages
+- Permanent data retention with backup considerations
 
 ### Usability
-- Intuitive interface for daily data entry
-- Mobile-friendly responsive design
-- 24-hour time format
-- Metric units only (kg for weight, mmol/L for glucose)
+- Intuitive interface for daily data entry with visual icons and clear layout
+- Mobile-friendly responsive design with 6-column grid on desktop, 3-column on mobile
+- 24-hour time format with user-editable timestamps
+- Metric units only (kg for weight, mmol/L for glucose with realistic ranges)
+- Dutch date format (dd-mm-yyyy) throughout the application
+- Consistent color scheme with health-themed icons (green apple for food, etc.)
+- Collapsible filters to reduce visual clutter
+- Clear visual feedback for user actions
 
 ## Technical Requirements
 
 ### Technology Stack
-- **Backend**: Laravel PHP framework (Latest LTS)
-- **Frontend**: Laravel Livewire for dynamic interactions
-- **Database**: MySQL with Docker for local development
-- **Deployment**: Caprover server with webhook-based CI/CD
+- **Backend**: Laravel PHP framework (v12.x) with PHP 8.3
+- **Frontend**: Laravel Livewire for dynamic interactions, Tailwind CSS for styling
+- **Database**: MySQL in production, Docker MySQL for local development
+- **Charts**: Chart.js for data visualization and reporting
+- **PWA**: Manifest.json, Service Worker, proper icon assets
+- **Deployment**: CapRover server with webhook-based CI/CD from GitHub
+- **Development**: Docker development environment with proper user permissions
 - **Standards**: Follow Laravel coding standards and architectural practices
 
 ### Testing Requirements
 - **Unit Tests**: All functions must have unit test coverage using Pest
-- **Feature Tests**: Application features must be feature tested using Pest
-- **End-to-End Tests**: Complete user workflows tested with Laravel Dusk and Playwright
-- **AI Testability**: Tests must be executable by AI systems
-- **Local Testing**: Docker environment for consistent testing
+- **Feature Tests**: Application features must be feature tested using Pest (food tracking, medication, etc.)
+- **End-to-End Tests**: Complete user workflows tested with Laravel Dusk and Playwright MCP
+- **Specific Test Coverage**: Measurement time preservation, glucose validation, PWA functionality
+- **AI Testability**: Tests must be executable by AI systems via Docker
+- **Local Testing**: Docker environment for consistent testing with proper permissions
+- **Production Testing**: Playwright browser testing for production verification
 
 ### Development Standards
-- Follow Laravel best practices
-- Adhere to Laravel architectural patterns
+- Follow Laravel best practices and architectural patterns
 - Code quality and maintainability focus
+- Proper Docker development workflow with user permission management
+- Multi-stage production Dockerfile with security hardening
+- Automated deployment with CapRover and GitHub webhooks
+- Environment-specific configuration management
+- Comprehensive error handling and logging
+
+### Deployment Requirements
+- **Production Server**: CapRover deployment on server.logje.nl
+- **Domain Configuration**: Primary domain logje.nl with www.logje.nl redirect
+- **SSL/HTTPS**: Automatic SSL certificate management and HTTPS enforcement
+- **Database**: MariaDB container integration with automated migrations
+- **Auto-deployment**: GitHub webhook integration for automatic deployment on main branch commits
+- **Environment Management**: Secure environment variable management through CapRover
+- **Multi-stage Build**: Optimized production Docker container with security hardening
+- **Asset Optimization**: Automated Vite asset compilation and deployment
+- **Health Checks**: Container health monitoring and automatic restart capabilities
 
 ## User Stories
 
 ### As a health-conscious user:
-- I want to log multiple daily measurements (glucose, weight, exercise) with timestamps
+- I want to log multiple daily measurements (glucose, weight, exercise, medication, food, notes) with timestamps
+- I want to track my medication intake by selecting from a predefined list of my medications
+- I want to log food consumption with automatic calorie and carbohydrate calculations
 - I want to add daily notes to record thoughts, observations, or context for any date
 - I want to add optional notes to any measurement for additional context
 - I want to mark my fasting glucose readings to distinguish them from regular readings
 - I want to record exercise with description and duration for activity tracking
 - I want to view and edit historical data to correct past entries or add missed measurements
-- I want to see my data organized by date with today as the default view
+- I want to see my data organized by date with today as the default view in Dutch format
 - I want to navigate to any past date to review or modify my measurements and notes
-- I want my measurement times pre-filled with current time for quick entry
-- I want to see visual reports of my progress over time
+- I want my measurement times pre-filled with current time but editable if needed
+- I want to see visual reports of my progress over time with interactive charts
+- I want to export my data in CSV and PDF formats for sharing with healthcare providers
+- I want to filter my dashboard view to focus on specific measurement types
 - I want my health data to be secure and permanently stored
 - I want the interface to work well on both desktop and mobile devices
+- I want to install the app on my phone as a Progressive Web App for quick access
 
 ### As a system user:
-- I want to register with email and password for secure access
-- I want to login securely to access only my personal health data
+- I want to login securely to access only my personal health data (registration temporarily disabled)
+- I want my sessions to remain active for reasonable periods without frequent re-login
 - I want the system to prevent me from entering future dates to maintain data integrity
-- I want to use metric units consistently (kg for weight, mmol/L for glucose)
+- I want to use metric units consistently (kg for weight, mmol/L for glucose in realistic ranges)
+- I want the system to preserve my custom time entries when creating or editing measurements
+- I want the application to work reliably across different browsers (Chrome, Safari, Brave)
+- I want the PWA to install correctly on my mobile device for offline-like access
+
+### As a food tracking user:
+- I want to search for foods from a comprehensive database when logging consumption
+- I want to enter the actual amount I consumed in grams for accurate nutrition tracking
+- I want to see automatic calculations of calories and carbohydrates based on my portion size
+- I want to manage the food database by adding new foods with nutritional information
+- I want to see daily nutrition totals and trends in visual charts
 
 ---
 
