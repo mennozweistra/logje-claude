@@ -46,8 +46,12 @@ APP_NAME=Logje
 APP_ENV=production
 APP_DEBUG=false
 APP_TIMEZONE=Europe/Amsterdam
-APP_URL=https://logje.nl
+APP_URL=https://logje.server.logje.nl
 LOG_LEVEL=error
+
+# Force HTTPS for all URLs (REQUIRED - fixes mixed content errors)
+FORCE_HTTPS=true
+ASSET_URL=https://logje.server.logje.nl
 
 DB_CONNECTION=mysql
 DB_HOST=srv-captain--maria-db
