@@ -36,14 +36,14 @@
     <div class="bg-white rounded-lg shadow p-4">
         <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
             @php
-                // Reorder measurement types: Weight, Glucose, Exercise, Notes, Medication
+                // Reorder measurement types: Weight, Glucose, Medication, Food, Exercise, Notes
                 $measurementTypes = [
                     ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
                     ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
-                    ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
-                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝'],
                     ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊'],
-                    ['slug' => 'food', 'name' => 'Food', 'icon' => '🍎']
+                    ['slug' => 'food', 'name' => 'Food', 'icon' => '🍏'],
+                    ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
+                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
                 ];
             @endphp
             @foreach ($measurementTypes as $type)
@@ -80,14 +80,14 @@
                 <div class="transition-all duration-300 ease-in-out opacity-100 mb-6">
                 <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
                 @php
-                    // Reorder filters to match buttons: Weight, Glucose, Exercise, Notes, Medication, Food
+                    // Reorder filters to match buttons: Weight, Glucose, Medication, Food, Exercise, Notes
                     $types = [
                         ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
                         ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
-                        ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
-                        ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝'],
                         ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊'],
-                        ['slug' => 'food', 'name' => 'Food', 'icon' => '🍎']
+                        ['slug' => 'food', 'name' => 'Food', 'icon' => '🍏'],
+                        ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
+                        ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
                     ];
                 @endphp
                 @foreach($types as $type)
@@ -133,7 +133,7 @@
                                         💊
                                         @break
                                     @case('food')
-                                        🍎
+                                        🍏
                                         @break
                                     @default
                                         📊
