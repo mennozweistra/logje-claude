@@ -5,8 +5,10 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
 Route::middleware('guest')->group(function () {
-    Volt::route('register', 'pages.auth.register')
-        ->name('register');
+    // TEMPORARILY DISABLED: User Registration
+    // To re-enable registration, uncomment the lines below:
+    // Volt::route('register', 'pages.auth.register')
+    //     ->name('register');
 
     Volt::route('login', 'pages.auth.login')
         ->name('login');
