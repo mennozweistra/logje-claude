@@ -85,7 +85,7 @@ All remaining tasks completed on 2025-08-03:
   - Production Domains: `logje.nl` and `www.logje.nl`
   - GitHub Repository: `mennozweistra/logje-claude`
   - Auto-deploy: GitHub webhook on `main` branch commits
-  - Database: MariaDB container `mariadb-db`
+  - Database: MariaDB container `maria-db`
 - **Implementation Plan**: 
   1. [x] Create CapRover deployment configuration (captain-definition file)
   2. [x] Create production Dockerfile with PHP 8.3 LTS
@@ -96,7 +96,7 @@ All remaining tasks completed on 2025-08-03:
      - [ ] Create CapRover app from GitHub repository
      - [ ] Configure environment variables in CapRover
      - [ ] Generate APP_KEY securely in production
-     - [ ] Set up database credentials (mariadb-db connection)
+     - [ ] Set up database credentials (maria-db connection)
      - [ ] Configure custom domains (logje.nl, www.logje.nl)
      - [ ] Set up GitHub webhook for automatic deployment
      - [ ] Run database migrations manually via CapRover terminal
@@ -108,7 +108,7 @@ All remaining tasks completed on 2025-08-03:
   - `DEPLOYMENT.md` - Complete step-by-step deployment guide
 - **Test Plan**: 
   1. [ ] Verify app deploys successfully from GitHub
-  2. [ ] Test database connectivity (mariadb-db container)
+  2. [ ] Test database connectivity (maria-db container)
   3. [ ] Run migrations manually: `php artisan migrate`
   4. [ ] Confirm all features work on production domains
   5. [ ] Test automatic deployment via webhook

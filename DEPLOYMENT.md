@@ -5,7 +5,7 @@ This guide walks you through deploying the Logje Health Tracking Application to 
 ## Prerequisites
 
 - CapRover server running at `server.logje.nl`
-- MariaDB database container (`mariadb-db`) running on CapRover
+- MariaDB database container (`maria-db`) running on CapRover
 - GitHub repository: `mennozweistra/logje-claude`
 - Domains: `logje.nl` and `www.logje.nl` configured in your DNS
 
@@ -45,7 +45,7 @@ APP_URL=https://logje.nl
 LOG_LEVEL=error
 
 DB_CONNECTION=mysql
-DB_HOST=srv-captain--mariadb-db
+DB_HOST=srv-captain--maria-db
 DB_PORT=3306
 DB_DATABASE=logje
 DB_USERNAME=[your_mariadb_username]
@@ -144,7 +144,7 @@ php artisan view:cache
 ### Common Issues:
 
 1. **Database Connection Error**:
-   - Verify MariaDB container name: `srv-captain--mariadb-db`
+   - Verify MariaDB container name: `srv-captain--maria-db`
    - Check database credentials
    - Ensure database exists
 
