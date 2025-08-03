@@ -62,10 +62,23 @@
     {{-- Measurements --}}
     <div class="bg-white rounded-lg shadow p-6">
         <div class="mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4 text-center">Measurements</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Measurements</h2>
+                <button 
+                    wire:click="toggleFilters"
+                    class="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+                    </svg>
+                    <span>{{ $filtersVisible ? 'Hide Filters' : 'Show Filters' }}</span>
+                </button>
+            </div>
             
-            {{-- Simple Measurement Type Filters - Aligned with buttons --}}
-            <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
+            {{-- Simple Measurement Type Filters - Collapsible --}}
+            @if($filtersVisible)
+                <div class="transition-all duration-300 ease-in-out opacity-100 mb-6">
+                <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
                 @php
                     // Reorder filters to match buttons: Weight, Glucose, Exercise, Notes, Medication, Food
                     $types = [
@@ -89,7 +102,9 @@
                         </span>
                     </label>
                 @endforeach
-            </div>
+                </div>
+                </div>
+            @endif
         </div>
 
         {{-- Measurements Display --}}

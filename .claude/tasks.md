@@ -384,3 +384,101 @@ All remaining tasks completed on 2025-08-03:
 - **Review**: 2025-08-03 12:15:00
 - **Completed**: 2025-08-03 12:20:00
 - **Duration**: 15 minutes
+
+---
+
+### [ ] 58 - Fix Glucose Values to Realistic mmol/L Range
+- **Status**: Todo
+- **Description**: Glucose values are currently in wrong unit/range. Update seeder to use realistic glucose values from 0-12 mmol/L and change UI validation from current 4-15 range to 0-12 range to match realistic blood glucose measurements.
+- **Implementation Plan**: 
+  1. [ ] Investigate current glucose seeder values and validation rules
+  2. [ ] Update database seeder to use realistic glucose values (0-12 mmol/L range)
+  3. [ ] Update UI validation rules from 4-15 to 0-12 range for glucose measurements
+  4. [ ] Update any hardcoded validation in measurement forms/components
+  5. [ ] Test glucose measurement entry with new validation range
+  6. [ ] Verify existing glucose data compatibility with new range
+- **Test Plan**: 
+  1. [ ] Verify seeder generates realistic glucose values (0-12 mmol/L)
+  2. [ ] Test glucose measurement entry with values in 0-12 range
+  3. [ ] Test validation rejects values outside 0-12 range
+  4. [ ] Verify existing glucose measurements still display correctly
+  5. [ ] Test edge cases (0.0, 12.0, negative values, >12 values)
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 59 - Reorder Measurement Types and Update Food Icon
+- **Status**: Todo  
+- **Description**: Reorder measurement types to: Weight, Glucose, Medication, Food, Exercise, Notes (for both filter checkboxes and new measurement buttons). Change food icon from red apple 🍎 to either green apple 🍏 or steak 🥩 to reduce red color dominance in the interface.
+- **Implementation Plan**: 
+  1. [ ] Update measurement type order in dashboard view template (new measurement buttons)
+  2. [ ] Update measurement type order in dashboard view template (filter checkboxes)
+  3. [ ] Change food icon from 🍎 to 🍏 (green apple) or 🥩 (steak) in dashboard template
+  4. [ ] Update food icon in measurement display/table rows to match new icon
+  5. [ ] Verify consistent icon usage across all food-related UI elements
+  6. [ ] Test that reordering doesn't break any functionality
+- **Test Plan**: 
+  1. [ ] Verify new measurement buttons display in correct order: Weight, Glucose, Medication, Food, Exercise, Notes
+  2. [ ] Verify filter checkboxes display in same order as buttons
+  3. [ ] Verify new food icon appears in all food-related UI elements
+  4. [ ] Test that all measurement types still function correctly after reordering
+  5. [ ] Verify visual consistency and improved color balance with new food icon
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [✅] 60 - Collapse Measurement Type Filters by Default
+- **Status**: Completed
+- **Description**: Hide measurement type filter checkboxes by default to reduce visual clutter. Show filters only when user needs them (via toggle button). User can manually hide filters even when filters are active. Default state should be collapsed/hidden for cleaner dashboard appearance.
+- **Implementation Plan**: 
+  1. [x] Add collapsible state management to Dashboard component (show/hide filters)
+  2. [x] Add toggle button to show/hide filter section (e.g., "Show Filters" / "Hide Filters")
+  3. [x] Update dashboard view to conditionally display filter checkboxes based on state
+  4. [x] Implement logic: auto-show filters when user selects filter, allow manual hide even when active
+  5. [x] Style toggle button to fit dashboard design (near measurements heading)
+  6. [x] Add smooth CSS transitions for collapse/expand animation
+  7. [x] Test filter state persistence during page interactions
+- **Test Plan**: 
+  1. [x] Verify filters are hidden by default on dashboard load
+  2. [x] Test toggle button shows/hides filter section correctly
+  3. [x] Verify filters auto-show when user selects a filter  
+  4. [x] Test filters can be manually hidden even when filters are active
+  5. [x] Test smooth animations during expand/collapse
+  6. [x] Verify filtering functionality remains intact when filters are visible
+  7. [x] Test responsive behavior on mobile devices
+- **Started**: 2025-08-03 12:25:00
+- **Review**: 2025-08-03 12:40:00
+- **Completed**: 2025-08-03 12:50:00
+- **Duration**: 25 minutes
+
+---
+
+### [ ] 61 - Fix Measurement Time Override Bug
+- **Status**: Todo
+- **Description**: Setting or updating measurement time (especially weight measurements) does not work - the time gets overwritten with current time instead of preserving user-entered time. This likely affects all measurement types. Fix this bug in the measurement saving logic and add feature tests to prevent regression.
+- **Implementation Plan**: 
+  1. [ ] Investigate measurement saving logic in MeasurementModal component
+  2. [ ] Check if time field is being properly captured from user input
+  3. [ ] Identify where time is being overwritten (model, controller, or component)
+  4. [ ] Fix the time preservation logic for both create and update operations
+  5. [ ] Ensure time validation still works (no future times, proper format)
+  6. [ ] Test fix with all measurement types (Weight, Glucose, Exercise, Notes, Medication, Food)
+  7. [ ] Create feature test to verify time preservation works correctly
+- **Test Plan**: 
+  1. [ ] Test creating new measurement with custom time (not current time)
+  2. [ ] Test editing existing measurement to change time to different value
+  3. [ ] Verify time preservation works for all measurement types
+  4. [ ] Test edge cases: past times, current time, invalid formats
+  5. [ ] Confirm time validation still prevents future times
+  6. [ ] Run feature test to ensure no regression
+  7. [ ] Test on both desktop and mobile interfaces
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 

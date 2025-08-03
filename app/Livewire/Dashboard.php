@@ -11,6 +11,7 @@ class Dashboard extends Component
 {
     public string $selectedDate;
     public array $filterTypes = [];
+    public bool $showFilters = false;
 
     public function mount(MeasurementRepository $measurementRepository)
     {
@@ -67,6 +68,19 @@ class Dashboard extends Component
         $this->filterTypes = [];
     }
 
+    public function toggleFilters()
+    {
+        $this->showFilters = !$this->showFilters;
+    }
+
+    public function updatedFilterTypes()
+    {
+        // Auto-show filters when user selects a filter (only if currently hidden)
+        if (!empty($this->filterTypes) && !$this->showFilters) {
+            $this->showFilters = true;
+        }
+    }
+
     public function render(MeasurementRepository $measurementRepository)
     {
         // Get measurements based on current filters
@@ -92,6 +106,7 @@ class Dashboard extends Component
             'measurements' => $measurements,
             'selectedDateFormatted' => Carbon::parse($this->selectedDate)->format('l, d-m-Y'),
             'isToday' => Carbon::parse($this->selectedDate)->isToday(),
+            'filtersVisible' => $this->showFilters,
         ]);
     }
 }
