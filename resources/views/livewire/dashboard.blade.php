@@ -44,7 +44,7 @@
 
     {{-- Add Measurement Section --}}
     <div class="bg-white rounded-lg shadow p-4">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
             @php
                 // Reorder measurement types: Weight, Glucose, Exercise, Notes, Medication
                 $measurementTypes = [
@@ -74,7 +74,7 @@
             <h2 class="text-lg font-semibold text-gray-900 mb-4 text-center">Measurements</h2>
             
             {{-- Simple Measurement Type Filters - Aligned with buttons --}}
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
                 @php
                     // Reorder filters to match buttons: Weight, Glucose, Exercise, Notes, Medication
                     $types = [
