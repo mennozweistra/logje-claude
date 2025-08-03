@@ -1,5 +1,5 @@
-# Use Alpine for much faster builds (no C compilation needed)
-FROM php:8.3-apache-alpine
+# Use Alpine with Nginx for much faster builds (no C compilation needed)
+FROM php:8.3-fpm-alpine
 
 # Set working directory
 WORKDIR /var/www/html
@@ -15,6 +15,8 @@ RUN apk add --no-cache \
     htop \
     procps \
     iputils \
+    nginx \
+    supervisor \
     # Required for PHP extensions
     oniguruma-dev \
     libzip-dev \
@@ -23,13 +25,56 @@ RUN apk add --no-cache \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Configure Nginx and Supervisor directories
+RUN mkdir -p /var/log/nginx /etc/supervisor/conf.d /var/log/supervisor
 
-# Configure Apache DocumentRoot to point to Laravel's public directory
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# Create Nginx configuration
+RUN cat > /etc/nginx/nginx.conf << 'EOF'
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log warn;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+    
+    log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                    '$status $body_bytes_sent "$http_referer" '
+                    '"$http_user_agent" "$http_x_forwarded_for"';
+    
+    access_log /var/log/nginx/access.log main;
+    
+    sendfile on;
+    keepalive_timeout 65;
+    
+    server {
+        listen 80;
+        server_name _;
+        root /var/www/html/public;
+        index index.php;
+        
+        location / {
+            try_files $uri $uri/ /index.php?$query_string;
+        }
+        
+        location ~ \.php$ {
+            fastcgi_pass 127.0.0.1:9000;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+        }
+        
+        location ~ /\.ht {
+            deny all;
+        }
+    }
+}
+EOF
 
 # Copy application files
 COPY . /var/www/html
@@ -41,7 +86,36 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Create startup script (Alpine uses sh, not bash)
+# Configure Supervisor
+RUN cat > /etc/supervisor/conf.d/supervisord.conf << 'EOF'
+[supervisord]
+nodaemon=true
+user=root
+logfile=/var/log/supervisor/supervisord.log
+pidfile=/var/run/supervisord.pid
+
+[program:php-fpm]
+command=php-fpm83 -F
+autostart=true
+autorestart=true
+priority=5
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
+[program:nginx]
+command=nginx -g 'daemon off;'
+autostart=true
+autorestart=true
+priority=10
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+EOF
+
+# Create startup script
 RUN echo '#!/bin/sh\n\
 # Generate application key if not set\n\
 if [ -z "$APP_KEY" ]; then\n\
@@ -53,8 +127,8 @@ php artisan config:cache\n\
 php artisan route:cache\n\
 php artisan view:cache\n\
 \n\
-# Start Apache\n\
-apache2-foreground' > /usr/local/bin/start.sh
+# Start PHP-FPM and Nginx via Supervisor\n\
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf' > /usr/local/bin/start.sh
 
 RUN chmod +x /usr/local/bin/start.sh
 
