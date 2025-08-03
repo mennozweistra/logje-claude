@@ -6,6 +6,10 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
+        
+        <!-- PWA Manifest for guest pages -->
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#1f2937">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

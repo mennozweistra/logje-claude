@@ -1,0 +1,71 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+        USER_NAME: ${USER_NAME:-appuser}
+    container_name: logje-app-dev
+    restart: unless-stopped
+    volumes:
+      - .:/var/www/html
+      - vendor:/var/www/html/vendor
+      - node_modules:/var/www/html/node_modules
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+    environment:
+      - APP_ENV=local
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=logje
+      - DB_USERNAME=root
+      - DB_PASSWORD=password
+    networks:
+      - logje-network
+    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
+
+  mysql:
+    image: mysql:8.0
+    container_name: logje-mysql-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: logje
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_USER: logje
+    volumes:
+      - mysql_data_dev:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - logje-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: logje-phpmyadmin-dev
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: password
+    depends_on:
+      - mysql
+    networks:
+      - logje-network
+
+volumes:
+  mysql_data_dev:
+  vendor:
+  node_modules:
+
+networks:
+  logje-network:
+    driver: bridge
