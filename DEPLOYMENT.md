@@ -82,12 +82,15 @@ SESSION_LIFETIME=120
    ```
 2. **Generate the APP_KEY:**
    ```bash
-   # Our Dockerfile uses Alpine, so use sh:
-   docker exec -it <logje-container-id> sh -c "cd /var/www/html && php artisan key:generate --show"
+   # Generate APP_KEY with correct cipher (must be base64 encoded for AES-256-CBC)
+   docker exec -it <logje-container-id> bash -c "cd /var/www/html && php artisan key:generate --show"
    
    # Alternative - enter container first:
-   docker exec -it <logje-container-id> sh
+   docker exec -it <logje-container-id> bash
    # Then: cd /var/www/html && php artisan key:generate --show
+   
+   # IMPORTANT: The generated key should start with "base64:" for AES-256-CBC cipher
+   # Example format: base64:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx=
    ```
 2. Copy the generated key (starts with `base64:`)
 3. In CapRover, go to your `logje` app → **App Configs** → **Environment Variables**
