@@ -76,16 +76,6 @@ http {
 }
 EOF
 
-# Copy application files
-COPY . /var/www/html
-
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
-
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
 # Configure Supervisor
 RUN cat > /etc/supervisor/conf.d/supervisord.conf << 'EOF'
 [supervisord]
@@ -116,21 +106,33 @@ stderr_logfile_maxbytes=0
 EOF
 
 # Create startup script
-RUN echo '#!/bin/sh\n\
-# Generate application key if not set\n\
-if [ -z "$APP_KEY" ]; then\n\
-    echo "Warning: APP_KEY not set. Please set it in CapRover environment variables."\n\
-fi\n\
-\n\
-# Cache configuration for production performance\n\
-php artisan config:cache\n\
-php artisan route:cache\n\
-php artisan view:cache\n\
-\n\
-# Start PHP-FPM and Nginx via Supervisor\n\
-/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf' > /usr/local/bin/start.sh
+RUN cat > /usr/local/bin/start.sh << 'EOF'
+#!/bin/sh
+# Generate application key if not set
+if [ -z "$APP_KEY" ]; then
+    echo "Warning: APP_KEY not set. Please set it in CapRover environment variables."
+fi
+
+# Cache configuration for production performance
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# Start PHP-FPM and Nginx via Supervisor
+/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+EOF
 
 RUN chmod +x /usr/local/bin/start.sh
+
+# Copy application files
+COPY . /var/www/html
+
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader
+
+# Set proper permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port 80
 EXPOSE 80
