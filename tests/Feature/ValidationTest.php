@@ -40,7 +40,7 @@ describe('Glucose Validation', function () {
         Livewire::actingAs($this->user)
             ->test(MeasurementModal::class)
             ->call('openAddMeasurement', 'glucose')
-            ->set('glucoseValue', '0.05')
+            ->set('glucoseValue', '-0.1')
             ->set('glucoseTime', '08:30')
             ->call('save')
             ->assertHasErrors(['glucoseValue' => 'min']);
@@ -50,7 +50,7 @@ describe('Glucose Validation', function () {
         Livewire::actingAs($this->user)
             ->test(MeasurementModal::class)
             ->call('openAddMeasurement', 'glucose')
-            ->set('glucoseValue', '55.0')
+            ->set('glucoseValue', '13.0')
             ->set('glucoseTime', '08:30')
             ->call('save')
             ->assertHasErrors(['glucoseValue' => 'max']);
@@ -322,7 +322,7 @@ describe('Edit Validation', function () {
         Livewire::actingAs($this->user)
             ->test(MeasurementModal::class)
             ->call('openEditMeasurement', $measurement->id)
-            ->set('glucoseValue', '100')
+            ->set('glucoseValue', '13.5')
             ->call('save')
             ->assertHasErrors(['glucoseValue' => 'max']);
     });
@@ -363,9 +363,9 @@ describe('Error Message Display', function () {
         Livewire::actingAs($this->user)
             ->test(MeasurementModal::class)
             ->call('openAddMeasurement', 'glucose')
-            ->set('glucoseValue', '100')
+            ->set('glucoseValue', '15.0')
             ->call('save')
-            ->assertSee('Blood glucose level seems too high (max 50 mmol/L). Please check your reading.');
+            ->assertSee('Blood glucose level seems too high (max 12 mmol/L). Please check your reading.');
     });
 
     it('displays validation errors for multiple fields', function () {

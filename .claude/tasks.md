@@ -387,26 +387,33 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 58 - Fix Glucose Values to Realistic mmol/L Range
-- **Status**: Todo
+### [✅] 58 - Fix Glucose Values to Realistic mmol/L Range
+- **Status**: Completed
 - **Description**: Glucose values are currently in wrong unit/range. Update seeder to use realistic glucose values from 0-12 mmol/L and change UI validation from current 4-15 range to 0-12 range to match realistic blood glucose measurements.
 - **Implementation Plan**: 
-  1. [ ] Investigate current glucose seeder values and validation rules
-  2. [ ] Update database seeder to use realistic glucose values (0-12 mmol/L range)
-  3. [ ] Update UI validation rules from 4-15 to 0-12 range for glucose measurements
-  4. [ ] Update any hardcoded validation in measurement forms/components
-  5. [ ] Test glucose measurement entry with new validation range
-  6. [ ] Verify existing glucose data compatibility with new range
+  1. [x] Investigate current glucose seeder values and validation rules
+  2. [x] Update database seeder to use realistic glucose values (0-12 mmol/L range)
+  3. [x] Update UI validation rules from 4-15 to 0-12 range for glucose measurements
+  4. [x] Update any hardcoded validation in measurement forms/components
+  5. [x] Test glucose measurement entry with new validation range
+  6. [x] Verify existing glucose data compatibility with new range
 - **Test Plan**: 
-  1. [ ] Verify seeder generates realistic glucose values (0-12 mmol/L)
-  2. [ ] Test glucose measurement entry with values in 0-12 range
-  3. [ ] Test validation rejects values outside 0-12 range
-  4. [ ] Verify existing glucose measurements still display correctly
-  5. [ ] Test edge cases (0.0, 12.0, negative values, >12 values)
-- **Started**: 
-- **Review**: 
-- **Completed**: 
-- **Duration**: 
+  1. [x] Verify seeder generates realistic glucose values (0-12 mmol/L)
+  2. [x] Test glucose measurement entry with values in 0-12 range
+  3. [x] Test validation rejects values outside 0-12 range
+  4. [x] Verify existing glucose measurements still display correctly
+  5. [x] Test edge cases (0.0, 12.0, negative values, >12 values)
+- **Root Cause**: Seeder was using mg/dL values (90-120) instead of mmol/L, and validation allowed unrealistic range (0.1-50)
+- **Solution**: Updated validation to 0-12 mmol/L range and seeder to generate 4.0-7.0 mmol/L fasting values
+- **Files Modified**: 
+  - `app/Livewire/MeasurementModal.php` - Updated glucose validation rules and error messages
+  - `database/seeders/MeasurementsSeeder.php` - Updated glucose values to realistic mmol/L range
+  - `tests/Feature/*.php` - Updated test values to use realistic glucose ranges
+- **Testing**: Verified with automated tests via Docker and manual browser testing - validation working correctly
+- **Started**: 2025-08-03 15:24:25
+- **Review**: 2025-08-03 15:29:56
+- **Completed**: 2025-08-03 15:29:56
+- **Duration**: 5 minutes 
 
 ---
 

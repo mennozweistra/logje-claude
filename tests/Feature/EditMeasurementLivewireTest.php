@@ -129,7 +129,7 @@ describe('Edit Glucose Measurements', function () {
         Livewire::actingAs($this->user)
             ->test(MeasurementModal::class)
             ->call('openEditMeasurement', $measurement->id)
-            ->set('glucoseValue', '100')
+            ->set('glucoseValue', '14.0')
             ->call('save')
             ->assertHasErrors(['glucoseValue' => 'max']);
     });

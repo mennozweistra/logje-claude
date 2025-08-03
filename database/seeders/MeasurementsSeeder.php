@@ -39,7 +39,7 @@ class MeasurementsSeeder extends Seeder
             $measurements[] = [
                 'user_id' => $testUser,
                 'measurement_type_id' => $glucoseTypeId,
-                'value' => rand(90, 120),
+                'value' => round(rand(40, 70) / 10, 1), // 4.0-7.0 mmol/L fasting range
                 'is_fasting' => true,
                 'description' => null,
                 'duration' => null,
@@ -116,7 +116,7 @@ class MeasurementsSeeder extends Seeder
         $measurements[] = [
             'user_id' => $sarahUser,
             'measurement_type_id' => $glucoseTypeId,
-            'value' => 105,
+            'value' => 5.8, // 5.8 mmol/L - normal fasting glucose
             'is_fasting' => true,
             'description' => null,
             'duration' => null,

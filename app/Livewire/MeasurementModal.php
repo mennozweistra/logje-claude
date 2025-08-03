@@ -317,8 +317,8 @@ class MeasurementModal extends Component
                     'glucoseValue' => [
                         'required',
                         'numeric',
-                        'min:0.1',
-                        'max:50',
+                        'min:0',
+                        'max:12',
                         'regex:/^\d+(\.\d{1,2})?$/',
                     ],
                     'glucoseTime' => 'required|date_format:H:i',
@@ -326,8 +326,8 @@ class MeasurementModal extends Component
                 ], [
                     'glucoseValue.required' => 'Blood glucose level is required.',
                     'glucoseValue.numeric' => 'Blood glucose level must be a number.',
-                    'glucoseValue.min' => 'Blood glucose level must be at least 0.1 mmol/L.',
-                    'glucoseValue.max' => 'Blood glucose level seems too high (max 50 mmol/L). Please check your reading.',
+                    'glucoseValue.min' => 'Blood glucose level must be at least 0 mmol/L.',
+                    'glucoseValue.max' => 'Blood glucose level seems too high (max 12 mmol/L). Please check your reading.',
                     'glucoseValue.regex' => 'Blood glucose level can have at most 2 decimal places.',
                     'glucoseTime.required' => 'Time is required.',
                     'glucoseTime.date_format' => 'Please enter a valid time in HH:MM format.',

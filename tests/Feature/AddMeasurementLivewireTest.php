@@ -136,7 +136,7 @@ it('validates glucose value range', function () {
     Livewire::actingAs($this->user)
         ->test(MeasurementModal::class)
         ->call('openAddMeasurement', 'glucose')
-        ->set('glucoseValue', '100')
+        ->set('glucoseValue', '15.5')
         ->call('save')
         ->assertHasErrors(['glucoseValue' => 'max']);
 });
