@@ -32,11 +32,12 @@
 
             {{-- Right: Date Picker --}}
             <div class="flex-1 flex justify-end">
-                <input type="date" 
-                       wire:model.lazy="selectedDate"
-                       max="{{ date('Y-m-d') }}"
-                       lang="nl-NL"
-                       class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <input type="text" 
+                       wire:model.lazy="selectedDateDisplay"
+                       placeholder="dd-mm-yyyy"
+                       pattern="\d{2}-\d{2}-\d{4}"
+                       title="Date format: dd-mm-yyyy"
+                       class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-32 text-center">
             </div>
         </div>
     </div>
@@ -58,7 +59,7 @@
                     wire:click="openAddMeasurement('{{ $type['slug'] }}')"
                     class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[100px]"
                 >
-                    <div class="text-2xl mb-2">{{ $type['icon'] }}</div>
+                    <div class="text-lg mb-2">{{ $type['icon'] }}</div>
                     <span class="text-sm font-medium text-gray-900 text-center">{{ $type['name'] }}</span>
                 </button>
             @endforeach
