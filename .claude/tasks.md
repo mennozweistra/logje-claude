@@ -459,26 +459,32 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 61 - Fix Measurement Time Override Bug
-- **Status**: Todo
+### [✅] 61 - Fix Measurement Time Override Bug
+- **Status**: Completed
 - **Description**: Setting or updating measurement time (especially weight measurements) does not work - the time gets overwritten with current time instead of preserving user-entered time. This likely affects all measurement types. Fix this bug in the measurement saving logic and add feature tests to prevent regression.
 - **Implementation Plan**: 
-  1. [ ] Investigate measurement saving logic in MeasurementModal component
-  2. [ ] Check if time field is being properly captured from user input
-  3. [ ] Identify where time is being overwritten (model, controller, or component)
-  4. [ ] Fix the time preservation logic for both create and update operations
-  5. [ ] Ensure time validation still works (no future times, proper format)
-  6. [ ] Test fix with all measurement types (Weight, Glucose, Exercise, Notes, Medication, Food)
-  7. [ ] Create feature test to verify time preservation works correctly
+  1. [x] Investigate measurement saving logic in MeasurementModal component
+  2. [x] Check if time field is being properly captured from user input - BUG CONFIRMED!
+  3. [x] Identify where time is being overwritten (model, controller, or component)
+  4. [x] Fix the time preservation logic for both create and update operations
+  5. [x] Ensure time validation still works (no future times, proper format)
+  6. [x] Test fix with all measurement types (Weight, Glucose, Exercise, Notes, Medication, Food)
+  7. [x] Create feature test to verify time preservation works correctly
 - **Test Plan**: 
-  1. [ ] Test creating new measurement with custom time (not current time)
-  2. [ ] Test editing existing measurement to change time to different value
-  3. [ ] Verify time preservation works for all measurement types
-  4. [ ] Test edge cases: past times, current time, invalid formats
-  5. [ ] Confirm time validation still prevents future times
-  6. [ ] Run feature test to ensure no regression
-  7. [ ] Test on both desktop and mobile interfaces
-- **Started**: 
-- **Review**: 
-- **Completed**: 
-- **Duration**: 
+  1. [x] Test creating new measurement with custom time (not current time)
+  2. [x] Test editing existing measurement to change time to different value
+  3. [x] Verify time preservation works for all measurement types
+  4. [x] Test edge cases: past times, current time, invalid formats
+  5. [x] Confirm time validation still prevents future times
+  6. [x] Run feature test to ensure no regression
+  7. [x] Test on both desktop and mobile interfaces
+- **Root Cause**: The `Measurement` model's `$fillable` array was missing `'created_at'`, causing Laravel's mass assignment protection to ignore explicitly set timestamps
+- **Solution**: Added `'created_at'` to the `$fillable` array in `app/Models/Measurement.php:25`
+- **Files Modified**: 
+  - `app/Models/Measurement.php` - Added `'created_at'` to fillable array
+  - `tests/Feature/MeasurementTimePreservationTest.php` - Created comprehensive test suite
+- **Testing**: Verified with automated tests and manual browser testing - time preservation now works correctly
+- **Started**: 2025-08-03 12:55:00
+- **Review**: 2025-08-03 13:25:00
+- **Completed**: 2025-08-03 13:25:00
+- **Duration**: 30 minutes 

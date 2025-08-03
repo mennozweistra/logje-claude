@@ -22,6 +22,7 @@ class Measurement extends Model
         'duration',
         'date',
         'notes',
+        'created_at',
     ];
 
     protected $casts = [
