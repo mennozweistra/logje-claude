@@ -7,7 +7,7 @@
                 <h1 class="text-2xl font-bold text-gray-900">{{ $selectedDateFormatted }}</h1>
             </div>
 
-            {{-- Center: Navigation Buttons - Fixed Position --}}
+            {{-- Right: Navigation Buttons --}}
             <div class="flex items-center space-x-3">
                 <button wire:click="previousDay" 
                         class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors w-10 h-10 flex items-center justify-center">
@@ -28,16 +28,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
-            </div>
-
-            {{-- Right: Date Picker --}}
-            <div class="flex-1 flex justify-end">
-                <input type="text" 
-                       wire:model.lazy="selectedDateDisplay"
-                       placeholder="dd-mm-yyyy"
-                       pattern="\d{2}-\d{2}-\d{4}"
-                       title="Date format: dd-mm-yyyy"
-                       class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-32 text-center">
             </div>
         </div>
     </div>
