@@ -149,14 +149,33 @@ Now update your CapRover environment variables with the database credentials:
 - `DB_USERNAME=logje_user`
 - `DB_PASSWORD=your_secure_password_here`
 
-### Run Migrations
-⚠️ **Manual Migration Recommended** for production safety:
+### Database Migrations
 
+✅ **Automatic Migrations**: Database migrations now run automatically during deployment!
+
+The application startup script will:
+1. **Wait for database connection** (up to 30 seconds)
+2. **Run migrations automatically** with `php artisan migrate --force`
+3. **Continue startup** even if migrations fail (with warning)
+4. **Log all migration activity** in the deployment logs
+
+**To monitor migrations:**
 1. In CapRover, go to your `logje` app → **Deployment** → **App Logs**
-2. Open **Terminal**
-3. Run: `php artisan migrate:status` (check current state)
-4. Run: `php artisan migrate` (apply migrations)
-5. Verify: `php artisan migrate:status` (confirm all migrations ran)
+2. Look for migration messages in the startup logs:
+   ```
+   Starting Laravel deployment...
+   Checking database connection...
+   Database connection successful
+   Running database migrations...
+   Migrations completed successfully
+   Starting Apache web server...
+   ```
+
+**Manual migration (if needed):**
+If you need to run migrations manually or check status:
+1. Open **Terminal** in CapRover app
+2. Run: `php artisan migrate:status` (check current state)
+3. Run: `php artisan migrate --force` (apply migrations manually)
 
 ## Step 8: Configure Custom Domains
 

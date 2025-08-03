@@ -64,15 +64,36 @@ RUN chown -R www-data:www-data storage bootstrap/cache && \
 RUN echo "<FilesMatch \"^\.\">\nRequire all denied\n</FilesMatch>" > /etc/apache2/conf-available/hardening.conf && \
     a2enconf hardening
 
-# Startup script: cache config if APP_KEY is set
+# Startup script: cache config and run migrations if APP_KEY is set
 RUN echo '#!/bin/bash\n\
 set -e\n\
-echo "Starting Apache..."\n\
+echo "Starting Laravel deployment..."\n\
 if [ -n "$APP_KEY" ]; then\n\
-    echo "Caching config..."\n\
+    echo "Caching configuration..."\n\
     php artisan config:cache\n\
     php artisan route:cache || true\n\
+    \n\
+    echo "Checking database connection..."\n\
+    # Wait for database to be ready (max 30 seconds)\n\
+    for i in {1..30}; do\n\
+        if php artisan db:show --database=mysql >/dev/null 2>&1; then\n\
+            echo "Database connection successful"\n\
+            break\n\
+        fi\n\
+        echo "Waiting for database... ($i/30)"\n\
+        sleep 1\n\
+    done\n\
+    \n\
+    echo "Running database migrations..."\n\
+    if php artisan migrate --force; then\n\
+        echo "Migrations completed successfully"\n\
+    else\n\
+        echo "WARNING: Migration failed, but continuing startup"\n\
+    fi\n\
+else\n\
+    echo "APP_KEY not set, skipping migrations and caching"\n\
 fi\n\
+echo "Starting Apache web server..."\n\
 exec apache2-foreground' > /usr/local/bin/start.sh && chmod +x /usr/local/bin/start.sh
 
 # Add healthcheck (optional)
