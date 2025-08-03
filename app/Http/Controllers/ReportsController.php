@@ -136,6 +136,40 @@ class ReportsController extends Controller
     }
 
     /**
+     * Get nutrition data for charts (calories and carbs)
+     */
+    public function nutritionData(Request $request): JsonResponse
+    {
+        $request->validate([
+            'days' => 'integer|min:7|max:365',
+            'start_date' => 'date',
+            'end_date' => 'date|after_or_equal:start_date',
+        ]);
+
+        $userId = auth()->id();
+        $days = $request->input('days', 30);
+        
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'));
+            $endDate = Carbon::parse($request->input('end_date'));
+        } else {
+            $endDate = Carbon::today();
+            $startDate = $endDate->copy()->subDays($days - 1);
+        }
+
+        $measurements = $this->measurementRepository->getUserMeasurementsByTypeAndDateRange(
+            $userId, 
+            'food', 
+            $startDate, 
+            $endDate
+        );
+
+        $chartData = $this->processNutritionData($measurements);
+
+        return response()->json($chartData);
+    }
+
+    /**
      * Process glucose measurements for chart display
      */
     private function processGlucoseData($measurements): array
@@ -245,6 +279,52 @@ class ReportsController extends Controller
         return [
             'dailyDuration' => $durationData,
             'exerciseTypes' => $exerciseTypes,
+        ];
+    }
+
+    /**
+     * Process food measurements for nutrition chart display
+     */
+    private function processNutritionData($measurements): array
+    {
+        $dailyCalories = [];
+        $dailyCarbs = [];
+
+        foreach ($measurements as $measurement) {
+            $date = $measurement->date->format('Y-m-d');
+            
+            if (!isset($dailyCalories[$date])) {
+                $dailyCalories[$date] = 0;
+                $dailyCarbs[$date] = 0;
+            }
+
+            // Sum up calories and carbs from all food measurements for this measurement
+            foreach ($measurement->foodMeasurements as $foodMeasurement) {
+                $dailyCalories[$date] += $foodMeasurement->calculated_calories;
+                $dailyCarbs[$date] += $foodMeasurement->calculated_carbs;
+            }
+        }
+
+        $calorieData = [];
+        $carbData = [];
+
+        foreach ($dailyCalories as $date => $calories) {
+            $calorieData[] = [
+                'x' => $date,
+                'y' => round($calories, 0)
+            ];
+        }
+
+        foreach ($dailyCarbs as $date => $carbs) {
+            $carbData[] = [
+                'x' => $date,
+                'y' => round($carbs, 1)
+            ];
+        }
+
+        return [
+            'dailyCalories' => $calorieData,
+            'dailyCarbs' => $carbData,
         ];
     }
 

@@ -43,6 +43,9 @@
                 <div class="xl:col-span-2" id="exercise-skeleton">
                     <x-chart-skeleton title="Exercise Activity" />
                 </div>
+                <div class="xl:col-span-2" id="nutrition-skeleton">
+                    <x-chart-skeleton title="Daily Nutrition" />
+                </div>
 
                 <!-- Glucose Chart -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" id="glucose-chart-container" style="display: none;">
@@ -112,6 +115,39 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Nutrition Chart -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg xl:col-span-2" id="nutrition-chart-container" style="display: none;">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium mb-4">Daily Nutrition</h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Daily Calories</h4>
+                                <div class="relative h-48">
+                                    <canvas id="calories-chart"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Daily Carbohydrates (g)</h4>
+                                <div class="relative h-48">
+                                    <canvas id="carbs-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600">
+                            <div class="flex flex-wrap gap-4">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-orange-500 rounded mr-2"></div>
+                                    Calories
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
+                                    Carbohydrates
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Export Section -->
@@ -133,7 +169,7 @@
 
     <script>
         // Chart variables
-        let glucoseChart, weightChart, exerciseDurationChart, exerciseTypesChart;
+        let glucoseChart, weightChart, exerciseDurationChart, exerciseTypesChart, caloriesChart, carbsChart;
 
         // Initialize charts on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -362,6 +398,78 @@
                     maintainAspectRatio: false
                 }
             });
+
+            // Calories Chart
+            const caloriesCtx = document.getElementById('calories-chart').getContext('2d');
+            caloriesChart = new Chart(caloriesCtx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        label: 'Calories',
+                        data: [],
+                        backgroundColor: 'rgba(249, 115, 22, 0.8)',
+                        borderColor: 'rgb(249, 115, 22)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                parser: 'yyyy-MM-dd',
+                                displayFormats: {
+                                    day: 'dd-MM'
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Calories'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Carbs Chart
+            const carbsCtx = document.getElementById('carbs-chart').getContext('2d');
+            carbsChart = new Chart(carbsCtx, {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        label: 'Carbohydrates',
+                        data: [],
+                        backgroundColor: 'rgba(234, 179, 8, 0.8)',
+                        borderColor: 'rgb(234, 179, 8)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                parser: 'yyyy-MM-dd',
+                                displayFormats: {
+                                    day: 'dd-MM'
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Grams'
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function showLoadingStates() {
@@ -369,15 +477,18 @@
             const glucoseSkeleton = document.getElementById('glucose-skeleton');
             const weightSkeleton = document.getElementById('weight-skeleton');
             const exerciseSkeleton = document.getElementById('exercise-skeleton');
+            const nutritionSkeleton = document.getElementById('nutrition-skeleton');
             
             if (glucoseSkeleton) glucoseSkeleton.style.display = 'block';
             if (weightSkeleton) weightSkeleton.style.display = 'block';
             if (exerciseSkeleton) exerciseSkeleton.style.display = 'block';
+            if (nutritionSkeleton) nutritionSkeleton.style.display = 'block';
             
             // Hide charts
             document.getElementById('glucose-chart-container').style.display = 'none';
             document.getElementById('weight-chart-container').style.display = 'none';
             document.getElementById('exercise-chart-container').style.display = 'none';
+            document.getElementById('nutrition-chart-container').style.display = 'none';
         }
 
         function hideLoadingStates() {
@@ -385,15 +496,18 @@
             const glucoseSkeleton = document.getElementById('glucose-skeleton');
             const weightSkeleton = document.getElementById('weight-skeleton');
             const exerciseSkeleton = document.getElementById('exercise-skeleton');
+            const nutritionSkeleton = document.getElementById('nutrition-skeleton');
             
             if (glucoseSkeleton) glucoseSkeleton.style.display = 'none';
             if (weightSkeleton) weightSkeleton.style.display = 'none';
             if (exerciseSkeleton) exerciseSkeleton.style.display = 'none';
+            if (nutritionSkeleton) nutritionSkeleton.style.display = 'none';
             
             // Show charts
             document.getElementById('glucose-chart-container').style.display = 'block';
             document.getElementById('weight-chart-container').style.display = 'block';
             document.getElementById('exercise-chart-container').style.display = 'block';
+            document.getElementById('nutrition-chart-container').style.display = 'block';
         }
 
         async function updateCharts() {
@@ -475,6 +589,25 @@
                 exerciseTypesChart.data.labels = types;
                 exerciseTypesChart.data.datasets[0].data = durations;
                 exerciseTypesChart.update();
+
+                // Update nutrition charts
+                const nutritionResponse = await fetch(`{{ route('reports.nutrition-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                    method: 'GET',
+                    headers: headers,
+                    credentials: 'same-origin'
+                });
+                
+                if (!nutritionResponse.ok) {
+                    throw new Error(`HTTP error! status: ${nutritionResponse.status}`);
+                }
+                
+                const nutritionData = await nutritionResponse.json();
+                
+                caloriesChart.data.datasets[0].data = nutritionData.dailyCalories;
+                caloriesChart.update();
+
+                carbsChart.data.datasets[0].data = nutritionData.dailyCarbs;
+                carbsChart.update();
 
                 hideLoadingStates();
 
