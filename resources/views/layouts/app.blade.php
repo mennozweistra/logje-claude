@@ -13,7 +13,15 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <meta name="apple-mobile-web-app-title" content="Logje">
-        <link rel="apple-touch-icon" href="/images/icons/icon.svg">
+        <meta name="apple-touch-fullscreen" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+        <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="/images/icons/icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="96x96" href="/images/icons/icon-96x96.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="/images/icons/icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="192x192" href="/images/icons/icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="/images/icons/icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="512x512" href="/images/icons/icon-512x512.png">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

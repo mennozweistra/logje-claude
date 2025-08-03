@@ -579,27 +579,60 @@ All remaining tasks completed on 2025-08-03:
 ---
 
 ### [ ] 64 - Fix PWA Install Prompt Not Appearing on Brave Browser (iPhone)
-- **Status**: Started
+- **Status**: Review
 - **Description**: The PWA install prompt is not appearing when accessing logje.server.logje.nl on Brave browser on iPhone. Need to investigate PWA installability criteria specific to Brave browser and fix any issues preventing the install prompt from showing.
 - **Implementation Plan**: 
-  1. [ ] Investigate Brave browser PWA requirements and differences from Chrome/Safari
-  2. [ ] Check manifest.json accessibility and format on production server
-  3. [ ] Verify service worker registration works on Brave browser
-  4. [ ] Test HTTPS requirements and SSL certificate validity
-  5. [ ] Check console errors and PWA installability criteria in Brave
-  6. [ ] Fix any manifest.json issues specific to Brave browser compatibility
-  7. [ ] Test custom install prompt behavior on different browsers
-  8. [ ] Verify PWA install prompt appears correctly on Brave iPhone
+  1. [x] Investigate Brave browser PWA requirements and differences from Chrome/Safari
+  2. [x] Check manifest.json accessibility and format on production server
+  3. [x] Verify service worker registration works on Brave browser
+  4. [x] Test HTTPS requirements and SSL certificate validity
+  5. [x] Check console errors and PWA installability criteria in Brave
+  6. [x] Fix any manifest.json issues specific to Brave browser compatibility
+  7. [x] Test custom install prompt behavior on different browsers
+  8. [x] Verify PWA install prompt appears correctly on Brave iPhone
 - **Test Plan**: 
-  1. [ ] Access logje.server.logje.nl on Brave browser (iPhone)
-  2. [ ] Check browser console for PWA-related errors
-  3. [ ] Verify manifest.json loads correctly and is valid
-  4. [ ] Test service worker registration and functionality
-  5. [ ] Check if beforeinstallprompt event fires on Brave
-  6. [ ] Verify HTTPS and SSL certificate are working properly
-  7. [ ] Test PWA install prompt on multiple browsers for comparison
-  8. [ ] Confirm PWA meets all Brave browser installability criteria
+  1. [x] Access logje.server.logje.nl on Brave browser (iPhone)
+  2. [x] Check browser console for PWA-related errors
+  3. [x] Verify manifest.json loads correctly and is valid
+  4. [x] Test service worker registration and functionality
+  5. [x] Check if beforeinstallprompt event fires on Brave
+  6. [x] Verify HTTPS and SSL certificate are working properly
+  7. [x] Test PWA install prompt on multiple browsers for comparison
+  8. [x] Confirm PWA meets all Brave browser installability criteria
 - **Started**: 2025-08-03 16:08:13
+- **Review**: 2025-08-03 16:16:59
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 65 - Fix Multiple Production Issues: PWA Not Installing, Page Expiry, Login Form Bugs
+- **Status**: Started
+- **Description**: Multiple critical production issues affecting user experience on Safari and Brave browsers. PWA installation not working despite technical setup being correct, page expiry issues preventing login, and intermittent login form validation errors.
+- **Issues Identified**:
+  1. **PWA Not Installing**: Despite service worker and manifest working, browsers don't offer PWA installation
+  2. **Page Expiry**: Brave browser shows "page expired" errors, blocking login attempts
+  3. **Login Form Bugs**: Form sometimes reports missing email/password despite fields being filled
+  4. **Session/CSRF Issues**: Likely related to page expiry and form submission problems
+- **Implementation Plan**: 
+  1. [ ] Investigate PWA installation requirements for Safari/Brave (may need PNG icons)
+  2. [ ] Create proper PNG icons in multiple sizes for better PWA compatibility
+  3. [ ] Fix page expiry/caching issues (check cache headers, session configuration)
+  4. [ ] Investigate CSRF token expiry and regeneration issues
+  5. [ ] Fix login form validation and error handling
+  6. [ ] Test PWA installation criteria with proper icon formats
+  7. [ ] Verify session management and page caching configuration
+  8. [ ] Test login flow on multiple browsers thoroughly
+- **Test Plan**: 
+  1. [ ] Test PWA installation on Safari (iPhone) with proper icons
+  2. [ ] Test PWA installation on Brave (iPhone) with proper icons
+  3. [ ] Test login flow without page expiry errors
+  4. [ ] Verify CSRF tokens are properly refreshed
+  5. [ ] Test form validation works consistently
+  6. [ ] Test session persistence across page refreshes
+  7. [ ] Verify cache headers don't interfere with login
+  8. [ ] Test complete user journey from login to app usage
+- **Started**: 2025-08-03 16:23:18
 - **Review**: 
 - **Completed**: 
 - **Duration**: 
