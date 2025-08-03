@@ -550,8 +550,8 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 63 - Fix Laravel Storage Permissions Issues Permanently with Docker
-- **Status**: Review
+### [✅] 63 - Fix Laravel Storage Permissions Issues Permanently with Docker
+- **Status**: Completed
 - **Description**: Solve the ongoing Laravel file permission issues permanently by configuring proper Docker setup with correct user/group permissions for development. This will allow seamless file editing and prevent permission denied errors when modifying Laravel files.
 - **Implementation Plan**: 
   1. [x] Check current Docker setup and identify permission issues
@@ -573,5 +573,33 @@ All remaining tasks completed on 2025-08-03:
   8. [x] Verify no permission errors in logs
 - **Started**: 2025-08-03 15:56:57
 - **Review**: 2025-08-03 16:04:02
+- **Completed**: 2025-08-03 16:05:28
+- **Duration**: 8 minutes
+
+---
+
+### [ ] 64 - Fix PWA Install Prompt Not Appearing on Brave Browser (iPhone)
+- **Status**: Started
+- **Description**: The PWA install prompt is not appearing when accessing logje.server.logje.nl on Brave browser on iPhone. Need to investigate PWA installability criteria specific to Brave browser and fix any issues preventing the install prompt from showing.
+- **Implementation Plan**: 
+  1. [ ] Investigate Brave browser PWA requirements and differences from Chrome/Safari
+  2. [ ] Check manifest.json accessibility and format on production server
+  3. [ ] Verify service worker registration works on Brave browser
+  4. [ ] Test HTTPS requirements and SSL certificate validity
+  5. [ ] Check console errors and PWA installability criteria in Brave
+  6. [ ] Fix any manifest.json issues specific to Brave browser compatibility
+  7. [ ] Test custom install prompt behavior on different browsers
+  8. [ ] Verify PWA install prompt appears correctly on Brave iPhone
+- **Test Plan**: 
+  1. [ ] Access logje.server.logje.nl on Brave browser (iPhone)
+  2. [ ] Check browser console for PWA-related errors
+  3. [ ] Verify manifest.json loads correctly and is valid
+  4. [ ] Test service worker registration and functionality
+  5. [ ] Check if beforeinstallprompt event fires on Brave
+  6. [ ] Verify HTTPS and SSL certificate are working properly
+  7. [ ] Test PWA install prompt on multiple browsers for comparison
+  8. [ ] Confirm PWA meets all Brave browser installability criteria
+- **Started**: 2025-08-03 16:08:13
+- **Review**: 
 - **Completed**: 
 - **Duration**: 

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PWA Icon Generator - Logje Health Tracker</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        .icon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .icon-item { text-align: center; }
+        button { background: #1f2937; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+        button:hover { background: #374151; }
+    </style>
+</head>
+<body>
+    <h1>Logje Health Tracker - PWA Icon Generator</h1>
+    <p>Generate PNG icons for better PWA compatibility across all browsers including Brave.</p>
+    
+    <button onclick="generateAllIcons()">Generate All PNG Icons</button>
+    <button onclick="downloadZip()">Download All as ZIP</button>
+    
+    <div id="icon-grid" class="icon-grid"></div>
+
+    <script>
+        const iconSizes = [48, 72, 96, 144, 192, 512];
+        const canvases = {};
+        
+        function createHealthIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Background with rounded corners
+            ctx.fillStyle = '#1f2937'; // Theme color
+            ctx.fillRect(0, 0, size, size);
+            
+            // Add rounded corners effect
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.beginPath();
+            const radius = size * 0.15;
+            ctx.roundRect(0, 0, size, size, radius);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // Health cross symbol
+            ctx.fillStyle = '#ffffff';
+            const crossSize = size * 0.4;
+            const crossThickness = size * 0.08;
+            const centerX = size / 2;
+            const centerY = size / 2;
+            
+            // Horizontal bar
+            ctx.fillRect(centerX - crossSize/2, centerY - crossThickness/2, crossSize, crossThickness);
+            // Vertical bar
+            ctx.fillRect(centerX - crossThickness/2, centerY - crossSize/2, crossThickness, crossSize);
+            
+            // Add small heart symbol in corner
+            ctx.fillStyle = '#ef4444'; // Red heart
+            const heartSize = size * 0.12;
+            const heartX = centerX + crossSize/3.5;
+            const heartY = centerY + crossSize/3.5;
+            
+            // Simple heart shape using circles and triangle
+            ctx.beginPath();
+            ctx.arc(heartX - heartSize/4, heartY - heartSize/4, heartSize/4, 0, 2 * Math.PI);
+            ctx.arc(heartX + heartSize/4, heartY - heartSize/4, heartSize/4, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(heartX - heartSize/2, heartY);
+            ctx.lineTo(heartX, heartY + heartSize/2);
+            ctx.lineTo(heartX + heartSize/2, heartY);
+            ctx.fill();
+            
+            // Add letter "L" for Logje
+            ctx.fillStyle = '#ffffff';
+            ctx.font = `bold ${size * 0.12}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('L', centerX - crossSize/3, centerY + crossSize/3);
+            
+            return canvas;
+        }
+        
+        function generateAllIcons() {
+            const grid = document.getElementById('icon-grid');
+            grid.innerHTML = '';
+            
+            iconSizes.forEach(size => {
+                const canvas = createHealthIcon(size);
+                canvases[size] = canvas;
+                
+                const container = document.createElement('div');
+                container.className = 'icon-item';
+                
+                const title = document.createElement('h3');
+                title.textContent = `${size}x${size}px`;
+                
+                const downloadBtn = document.createElement('button');
+                downloadBtn.textContent = `Download ${size}x${size}`;
+                downloadBtn.onclick = () => downloadIcon(canvas, size);
+                
+                container.appendChild(title);
+                container.appendChild(canvas);
+                container.appendChild(downloadBtn);
+                
+                grid.appendChild(container);
+            });
+        }
+        
+        function downloadIcon(canvas, size) {
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function downloadZip() {
+            alert('Please download icons individually. For production use, consider using a professional icon design tool.');
+        }
+        
+        // Generate icons on page load
+        window.onload = generateAllIcons;
+    </script>
+</body>
+</html>

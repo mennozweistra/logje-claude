@@ -10,6 +10,10 @@
         <!-- PWA Manifest for guest pages -->
         <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#1f2937">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Logje">
+        <link rel="apple-touch-icon" href="/images/icons/icon.svg">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -30,5 +34,53 @@
                 {{ $slot }}
             </div>
         </div>
+
+        <!-- PWA Service Worker Registration -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(function(registration) {
+                            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                        }, function(err) {
+                            console.log('ServiceWorker registration failed: ', err);
+                        });
+                });
+            }
+
+            // PWA Install Prompt
+            let deferredPrompt;
+            const installButton = document.createElement('button');
+            installButton.textContent = 'Install App';
+            installButton.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: #1f2937; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; display: none; z-index: 1000;';
+            document.body.appendChild(installButton);
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('beforeinstallprompt event fired');
+                e.preventDefault();
+                deferredPrompt = e;
+                installButton.style.display = 'block';
+            });
+
+            installButton.addEventListener('click', (e) => {
+                installButton.style.display = 'none';
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                        } else {
+                            console.log('User dismissed the install prompt');
+                        }
+                        deferredPrompt = null;
+                    });
+                }
+            });
+
+            window.addEventListener('appinstalled', (evt) => {
+                console.log('App was installed');
+                installButton.style.display = 'none';
+            });
+        </script>
     </body>
 </html>
