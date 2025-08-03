@@ -91,11 +91,17 @@ All remaining tasks completed on 2025-08-03:
   2. [x] Create production Dockerfile with PHP 8.3 LTS
   3. [x] Configure environment variables template (.env.production.example)
   4. [x] Create comprehensive deployment guide (DEPLOYMENT.md)
-  5. [ ] Commit and push deployment files to repository
-  6. [ ] **MANUAL STEPS FOR USER**:
+  5. [x] Commit and push deployment files to repository
+  6. [x] **DEPLOYMENT DOCUMENTATION UPDATE**: Fixed critical deployment order issue
+     - [x] Added Step 4: Initial Deployment from Repository (must be done before APP_KEY generation)
+     - [x] Updated step numbering throughout documentation
+     - [x] Fixed issue where placeholder container was being accessed instead of actual Logje container
+  7. [ ] **MANUAL STEPS FOR USER**:
      - [ ] Create CapRover app from GitHub repository
      - [ ] Configure environment variables in CapRover
-     - [ ] Generate APP_KEY securely in production
+     - [ ] Force initial build and deploy from GitHub repository (Step 4)
+     - [ ] Generate APP_KEY securely in production (Step 5)
+     - [ ] Redeploy with APP_KEY (Step 6)
      - [ ] Set up database credentials (maria-db connection)
      - [ ] Configure custom domains (logje.nl, www.logje.nl)
      - [ ] Set up GitHub webhook for automatic deployment

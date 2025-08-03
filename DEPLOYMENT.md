@@ -12,7 +12,7 @@ This guide walks you through deploying the Logje Health Tracking Application to 
 ## Step 1: Create CapRover App
 
 1. Login to your CapRover dashboard at `https://server.logje.nl`
-2. Go to **Apps** → **One-Click Apps/Databases** → **Create App**
+2. Go to **Apps** and click the **Create New App** button (or **+** button)
 3. Choose **App Name**: `logje`
 4. Select **Has Persistent Data**: `No` (all data is in database)
 
@@ -25,9 +25,14 @@ This guide walks you through deploying the Logje Health Tracking Application to 
 5. Enter **Username**: `mennozweistra`
 6. Generate a **Personal Access Token** in GitHub:
    - Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
-   - Generate new token with `repo` scope
-   - Copy the token
-7. Enter the token in **Password/Token** field
+   - Click **Generate new token (classic)**
+   - Set **Expiration**: Choose appropriate duration (e.g., 90 days, 1 year, or no expiration)
+   - **Select these specific scopes/permissions**:
+     - ✅ **repo** (Full control of private repositories) - Required for repository access
+     - ✅ **admin:repo_hook** (Full control of repository hooks) - Required for webhook management
+   - Click **Generate token**
+   - Copy the token immediately (you won't see it again)
+7. Enter the token in the **Password** field
 8. Click **Save & Update**
 
 ## Step 3: Configure Environment Variables
@@ -56,31 +61,86 @@ SESSION_DRIVER=file
 SESSION_LIFETIME=120
 ```
 
-## Step 4: Generate APP_KEY
+## Step 4: Initial Deployment from Repository
+
+⚠️ **IMPORTANT**: You must deploy from the repository first before generating APP_KEY.
+
+1. Go to **Deployment** tab
+2. Click **Force Build and Deploy**
+3. Wait for deployment to complete (check logs for any errors)
+4. This builds your Logje container from the GitHub repository
+
+## Step 5: Generate APP_KEY
 
 ⚠️ **IMPORTANT**: The APP_KEY must be generated securely and never shared.
 
-1. In CapRover, go to your `logje` app
-2. Click **Deployment** → **App Logs** 
-3. Open a **Terminal** session
-4. Run: `php artisan key:generate --show`
-5. Copy the generated key (starts with `base64:`)
-6. Go back to **App Configs** → **Environment Variables**
-7. Add: `APP_KEY=[your_generated_key]`
-8. Click **Save & Update**
+1. **SSH to your server and find the Logje container:**
+   ```bash
+   ssh your-server
+   docker ps
+   # Look for a container with name containing "logje" or "srv-captain--logje"
+   ```
+2. **Generate the APP_KEY:**
+   ```bash
+   # Our Dockerfile uses Alpine, so use sh:
+   docker exec -it <logje-container-id> sh -c "cd /var/www/html && php artisan key:generate --show"
+   
+   # Alternative - enter container first:
+   docker exec -it <logje-container-id> sh
+   # Then: cd /var/www/html && php artisan key:generate --show
+   ```
+2. Copy the generated key (starts with `base64:`)
+3. In CapRover, go to your `logje` app → **App Configs** → **Environment Variables**
+4. Add: `APP_KEY=[your_generated_key]`
+5. Click **Save & Update**
 
-## Step 5: Initial Deployment
+## Step 6: Redeploy with APP_KEY
 
 1. Go to **Deployment** tab
 2. Click **Force Build and Deploy**
 3. Wait for deployment to complete (check logs for any errors)
 
-## Step 6: Database Setup
+## Step 7: Database Setup
 
-### Create Database (if not exists)
-1. Connect to your MariaDB container
-2. Create database: `CREATE DATABASE logje CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`
-3. Create user and grant permissions (or use existing user)
+### Create Database and User
+1. **SSH to your CapRover server:**
+   ```bash
+   ssh your-server
+   ```
+2. **Find your MariaDB container:**
+   ```bash
+   docker ps | grep maria-db
+   ```
+3. **Connect to MariaDB container:**
+   ```bash
+   docker exec -it <maria-db-container-id> mysql -u root -p
+   ```
+4. Enter your root password when prompted
+5. Create the database:
+   ```sql
+   CREATE DATABASE logje CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+6. Create a dedicated user for Logje:
+   ```sql
+   CREATE USER 'logje_user'@'%' IDENTIFIED BY 'your_secure_password_here';
+   ```
+7. Grant permissions to the user:
+   ```sql
+   GRANT ALL PRIVILEGES ON logje.* TO 'logje_user'@'%';
+   FLUSH PRIVILEGES;
+   ```
+8. Verify the setup:
+   ```sql
+   SHOW DATABASES;
+   SELECT User, Host FROM mysql.user WHERE User = 'logje_user';
+   ```
+9. Exit MariaDB: `EXIT;`
+
+### Update Environment Variables
+Now update your CapRover environment variables with the database credentials:
+- `DB_DATABASE=logje`
+- `DB_USERNAME=logje_user`
+- `DB_PASSWORD=your_secure_password_here`
 
 ### Run Migrations
 ⚠️ **Manual Migration Recommended** for production safety:
@@ -91,7 +151,7 @@ SESSION_LIFETIME=120
 4. Run: `php artisan migrate` (apply migrations)
 5. Verify: `php artisan migrate:status` (confirm all migrations ran)
 
-## Step 7: Configure Custom Domains
+## Step 8: Configure Custom Domains
 
 1. In your `logje` app, go to **HTTP Settings**
 2. **Enable HTTPS**: Check this box
@@ -102,7 +162,7 @@ SESSION_LIFETIME=120
 5. Click **Save & Update**
 6. Wait for SSL certificates to be automatically generated
 
-## Step 8: Set Up Auto-Deployment Webhook
+## Step 9: Set Up Auto-Deployment Webhook
 
 1. In CapRover, go to your `logje` app → **Deployment**
 2. Copy the **Webhook URL** from the GitHub section
@@ -114,14 +174,14 @@ SESSION_LIFETIME=120
 8. Check **Active**
 9. Click **Add webhook**
 
-## Step 9: Test Deployment
+## Step 10: Test Deployment
 
 1. Visit `https://logje.nl` to verify the app is running
 2. Test user registration and login
 3. Test measurement creation and editing
 4. Verify all functionality works
 
-## Step 10: Test Auto-Deployment
+## Step 11: Test Auto-Deployment
 
 1. Make a small change to your repository (e.g., update README)
 2. Commit and push to `main` branch

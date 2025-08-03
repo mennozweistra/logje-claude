@@ -1,26 +1,24 @@
-# Use PHP 8.3 LTS with Apache
-FROM php:8.3-apache
+# Use Alpine for much faster builds (no C compilation needed)
+FROM php:8.3-apache-alpine
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install system dependencies - Alpine packages are pre-compiled
+RUN apk add --no-cache \
     git \
     curl \
-    libonig-dev \
     zip \
     unzip \
-    libzip-dev \
-    default-mysql-client \
+    mysql-client \
     nano \
     htop \
     procps \
-    iputils-ping \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring zip
+    iputils \
+    # Required for PHP extensions
+    oniguruma-dev \
+    libzip-dev \
+    && docker-php-ext-install -j$(nproc) pdo_mysql mbstring zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -43,8 +41,8 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Create startup script
-RUN echo '#!/bin/bash\n\
+# Create startup script (Alpine uses sh, not bash)
+RUN echo '#!/bin/sh\n\
 # Generate application key if not set\n\
 if [ -z "$APP_KEY" ]; then\n\
     echo "Warning: APP_KEY not set. Please set it in CapRover environment variables."\n\
