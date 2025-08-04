@@ -40,7 +40,7 @@
                 $measurementTypes = [
                     ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
                     ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
-                    ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊'],
+                    ['slug' => 'medication', 'name' => 'Medication', 'icon' => '🔵'],
                     ['slug' => 'food', 'name' => 'Food', 'icon' => '🍏'],
                     ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
                     ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
@@ -84,7 +84,7 @@
                     $types = [
                         ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
                         ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
-                        ['slug' => 'medication', 'name' => 'Medication', 'icon' => '💊'],
+                        ['slug' => 'medication', 'name' => 'Medication', 'icon' => '🔵'],
                         ['slug' => 'food', 'name' => 'Food', 'icon' => '🍏'],
                         ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
                         ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
@@ -130,7 +130,7 @@
                                         📝
                                         @break
                                     @case('medication')
-                                        💊
+                                        🔵
                                         @break
                                     @case('food')
                                         🍏

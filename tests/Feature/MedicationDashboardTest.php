@@ -21,7 +21,7 @@ beforeEach(function () {
 test('it displays medication button on dashboard', function () {
     Livewire::actingAs($this->user)
         ->test(Dashboard::class)
-        ->assertSee('💊')
+        ->assertSee('🔵')
         ->assertSee('Medication');
 });
 
@@ -41,7 +41,7 @@ test('it displays single medication measurement correctly', function () {
     
     Livewire::actingAs($this->user)
         ->test(Dashboard::class)
-        ->assertSee('💊')
+        ->assertSee('🔵')
         ->assertSee('08:00')
         ->assertSee('Medication:')
         ->assertSee('Rybelsus')
@@ -90,7 +90,7 @@ test('it displays medication measurements without notes', function () {
     
     Livewire::actingAs($this->user)
         ->test(Dashboard::class)
-        ->assertSee('💊')
+        ->assertSee('🔵')
         ->assertSee('Medication:')
         ->assertSee('Rybelsus');
 });
