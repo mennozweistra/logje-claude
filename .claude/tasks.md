@@ -801,29 +801,6 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 73 - Replace Red Medicine Icon with Non-Red Alternative
-- **Status**: Todo
-- **Description**: Replace the current red pill emoji (💊) used for medicine/medication with a non-red alternative to reduce color dominance in listings that contain both glucose entries and medicine entries. The red color is becoming too visually prominent when both measurement types are displayed together.
-- **Implementation Plan**: 
-  1. [ ] Choose a suitable non-red medicine icon alternative (e.g., 💉, 🩹, ⚕️, or a simple colored pill in blue/green/purple)
-  2. [ ] Replace medicine icon in dashboard measurement type buttons (dashboard.blade.php lines 43, 87)
-  3. [ ] Replace medicine icon in dashboard measurement display icons (dashboard.blade.php line 133)
-  4. [ ] Verify consistency across all places where medicine icon appears
-  5. [ ] Test visual balance in measurement listings with glucose and medicine entries together
-- **Test Plan**: 
-  **Manual Tests:**
-  1. [ ] Verify medicine icon displays correctly in measurement type buttons on dashboard
-  2. [ ] Verify medicine icon displays correctly in measurement entries list
-  3. [ ] Verify medicine icon displays correctly in filter buttons
-  4. [ ] Confirm visual balance improvement when viewing mixed glucose/medicine measurement listings
-  5. [ ] Test icon visibility and readability across different screen sizes
-- **Started**: 
-- **Review**: 
-- **Completed**: 
-- **Duration**: 
-
----
-
 ### [ ] 72 - Add Critical Retrospective Test Coverage (Phase 1)
 - **Status**: Todo
 - **Description**: Add test coverage for the most critical completed features that lack automated testing. This first phase focuses on user-facing functionality and navigation changes to ensure regression protection. **NOTE**: This task was broken down from a larger task that exceeded target duration.
@@ -841,6 +818,29 @@ All remaining tasks completed on 2025-08-03:
   **Manual Tests:**
   5. [ ] Verify all navigation links work correctly after test creation
   6. [ ] Run full test suite to ensure no regressions
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 73 - Replace Red Medicine Icon with Non-Red Alternative
+- **Status**: Todo
+- **Description**: Replace the current red pill emoji (💊) used for medicine/medication with a non-red alternative to reduce color dominance in listings that contain both glucose entries and medicine entries. The red color is becoming too visually prominent when both measurement types are displayed together.
+- **Implementation Plan**: 
+  1. [ ] Choose a suitable non-red medicine icon alternative (e.g., 💉, 🩹, ⚕️, or a simple colored pill in blue/green/purple)
+  2. [ ] Replace medicine icon in dashboard measurement type buttons (dashboard.blade.php lines 43, 87)
+  3. [ ] Replace medicine icon in dashboard measurement display icons (dashboard.blade.php line 133)
+  4. [ ] Verify consistency across all places where medicine icon appears
+  5. [ ] Test visual balance in measurement listings with glucose and medicine entries together
+- **Test Plan**: 
+  **Manual Tests:**
+  1. [ ] Verify medicine icon displays correctly in measurement type buttons on dashboard
+  2. [ ] Verify medicine icon displays correctly in measurement entries list
+  3. [ ] Verify medicine icon displays correctly in filter buttons
+  4. [ ] Confirm visual balance improvement when viewing mixed glucose/medicine measurement listings
+  5. [ ] Test icon visibility and readability across different screen sizes
 - **Started**: 
 - **Review**: 
 - **Completed**: 
@@ -924,26 +924,22 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 77 - Enhance Test Coverage and CI/CD Pipeline
+### [ ] 77 - Audit Current Test Coverage and Set Up CI/CD Foundation
 - **Status**: Todo
-- **Description**: Implement comprehensive testing requirements including unit tests, feature tests, and end-to-end tests with proper CI/CD integration. Ensure all functions have test coverage and tests are executable by AI systems.
+- **Description**: First phase of enhancing test coverage: audit existing tests, identify gaps, and establish CI/CD foundation. This focused approach ensures manageable implementation within target duration.
 - **Implementation Plan**: 
-  1. [ ] Audit current test coverage and identify gaps
-  2. [ ] Create comprehensive unit tests for all models and services
-  3. [ ] Expand feature tests for all application workflows
-  4. [ ] Implement end-to-end tests for complete user journeys
-  5. [ ] Set up automated test execution in CI/CD pipeline
-  6. [ ] Configure test reporting and coverage metrics
-  7. [ ] Ensure Docker test environment consistency
-  8. [ ] Document testing standards and procedures
+  1. [ ] Run test coverage analysis to identify untested code
+  2. [ ] Document current test gaps in critical areas
+  3. [ ] Set up automated test execution in CI/CD pipeline
+  4. [ ] Configure basic test reporting and coverage metrics
+  5. [ ] Ensure Docker test environment consistency
+  6. [ ] Document testing standards and next steps
 - **Test Plan**: 
-  1. [ ] Verify unit test coverage for all business logic
-  2. [ ] Test feature test coverage for all user-facing functionality
-  3. [ ] Verify end-to-end tests cover complete workflows
-  4. [ ] Test automated test execution in CI/CD pipeline
-  5. [ ] Verify test reporting and coverage metrics
-  6. [ ] Test Docker test environment consistency
-  7. [ ] Verify tests are executable by AI systems
+  1. [ ] Verify test coverage report generates correctly
+  2. [ ] Test automated test execution in CI/CD pipeline
+  3. [ ] Verify test reporting displays coverage metrics
+  4. [ ] Test Docker test environment consistency
+  5. [ ] Verify tests are executable by AI systems
 - **Started**: 
 - **Review**: 
 - **Completed**: 
@@ -951,26 +947,62 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 78 - Implement Deployment Monitoring and Maintenance
+### [ ] 78 - Implement Core Application Health Monitoring
 - **Status**: Todo
-- **Description**: Establish ongoing deployment monitoring, health checks, backup procedures, and maintenance workflows for the production CapRover deployment. Ensure reliable operation and data protection.
+- **Description**: First phase of deployment monitoring: establish basic health monitoring and alerting for the production CapRover deployment. This focused approach covers essential monitoring within target duration.
 - **Implementation Plan**: 
-  1. [ ] Set up application health monitoring and alerting
-  2. [ ] Implement automated database backup procedures
-  3. [ ] Configure log aggregation and monitoring
-  4. [ ] Set up SSL certificate auto-renewal monitoring
-  5. [ ] Create deployment rollback procedures
-  6. [ ] Implement performance monitoring and optimization
-  7. [ ] Document maintenance procedures and troubleshooting
-  8. [ ] Set up uptime monitoring and notifications
+  1. [ ] Set up application health check endpoint
+  2. [ ] Configure basic uptime monitoring and notifications
+  3. [ ] Set up SSL certificate auto-renewal monitoring
+  4. [ ] Configure basic log aggregation for error tracking
+  5. [ ] Document monitoring setup and access procedures
 - **Test Plan**: 
   1. [ ] Test health check endpoints respond correctly
-  2. [ ] Verify automated backup procedures work
-  3. [ ] Test log aggregation captures application events
-  4. [ ] Verify SSL certificate monitoring works
-  5. [ ] Test deployment rollback procedures
-  6. [ ] Verify performance monitoring captures metrics
-  7. [ ] Test uptime monitoring and alerting
+  2. [ ] Test uptime monitoring and alerting
+  3. [ ] Verify SSL certificate monitoring works
+  4. [ ] Test log aggregation captures application errors
+  5. [ ] Verify monitoring notifications work correctly
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 79 - Expand Test Coverage for Critical Components
+- **Status**: Todo
+- **Description**: Second phase of test enhancement: create comprehensive unit and feature tests for critical application components identified in Task 77 audit.
+- **Implementation Plan**: 
+  1. [ ] Create comprehensive unit tests for all models and services
+  2. [ ] Expand feature tests for all application workflows
+  3. [ ] Implement end-to-end tests for complete user journeys
+  4. [ ] Update test coverage metrics and reporting
+- **Test Plan**: 
+  1. [ ] Verify unit test coverage for all business logic
+  2. [ ] Test feature test coverage for all user-facing functionality
+  3. [ ] Verify end-to-end tests cover complete workflows
+  4. [ ] Verify improved coverage metrics in reports
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 80 - Advanced Deployment Monitoring and Backup Systems
+- **Status**: Todo
+- **Description**: Second phase of deployment monitoring: implement advanced monitoring, automated backups, and maintenance procedures building on Task 78 foundation.
+- **Implementation Plan**: 
+  1. [ ] Implement automated database backup procedures
+  2. [ ] Implement performance monitoring and optimization
+  3. [ ] Create deployment rollback procedures
+  4. [ ] Document maintenance procedures and troubleshooting
+  5. [ ] Set up advanced alerting and notification systems
+- **Test Plan**: 
+  1. [ ] Verify automated backup procedures work
+  2. [ ] Verify performance monitoring captures metrics
+  3. [ ] Test deployment rollback procedures
+  4. [ ] Test advanced alerting and notification systems
 - **Started**: 
 - **Review**: 
 - **Completed**: 
