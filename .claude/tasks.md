@@ -636,3 +636,164 @@ All remaining tasks completed on 2025-08-03:
 - **Review**: 
 - **Completed**: 
 - **Duration**: 
+
+---
+
+### [ ] 66 - Remove PWA Service Worker and Related Code
+- **Status**: Started
+- **Description**: Remove the PWA service worker and all related PWA functionality that was causing the login/CSRF issues. This includes removing the service worker registration, manifest.json, PWA installation prompts, and any PWA-related code from the application.
+- **Implementation Plan**: 
+  1. [ ] Remove service worker file (public/sw.js or similar)
+  2. [ ] Remove service worker registration from main layout/views
+  3. [ ] Remove manifest.json file and its route/link references
+  4. [ ] Remove PWA installation prompt/banner code
+  5. [ ] Remove PWA-related meta tags and theme colors
+  6. [ ] Clean up any PWA-related assets (icons, splash screens)
+  7. [ ] Update any documentation references to PWA functionality
+  8. [ ] Test that login/CSRF issues are resolved after removal
+- **Test Plan**: 
+  1. [ ] Verify service worker no longer registers in browser
+  2. [ ] Test login functionality works without CSRF/session issues
+  3. [ ] Verify no PWA installation prompts appear
+  4. [ ] Check browser console for any PWA-related errors
+  5. [ ] Test application functionality remains intact
+  6. [ ] Verify no broken links or missing resources
+  7. [ ] Test on multiple browsers (Chrome, Safari, Brave)
+- **Started**: 2025-08-04 15:37:00
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 67 - Rename Food Management Menu to Data and Create Food Submenu
+- **Status**: Todo
+- **Description**: Rename the current "Food Management" menu item to "Data" and create "Food" as a submenu item under it. This will prepare the menu structure for additional data management options.
+- **Implementation Plan**: 
+  1. [ ] Identify current "Food Management" menu implementation in navigation
+  2. [ ] Rename "Food Management" to "Data" in navigation component
+  3. [ ] Create dropdown/submenu structure for "Data" menu
+  4. [ ] Add "Food" as first submenu item under "Data"
+  5. [ ] Ensure "Food" submenu links to existing food management functionality
+  6. [ ] Update any route names or references if needed
+  7. [ ] Style submenu to match existing design patterns
+  8. [ ] Test menu navigation and functionality
+- **Test Plan**: 
+  1. [ ] Verify "Data" appears in main navigation instead of "Food Management"
+  2. [ ] Test "Data" menu shows submenu on hover/click
+  3. [ ] Verify "Food" submenu item navigates to food management page
+  4. [ ] Test submenu styling matches application design
+  5. [ ] Verify menu works on both desktop and mobile
+  6. [ ] Test all existing food management functionality still works
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 68 - Add Medicines Data Management Under Data Menu
+- **Status**: Todo
+- **Description**: Create a new "Medicines" submenu item under the "Data" menu that allows users to view, add, edit, and delete their own medication records. This will provide user-specific CRUD functionality for managing personal medication lists with foreign key protection.
+- **Implementation Plan**: 
+  1. [ ] Add "Medicines" submenu item to "Data" menu navigation
+  2. [ ] Create medicines management route and controller method
+  3. [ ] Create medicines management view/component (similar to food management)
+  4. [ ] Implement medicine listing with existing medicines from database
+  5. [ ] Add create new medicine functionality with form (name, description)
+  6. [ ] Add edit existing medicine functionality
+  7. [ ] Add delete medicine functionality with confirmation
+  8. [ ] Style medicines management to match food management design
+- **Test Plan**: 
+  1. [ ] Verify "Medicines" appears as submenu under "Data"
+  2. [ ] Test medicines page loads and displays existing medications
+  3. [ ] Test creating new medicine record
+  4. [ ] Test editing existing medicine (name, description)
+  5. [ ] Test deleting medicine with proper confirmation
+  6. [ ] Verify medicines page styling matches application design
+  7. [ ] Test responsive layout on mobile devices
+  8. [ ] Verify medicine changes reflect in measurement entry forms
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 69 - Add User Foreign Key to Foods and Medications Tables
+- **Status**: Todo
+- **Description**: Add user_id foreign key columns to both foods and medications tables to make them user-specific. Create migration to add the columns and update existing records with proper user associations.
+- **Implementation Plan**: 
+  1. [ ] Create migration to add user_id foreign key to foods table
+  2. [ ] Create migration to add user_id foreign key to medications table
+  3. [ ] Update existing food records to associate with appropriate users (or admin user)
+  4. [ ] Update existing medication records to associate with appropriate users (or admin user)
+  5. [ ] Add foreign key constraints for user_id columns
+  6. [ ] Update Food and Medication models to include user relationship
+  7. [ ] Test that foreign key constraints work properly
+  8. [ ] Verify data integrity after migration
+- **Test Plan**: 
+  1. [ ] Verify user_id columns are added to both tables
+  2. [ ] Test that foreign key constraints prevent orphaned records
+  3. [ ] Verify existing data is properly associated with users
+  4. [ ] Test model relationships work correctly
+  5. [ ] Verify cascading deletes work if user is deleted
+  6. [ ] Test migration rollback functionality
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 70 - Update Food Management to be User-Specific with CRUD Operations
+- **Status**: Todo
+- **Description**: Update the food management system to be user-specific with full CRUD operations and foreign key protection. Users can only see and manage their own foods, with deletion protection when foods are referenced by measurements.
+- **Implementation Plan**: 
+  1. [ ] Update FoodController to filter foods by authenticated user
+  2. [ ] Update food creation to associate new foods with current user
+  3. [ ] Implement food editing functionality for user's own foods
+  4. [ ] Implement food deletion with foreign key constraint checking
+  5. [ ] Add error handling for deletion attempts when food is referenced
+  6. [ ] Update food management views to show user-specific foods only
+  7. [ ] Add confirmation dialogs for food deletion
+  8. [ ] Update food seeding to work with user-specific food records
+- **Test Plan**: 
+  1. [ ] Test users only see their own foods in management interface
+  2. [ ] Test food creation associates with correct user
+  3. [ ] Test food editing only works for owned foods
+  4. [ ] Test food deletion is blocked when referenced by measurements
+  5. [ ] Test error messages for blocked deletions are clear
+  6. [ ] Test confirmation dialogs work properly
+  7. [ ] Verify food filtering in measurement entry still works
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 71 - Update Medication Management to be User-Specific with CRUD Operations
+- **Status**: Todo
+- **Description**: Update the medication management system to be user-specific with full CRUD operations and foreign key protection. Users can only see and manage their own medications, with deletion protection when medications are referenced by measurements.
+- **Implementation Plan**: 
+  1. [ ] Create MedicationController for medication CRUD operations
+  2. [ ] Update medication queries to filter by authenticated user
+  3. [ ] Implement medication creation to associate with current user
+  4. [ ] Implement medication editing functionality for user's own medications
+  5. [ ] Implement medication deletion with foreign key constraint checking
+  6. [ ] Add error handling for deletion attempts when medication is referenced
+  7. [ ] Create medication management views similar to food management
+  8. [ ] Update medication seeding to work with user-specific medication records
+- **Test Plan**: 
+  1. [ ] Test users only see their own medications in management interface
+  2. [ ] Test medication creation associates with correct user
+  3. [ ] Test medication editing only works for owned medications
+  4. [ ] Test medication deletion is blocked when referenced by measurements
+  5. [ ] Test error messages for blocked deletions are clear
+  6. [ ] Test confirmation dialogs work properly
+  7. [ ] Verify medication filtering in measurement entry still works
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 

@@ -13,7 +13,12 @@ This document contains the requirements for the Logje health tracking web applic
   - Medication intake tracking (multiple medications per entry from predefined list)
   - Food consumption tracking with nutritional information (calories and carbohydrates)
 - **Six Measurement Types**: Complete measurement system with Weight, Glucose, Medication, Food, Exercise, Notes
-- **Medication Database**: Predefined medication list (Rybelsus, Metformine, Amlodipine, Kaliumlosartan, Atorvastatine)
+- **User-Specific Medication Database**: Each user maintains their own personal medication list
+  - Medications are linked to specific users and not shared between accounts
+  - Users can add, edit, and delete their own medications
+  - Medications can only be deleted when no medication measurements reference them
+  - Foreign key constraint protection prevents deletion of medications with existing measurements
+- **Medication Seeding**: System includes seeder with common medications (Rybelsus, Metformine, Amlodipine, Kaliumlosartan, Atorvastatine) for development/testing purposes
 - **Food Database**: Comprehensive food database with nutritional information per 100g
 - **Notes Support**: All measurement types can include optional notes for additional context
 - **Time-based Data Entry**: All measurements and notes include time of entry (24-hour format) with user-editable timestamps
@@ -36,11 +41,15 @@ This document contains the requirements for the Logje health tracking web applic
 ### Food Tracking Features
 
 #### Food Database Management
-- **Food Maintenance Interface**: Administrative functionality to manage food database
-  - Add new foods to database with name, description, calories per 100g, carbs per 100g
-  - Edit existing food nutritional information
-  - Delete foods from database (with safety checks for existing measurements)
-  - Searchable list of all foods in database for management
+- **User-Specific Food Database**: Each user has their own personal food database
+  - Foods are linked to specific users and not shared between accounts
+  - Users can only see and manage their own food items
+- **Food Maintenance Interface**: Personal food database management functionality
+  - Add new foods to personal database with name, description, calories per 100g, carbs per 100g
+  - Edit existing food nutritional information for owned foods
+  - Delete foods from personal database (only when no food measurements reference them)
+  - Searchable list of all personal foods in database for management
+  - Foreign key constraint protection: foods cannot be deleted if linked to existing measurements
 - **Food Database**: Persistent database with foods and their per-100g nutritional information
   - Each food record contains: name, description (optional), calories per 100g, carbohydrates per 100g
   - Pre-seeded with common foods (fruits, vegetables, proteins, grains, etc.)
@@ -118,6 +127,22 @@ This document contains the requirements for the Logje health tracking web applic
 - Consistent color scheme with health-themed icons (green apple for food, etc.)
 - Collapsible filters to reduce visual clutter
 - Clear visual feedback for user actions
+
+### Medication Management Features
+
+#### User-Specific Medication Database
+- **Personal Medication List**: Each user maintains their own private medication database
+  - Medications are linked to specific users and not shared between accounts
+  - Users can only access and manage their own medication records
+- **Medication CRUD Operations**: Complete medication management functionality
+  - **Create**: Users can add new medications to their personal list with name and description
+  - **Read**: Users can view all their medications in a searchable, manageable list
+  - **Update**: Users can edit medication names and descriptions for their owned medications
+  - **Delete**: Users can delete medications from their personal list with safety constraints
+- **Foreign Key Protection**: Medications cannot be deleted if referenced by existing measurements
+  - System prevents deletion of medications that have associated medication measurements
+  - Clear error messages when deletion is blocked due to existing references
+  - Foreign key constraints maintain data integrity automatically
 
 ## Technical Requirements
 
