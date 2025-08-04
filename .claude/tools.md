@@ -127,6 +127,58 @@ npx playwright test --reporter=list  # Console output only
 
 <!-- Debugging and troubleshooting tools -->
 
+## File Editing Best Practices
+
+### Edit Tool Usage Instructions
+
+**CRITICAL**: When using the Edit tool (MultiEdit, etc.), always provide sufficient unique context to avoid ambiguity errors.
+
+#### Rule 1: Unique Context Required
+Always include enough surrounding text to uniquely identify the target occurrence when the string appears multiple times in a file.
+
+**Correct Usage (unique context):**
+```
+Edit(.claude/tasks.md):
+  old_string: |
+    6. [ ] Run full test suite to ensure no regressions
+    - **Started**: 
+    - **Review**: 
+    - **Completed**: 
+  new_string: |
+    6. [x] Run full test suite to ensure no regressions  
+    - **Started**: 2025-08-04 14:00
+    - **Review**: 2025-08-04 15:00
+    - **Completed**: 2025-08-04 15:20
+```
+
+#### Rule 2: Use replace_all for Global Changes
+Set `replace_all: true` when intentionally replacing every occurrence of a string.
+
+**Correct Usage (replace all):**
+```
+Edit(.claude/tasks.md):
+  old_string: "- **Duration**:"
+  new_string: "- **Duration (estimated)**:"
+  replace_all: true
+```
+
+#### Rule 3: Avoid Ambiguous Strings
+Never use short, generic strings that appear multiple times without sufficient context.
+
+**Incorrect (will cause ambiguity errors):**
+```
+Edit(.claude/tasks.md):
+  old_string: "- **Duration**: "
+  new_string: "- **Duration**: 30 minutes"
+```
+
+**Error Message Indicates**: "Found X matches of the string to replace, but replace_all is false"
+
+#### Solution Strategies:
+1. **Add More Context**: Include 2-3 lines before/after the target
+2. **Use replace_all**: If you want to change all occurrences  
+3. **Be More Specific**: Use unique identifiers like task numbers, function names, etc.
+
 ## Resolved Tool Issues
 
 ### Playwright Browser Control Issue
