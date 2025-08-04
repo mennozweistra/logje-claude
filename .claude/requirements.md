@@ -128,6 +128,30 @@ This document contains the requirements for the Logje health tracking web applic
 - Collapsible filters to reduce visual clutter
 - Clear visual feedback for user actions
 
+#### Mobile UI Optimization
+- **Compact Mobile Layout**: Mobile interface uses compact design with minimal spacing between UI elements to maximize content display
+- **Desktop Spacious Layout**: Desktop interface can use more generous spacing and larger elements for comfortable viewing
+- **Minimized Mobile Header**: Header size reduced on mobile devices to preserve screen real estate for content
+- **Measurement-Focused Dashboard**: Dashboard prioritizes display of measurement entries over creation controls
+- **Repositioned Creation Controls**: Measurement creation buttons moved below measurement entries on mobile to reduce visual prominence and space usage
+- **Touch-Friendly Targets**: Maintain appropriate touch target sizes (minimum 44px) while using compact layouts
+- **Portrait Mode Optimization**: In portrait orientation, less critical details (such as measurement type labels) may use smaller fonts or be visually de-emphasized
+- **Swipe Date Navigation** *(nice-to-have)*: Enable swipe gestures for date navigation on mobile devices
+
+#### User Story: Mobile Dashboard Experience
+**As a** mobile user reviewing my daily measurements  
+**I want** a compact, focused dashboard interface  
+**So that** I can quickly view my measurement data without excessive scrolling or visual clutter  
+
+**Acceptance Criteria:**
+- Mobile dashboard displays measurements prominently with minimal spacing
+- Header takes up minimal vertical space on mobile screens
+- Creation buttons are positioned below measurement entries, not prominently at the top
+- Touch targets remain easily tappable (minimum 44x44px)
+- Less important details (like measurement type labels) use appropriately smaller fonts in portrait mode
+- Desktop layout maintains current spacious design for comfortable desktop use
+- No information is permanently hidden - all current functionality remains accessible
+
 ### Medication Management Features
 
 #### User-Specific Medication Database
