@@ -692,8 +692,8 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 69 - Update Food Management to be User-Specific with CRUD Operations
-- **Status**: Review
+### [x] 69 - Update Food Management to be User-Specific with CRUD Operations
+- **Status**: Completed
 - **Description**: Update the food management system to be user-specific with full CRUD operations and foreign key protection. Users can only see and manage their own foods, with deletion protection when foods are referenced by measurements. **REQUIRES**: Task 68 completion.
 - **Implementation Plan**: 
   1. [x] Update FoodManagement Livewire component to filter foods by authenticated user
@@ -721,8 +721,8 @@ All remaining tasks completed on 2025-08-03:
 - **Issues Summary**: No issues found. All functionality implemented successfully with comprehensive test coverage (15 passing tests). User-specific food management now works correctly with proper authorization, foreign key protection, and automatic user scoping.
 - **Started**: 2025-08-04 21:04:07
 - **Review**: 2025-08-04 21:08:10
-- **Completed**: 
-- **Duration**: 
+- **Completed**: 2025-08-04 21:18:51
+- **Duration**: 15 minutes
 
 ---
 
