@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class Food extends Model
 {
@@ -16,6 +17,7 @@ class Food extends Model
         'description',
         'carbs_per_100g',
         'calories_per_100g',
+        'user_id',
     ];
 
     protected $casts = [
@@ -40,11 +42,41 @@ class Food extends Model
     }
 
     /**
+     * Get the user that owns the food
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Get the food measurements for this food
      */
     public function foodMeasurements()
     {
         return $this->hasMany(FoodMeasurement::class);
+    }
+
+    /**
+     * Boot the model and add global scope for user filtering
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Add global scope to filter by authenticated user
+        static::addGlobalScope('user', function (Builder $builder) {
+            if (auth()->check()) {
+                $builder->where('user_id', auth()->id());
+            }
+        });
+
+        // Automatically set user_id when creating
+        static::creating(function ($food) {
+            if (auth()->check() && !$food->user_id) {
+                $food->user_id = auth()->id();
+            }
+        });
     }
 
     /**

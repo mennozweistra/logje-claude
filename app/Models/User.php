@@ -71,4 +71,20 @@ class User extends Authenticatable
     {
         return $this->measurements()->ofType($type);
     }
+
+    /**
+     * Get all foods for this user
+     */
+    public function foods(): HasMany
+    {
+        return $this->hasMany(Food::class);
+    }
+
+    /**
+     * Get all medications for this user
+     */
+    public function medications(): HasMany
+    {
+        return $this->hasMany(Medication::class);
+    }
 }

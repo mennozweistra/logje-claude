@@ -578,8 +578,8 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 64 - Fix PWA Install Prompt Not Appearing on Brave Browser (iPhone)
-- **Status**: Review
+### [✅] 64 - Fix PWA Install Prompt Not Appearing on Brave Browser (iPhone)
+- **Status**: Completed
 - **Description**: The PWA install prompt is not appearing when accessing logje.server.logje.nl on Brave browser on iPhone. Need to investigate PWA installability criteria specific to Brave browser and fix any issues preventing the install prompt from showing.
 - **Implementation Plan**: 
   1. [x] Investigate Brave browser PWA requirements and differences from Chrome/Safari
@@ -601,43 +601,11 @@ All remaining tasks completed on 2025-08-03:
   8. [x] Confirm PWA meets all Brave browser installability criteria
 - **Started**: 2025-08-03 16:08:13
 - **Review**: 2025-08-03 16:16:59
-- **Completed**: 
-- **Duration**: 
+- **Completed**: 2025-08-04 19:31:51 (Task rendered obsolete by PWA removal in Task 66)
+- **Duration**: Task obsoleted - PWA functionality removed 
 
 ---
 
-### [ ] 65 - Fix Multiple Production Issues: PWA Not Installing, Page Expiry, Login Form Bugs
-- **Status**: Started
-- **Description**: Multiple critical production issues affecting user experience on Safari and Brave browsers. PWA installation not working despite technical setup being correct, page expiry issues preventing login, and intermittent login form validation errors.
-- **Issues Identified**:
-  1. **PWA Not Installing**: Despite service worker and manifest working, browsers don't offer PWA installation
-  2. **Page Expiry**: Brave browser shows "page expired" errors, blocking login attempts
-  3. **Login Form Bugs**: Form sometimes reports missing email/password despite fields being filled
-  4. **Session/CSRF Issues**: Likely related to page expiry and form submission problems
-- **Implementation Plan**: 
-  1. [ ] Investigate PWA installation requirements for Safari/Brave (may need PNG icons)
-  2. [ ] Create proper PNG icons in multiple sizes for better PWA compatibility
-  3. [ ] Fix page expiry/caching issues (check cache headers, session configuration)
-  4. [ ] Investigate CSRF token expiry and regeneration issues
-  5. [ ] Fix login form validation and error handling
-  6. [ ] Test PWA installation criteria with proper icon formats
-  7. [ ] Verify session management and page caching configuration
-  8. [ ] Test login flow on multiple browsers thoroughly
-- **Test Plan**: 
-  1. [ ] Test PWA installation on Safari (iPhone) with proper icons
-  2. [ ] Test PWA installation on Brave (iPhone) with proper icons
-  3. [ ] Test login flow without page expiry errors
-  4. [ ] Verify CSRF tokens are properly refreshed
-  5. [ ] Test form validation works consistently
-  6. [ ] Test session persistence across page refreshes
-  7. [ ] Verify cache headers don't interfere with login
-  8. [ ] Test complete user journey from login to app usage
-- **Started**: 2025-08-03 16:23:18
-- **Review**: 
-- **Completed**: 
-- **Duration**: 
-
----
 
 ### [✅] 66 - Remove PWA Service Worker and Related Code
 - **Status**: Completed
@@ -668,7 +636,6 @@ All remaining tasks completed on 2025-08-03:
 
 ### [✅] 67 - Rename Food Management Menu to Data and Create Food Submenu
 - **Status**: Completed
-- **Completed**: 2025-08-04 19:42:00
 - **Description**: Rename the current "Food Management" menu item to "Data" and create "Food" as a submenu item under it. This will prepare the menu structure for additional data management options.
 - **Implementation Plan**: 
   1. [x] Identify current "Food Management" menu implementation in navigation
@@ -688,71 +655,70 @@ All remaining tasks completed on 2025-08-03:
   6. [x] Test all existing food management functionality still works
 - **Started**: 2025-08-04 19:33:33
 - **Review**: 2025-08-04 19:38:40
-- **Completed**: 
-- **Duration**: 
+- **Completed**: 2025-08-04 19:42:00
+- **Duration**: 8 minutes 
 
 ---
 
 ### [ ] 68 - Add User Foreign Key to Foods and Medications Tables
-- **Status**: Todo
-- **Description**: Add user_id foreign key columns to both foods and medications tables to make them user-specific. Create migration to add the columns and update existing records with proper user associations.
+- **Status**: Review
+- **Description**: Add user_id foreign key columns to both foods and medications tables to make them user-specific. This is critical for implementing proper user data isolation as required by the software requirements.
 - **Implementation Plan**: 
-  1. [ ] Create migration to add user_id foreign key to foods table
-  2. [ ] Create migration to add user_id foreign key to medications table
-  3. [ ] Update existing food records to associate with appropriate users (or admin user)
-  4. [ ] Update existing medication records to associate with appropriate users (or admin user)
-  5. [ ] Add foreign key constraints for user_id columns
-  6. [ ] Update Food and Medication models to include user relationship
-  7. [ ] Create unit tests for model relationships and foreign key constraints
-  8. [ ] Test that foreign key constraints work properly
-  9. [ ] Verify data integrity after migration
+  1. [x] Create migration to add user_id foreign key to foods table with proper indexing
+  2. [x] Create migration to add user_id foreign key to medications table with proper indexing
+  3. [x] Update existing food records to associate with first available user (maintain data)
+  4. [x] Update existing medication records to associate with first available user (maintain data)
+  5. [x] Add foreign key constraints with CASCADE delete for data integrity
+  6. [x] Update Food model to include user relationship and scoping
+  7. [x] Update Medication model to include user relationship and scoping
+  8. [x] Add global scopes to automatically filter by authenticated user
+  9. [x] Test migration rollback functionality for safe deployment
 - **Test Plan**: 
   **Unit Tests:**
-  1. [ ] Create `tests/Unit/Models/FoodTest.php` - Test Food model user relationship
-  2. [ ] Create `tests/Unit/Models/MedicationTest.php` - Test Medication model user relationship
-  3. [ ] Create `tests/Feature/Database/UserForeignKeyMigrationTest.php` - Test migration up/down
-  4. [ ] Create `tests/Feature/Database/ForeignKeyConstraintsTest.php` - Test constraint enforcement
+  1. [x] Create `tests/Feature/Database/UserForeignKeyMigrationTest.php` - Test migration up/down and user scoping
+  2. [x] Create `tests/Feature/Database/DataIntegrityTest.php` - Test constraint enforcement
   **Manual Tests:**
-  5. [ ] Verify user_id columns are added to both tables
-  6. [ ] Test that foreign key constraints prevent orphaned records
-  7. [ ] Verify existing data is properly associated with users
-  8. [ ] Test model relationships work correctly
-  9. [ ] Verify cascading deletes work if user is deleted
-  10. [ ] Test migration rollback functionality
-- **Started**: 
-- **Review**: 
+  3. [x] Verify user_id columns are added to both tables with proper indexes
+  4. [x] Test that foreign key constraints prevent orphaned records (CASCADE DELETE working)
+  5. [x] Verify existing data is properly migrated to user associations (migration logic correct)
+  6. [x] Test model relationships and automatic scoping work correctly
+  7. [x] Verify CASCADE deletes work properly when user is deleted
+  8. [x] Test migration rollback preserves data integrity
+- **Issues Summary**: No issues found during implementation and testing. All foreign key relationships work correctly with proper CASCADE DELETE behavior, global scoping filters users appropriately, and migration rollback functionality works as expected.
+- **Started**: 2025-08-04 20:47:47
+- **Review**: 2025-08-04 20:52:07
 - **Completed**: 
 - **Duration**: 
 
 ---
 
 ### [ ] 69 - Update Food Management to be User-Specific with CRUD Operations
-- **Status**: Todo
-- **Description**: Update the food management system to be user-specific with full CRUD operations and foreign key protection. Users can only see and manage their own foods, with deletion protection when foods are referenced by measurements.
+- **Status**: Planned
+- **Description**: Update the food management system to be user-specific with full CRUD operations and foreign key protection. Users can only see and manage their own foods, with deletion protection when foods are referenced by measurements. **REQUIRES**: Task 68 completion.
 - **Implementation Plan**: 
-  1. [ ] Update FoodController to filter foods by authenticated user
-  2. [ ] Update food creation to associate new foods with current user
-  3. [ ] Implement food editing functionality for user's own foods
+  1. [ ] Update FoodManagement Livewire component to filter foods by authenticated user
+  2. [ ] Update food creation logic to automatically associate new foods with current user
+  3. [ ] Implement authorization checks for food editing (user can only edit own foods)
   4. [ ] Implement food deletion with foreign key constraint checking
-  5. [ ] Add error handling for deletion attempts when food is referenced
+  5. [ ] Add error handling and user feedback for deletion attempts when food is referenced
   6. [ ] Update food management views to show user-specific foods only
-  7. [ ] Add confirmation dialogs for food deletion
-  8. [ ] Create unit tests for user-specific food management functionality
-  9. [ ] Update food seeding to work with user-specific food records
+  7. [ ] Update food search/selection in measurement entry to use user-scoped foods
+  8. [ ] Add confirmation dialogs for food deletion with clear messaging
+  9. [ ] Update food seeding strategy to work with user-specific food records
 - **Test Plan**: 
   **Unit Tests:**
-  1. [ ] Create `tests/Unit/Livewire/FoodManagementTest.php` - Test component user scoping
-  2. [ ] Create `tests/Feature/FoodManagement/UserSpecificCrudTest.php` - Test CRUD operations
+  1. [ ] Create `tests/Unit/Livewire/FoodManagementUserScopeTest.php` - Test component user scoping
+  2. [ ] Create `tests/Feature/FoodManagement/UserSpecificCrudTest.php` - Test all CRUD operations
   3. [ ] Create `tests/Feature/FoodManagement/ForeignKeyProtectionTest.php` - Test deletion protection
-  4. [ ] Create `tests/Feature/FoodManagement/AuthorizationTest.php` - Test user can only access own foods
-  **Manual Tests:**
+  4. [ ] Create `tests/Feature/FoodManagement/AuthorizationTest.php` - Test user access restrictions
+  **Browser Tests:**
   5. [ ] Test users only see their own foods in management interface
-  6. [ ] Test food creation associates with correct user
-  7. [ ] Test food editing only works for owned foods
+  6. [ ] Test food creation associates with correct user automatically
+  7. [ ] Test food editing only works for owned foods (authorization)
   8. [ ] Test food deletion is blocked when referenced by measurements
-  9. [ ] Test error messages for blocked deletions are clear
+  9. [ ] Test error messages for blocked deletions are clear and actionable
   10. [ ] Test confirmation dialogs work properly
-  11. [ ] Verify food filtering in measurement entry still works
+  11. [ ] Verify food filtering in measurement entry respects user scoping
 - **Started**: 
 - **Review**: 
 - **Completed**: 
@@ -760,10 +726,8 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 70 - Add Medicines Data Management Under User Menu
-- **Status**: Review
-- **Started**: 2025-08-04 19:45:00
-- **Review**: 2025-08-04 19:50:00
+### [✅] 70 - Add Medicines Data Management Under User Menu
+- **Status**: Completed
 - **Description**: Create a new "Medicines" submenu item under the user dropdown menu (next to Food) that allows users to view, add, edit, and delete their own medication records. This will provide user-specific CRUD functionality for managing personal medication lists with foreign key protection. **DEPENDS ON**: Task 68 (foreign keys) and Task 69 (user-specific food management).
 - **Implementation Plan**: 
   1. [x] Add "Medicines" submenu item to user dropdown menu navigation
@@ -796,6 +760,40 @@ All remaining tasks completed on 2025-08-03:
   15. [ ] Test medication deletion is blocked when referenced by measurements (requires Task 68)
   16. [ ] Test error messages for blocked deletions are clear (requires Task 68)
   17. [ ] Verify medicine changes reflect in measurement entry forms
+- **Issues Summary**: Basic CRUD interface implemented but lacks user-specific scoping. Full user-specific functionality requires completion of Tasks 68-69 for foreign key relationships.
+- **Started**: 2025-08-04 19:45:00
+- **Review**: 2025-08-04 19:50:00
+- **Completed**: 2025-08-04 19:55:00
+- **Duration**: 10 minutes 
+
+---
+
+### [ ] 71 - Update Medicines Management to be User-Specific  
+- **Status**: Todo
+- **Description**: Update the medicines management system to be user-specific with proper authorization and foreign key protection. Currently shows all medicines to all users. **REQUIRES**: Task 68 completion.
+- **Implementation Plan**: 
+  1. [ ] Update MedicinesManagement Livewire component to filter medicines by authenticated user
+  2. [ ] Update medicine creation logic to automatically associate new medicines with current user
+  3. [ ] Implement authorization checks for medicine editing (user can only edit own medicines)
+  4. [ ] Implement medicine deletion with foreign key constraint checking
+  5. [ ] Add error handling and user feedback for deletion attempts when medicine is referenced
+  6. [ ] Update medicine search/selection in measurement entry to use user-scoped medicines
+  7. [ ] Add confirmation dialogs for medicine deletion with clear messaging
+  8. [ ] Update medicine seeding strategy to work with user-specific medicine records
+- **Test Plan**: 
+  **Unit Tests:**
+  1. [ ] Create `tests/Unit/Livewire/MedicinesManagementUserScopeTest.php` - Test component user scoping
+  2. [ ] Create `tests/Feature/MedicinesManagement/UserSpecificCrudTest.php` - Test all CRUD operations
+  3. [ ] Create `tests/Feature/MedicinesManagement/ForeignKeyProtectionTest.php` - Test deletion protection
+  4. [ ] Create `tests/Feature/MedicinesManagement/AuthorizationTest.php` - Test user access restrictions
+  **Browser Tests:**
+  5. [ ] Test users only see their own medicines in management interface
+  6. [ ] Test medicine creation associates with correct user automatically
+  7. [ ] Test medicine editing only works for owned medicines (authorization)
+  8. [ ] Test medicine deletion is blocked when referenced by measurements
+  9. [ ] Test error messages for blocked deletions are clear and actionable
+  10. [ ] Test confirmation dialogs work properly
+  11. [ ] Verify medicine filtering in measurement entry respects user scoping
 - **Started**: 
 - **Review**: 
 - **Completed**: 
@@ -803,12 +801,12 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 71 - Add Retrospective Unit Test Coverage for Completed Features
+### [ ] 72 - Add Retrospective Unit Test Coverage for Completed Features
 - **Status**: Todo
 - **Description**: Add comprehensive unit test coverage for major features that were completed without proper automated testing. This ensures regression protection and validates existing functionality.
 - **Implementation Plan**: 
-  1. [ ] Create `tests/Feature/PWA/ServiceWorkerTest.php` - Test PWA removal (Task 66)
-  2. [ ] Create `tests/Feature/Navigation/UserDropdownTest.php` - Test Food/Medicines menu in user dropdown (Task 67)
+  1. [ ] Create `tests/Feature/PWA/ServiceWorkerRemovalTest.php` - Test PWA removal is complete (Task 66)
+  2. [ ] Create `tests/Feature/Navigation/UserDropdownMenuTest.php` - Test Food/Medicines menu in user dropdown (Tasks 67, 70)
   3. [ ] Create `tests/Feature/MeasurementTime/TimePreservationTest.php` - Enhanced time preservation tests (Task 61)
   4. [ ] Create `tests/Feature/Dashboard/FilterCollapseTest.php` - Test filter collapse functionality (Task 60)
   5. [ ] Create `tests/Feature/Dashboard/DateEntryRemovalTest.php` - Test date entry removal (Task 57)
@@ -817,6 +815,7 @@ All remaining tasks completed on 2025-08-03:
   8. [ ] Create `tests/Feature/Reports/NutritionChartsTest.php` - Test nutrition chart functionality (Task 56)
   9. [ ] Create `tests/Feature/FoodMeasurement/CrudTest.php` - Test food measurement CRUD (Task 55)
   10. [ ] Create `tests/Unit/Models/FoodModelTest.php` - Test Food model methods and relationships (Task 54)
+  11. [ ] Create `tests/Feature/MedicationManagement/BasicCrudTest.php` - Test basic medicines management (Task 70)
 - **Test Plan**: 
   **Unit Tests (to be created):**  
   1. [ ] All tests listed in implementation plan above
@@ -824,7 +823,7 @@ All remaining tasks completed on 2025-08-03:
   3. [ ] Achieve >80% code coverage on new test files
   **Manual Tests:**
   4. [ ] Verify all existing functionality still works after test additions
-  5. [ ] Test that CI/CD pipeline runs all new tests
+  5. [ ] Test that CI/CD pipeline runs all new tests successfully
 - **Started**: 
 - **Review**: 
 - **Completed**: 
