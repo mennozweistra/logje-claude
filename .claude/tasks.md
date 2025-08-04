@@ -801,6 +801,29 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
+### [ ] 73 - Replace Red Medicine Icon with Non-Red Alternative
+- **Status**: Todo
+- **Description**: Replace the current red pill emoji (💊) used for medicine/medication with a non-red alternative to reduce color dominance in listings that contain both glucose entries and medicine entries. The red color is becoming too visually prominent when both measurement types are displayed together.
+- **Implementation Plan**: 
+  1. [ ] Choose a suitable non-red medicine icon alternative (e.g., 💉, 🩹, ⚕️, or a simple colored pill in blue/green/purple)
+  2. [ ] Replace medicine icon in dashboard measurement type buttons (dashboard.blade.php lines 43, 87)
+  3. [ ] Replace medicine icon in dashboard measurement display icons (dashboard.blade.php line 133)
+  4. [ ] Verify consistency across all places where medicine icon appears
+  5. [ ] Test visual balance in measurement listings with glucose and medicine entries together
+- **Test Plan**: 
+  **Manual Tests:**
+  1. [ ] Verify medicine icon displays correctly in measurement type buttons on dashboard
+  2. [ ] Verify medicine icon displays correctly in measurement entries list
+  3. [ ] Verify medicine icon displays correctly in filter buttons
+  4. [ ] Confirm visual balance improvement when viewing mixed glucose/medicine measurement listings
+  5. [ ] Test icon visibility and readability across different screen sizes
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
 ### [ ] 72 - Add Retrospective Unit Test Coverage for Completed Features
 - **Status**: Todo
 - **Description**: Add comprehensive unit test coverage for major features that were completed without proper automated testing. This ensures regression protection and validates existing functionality.
