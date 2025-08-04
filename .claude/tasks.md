@@ -770,7 +770,7 @@ All remaining tasks completed on 2025-08-03:
 
 ### [ ] 71 - Update Medicines Management to be User-Specific  
 - **Status**: Todo
-- **Description**: Update the medicines management system to be user-specific with proper authorization and foreign key protection. Currently shows all medicines to all users. **REQUIRES**: Task 68 completion.
+- **Description**: Update the medicines management system to be user-specific with proper authorization and foreign key protection. Currently shows all medicines to all users. Since Task 68 (user foreign keys) is now completed, this task can implement user-specific medicine management following the same pattern as Task 69 (food management).
 - **Implementation Plan**: 
   1. [ ] Update MedicinesManagement Livewire component to filter medicines by authenticated user
   2. [ ] Update medicine creation logic to automatically associate new medicines with current user
@@ -824,29 +824,71 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 72 - Add Retrospective Unit Test Coverage for Completed Features
+### [ ] 72 - Add Critical Retrospective Test Coverage (Phase 1)
 - **Status**: Todo
-- **Description**: Add comprehensive unit test coverage for major features that were completed without proper automated testing. This ensures regression protection and validates existing functionality.
+- **Description**: Add test coverage for the most critical completed features that lack automated testing. This first phase focuses on user-facing functionality and navigation changes to ensure regression protection. **NOTE**: This task was broken down from a larger task that exceeded target duration.
 - **Implementation Plan**: 
-  1. [ ] Create `tests/Feature/PWA/ServiceWorkerRemovalTest.php` - Test PWA removal is complete (Task 66)
-  2. [ ] Create `tests/Feature/Navigation/UserDropdownMenuTest.php` - Test Food/Medicines menu in user dropdown (Tasks 67, 70)
-  3. [ ] Create `tests/Feature/MeasurementTime/TimePreservationTest.php` - Enhanced time preservation tests (Task 61)
-  4. [ ] Create `tests/Feature/Dashboard/FilterCollapseTest.php` - Test filter collapse functionality (Task 60)
-  5. [ ] Create `tests/Feature/Dashboard/DateEntryRemovalTest.php` - Test date entry removal (Task 57)
-  6. [ ] Create `tests/Unit/Validation/GlucoseValidationTest.php` - Test glucose value validation (Task 58)
-  7. [ ] Create `tests/Feature/Dashboard/MeasurementReorderTest.php` - Test measurement type reordering (Task 59)
-  8. [ ] Create `tests/Feature/Reports/NutritionChartsTest.php` - Test nutrition chart functionality (Task 56)
-  9. [ ] Create `tests/Feature/FoodMeasurement/CrudTest.php` - Test food measurement CRUD (Task 55)
-  10. [ ] Create `tests/Unit/Models/FoodModelTest.php` - Test Food model methods and relationships (Task 54)
-  11. [ ] Create `tests/Feature/MedicationManagement/BasicCrudTest.php` - Test basic medicines management (Task 70)
+  1. [ ] Create `tests/Feature/Navigation/UserDropdownMenuTest.php` - Test Food/Medicines menu in user dropdown (Tasks 67, 70)
+  2. [ ] Create `tests/Feature/Dashboard/FilterCollapseTest.php` - Test filter collapse functionality (Task 60)  
+  3. [ ] Create `tests/Feature/Dashboard/DateEntryRemovalTest.php` - Test date entry removal (Task 57)
+  4. [ ] Create `tests/Feature/PWA/ServiceWorkerRemovalTest.php` - Test PWA removal is complete (Task 66)
 - **Test Plan**: 
-  **Unit Tests (to be created):**  
-  1. [ ] All tests listed in implementation plan above
-  2. [ ] Run full test suite to ensure no regressions
-  3. [ ] Achieve >80% code coverage on new test files
+  **Feature Tests:**  
+  1. [ ] Test navigation menu shows Food and Medicines under user dropdown
+  2. [ ] Test filter collapse/expand functionality works correctly
+  3. [ ] Test date entry input has been removed from dashboard
+  4. [ ] Test PWA service worker and manifest files are properly removed
   **Manual Tests:**
-  4. [ ] Verify all existing functionality still works after test additions
-  5. [ ] Test that CI/CD pipeline runs all new tests successfully
+  5. [ ] Verify all navigation links work correctly after test creation
+  6. [ ] Run full test suite to ensure no regressions
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 74 - Add Retrospective Test Coverage (Phase 2) - Measurement & Validation
+- **Status**: Todo  
+- **Description**: Add test coverage for measurement-related functionality that was completed without comprehensive testing. This phase focuses on measurement handling, validation, and time preservation features.
+- **Implementation Plan**: 
+  1. [ ] Create `tests/Feature/MeasurementTime/TimePreservationTest.php` - Enhanced time preservation tests (Task 61)
+  2. [ ] Create `tests/Unit/Validation/GlucoseValidationTest.php` - Test glucose value validation (Task 58)
+  3. [ ] Create `tests/Feature/Dashboard/MeasurementReorderTest.php` - Test measurement type reordering (Task 59)
+  4. [ ] Create `tests/Feature/FoodMeasurement/CrudTest.php` - Test food measurement CRUD (Task 55)
+- **Test Plan**: 
+  **Unit Tests:**
+  1. [ ] Test glucose validation rules and error handling
+  **Feature Tests:**
+  2. [ ] Test user-entered times are preserved during measurement creation/editing
+  3. [ ] Test measurement types display in correct order (Weight, Glucose, Medication, Food, Exercise, Notes)
+  4. [ ] Test food measurement CRUD operations work correctly
+  **Manual Tests:**
+  5. [ ] Run full test suite to ensure no regressions
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 75 - Add Retrospective Test Coverage (Phase 3) - Models & Reports  
+- **Status**: Todo
+- **Description**: Add test coverage for model methods, relationships, and reporting functionality that was completed without comprehensive testing. This final phase covers backend logic and reporting features.
+- **Implementation Plan**: 
+  1. [ ] Create `tests/Unit/Models/FoodModelTest.php` - Test Food model methods and relationships (Task 54)
+  2. [ ] Create `tests/Feature/Reports/NutritionChartsTest.php` - Test nutrition chart functionality (Task 56)
+  3. [ ] Create `tests/Feature/MedicationManagement/BasicCrudTest.php` - Test basic medicines management (Task 70)
+- **Test Plan**: 
+  **Unit Tests:**
+  1. [ ] Test Food model calculation methods (calculateCalories, calculateCarbs)
+  2. [ ] Test Food model relationships and search functionality
+  **Feature Tests:**
+  3. [ ] Test nutrition charts display correct data and date ranges
+  4. [ ] Test basic medicines management CRUD operations
+  **Manual Tests:**
+  5. [ ] Verify all model methods work correctly
+  6. [ ] Run full test suite to ensure no regressions
 - **Started**: 
 - **Review**: 
 - **Completed**: 
