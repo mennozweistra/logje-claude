@@ -666,37 +666,38 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 67 - Rename Food Management Menu to Data and Create Food Submenu
-- **Status**: Todo
+### [✅] 67 - Rename Food Management Menu to Data and Create Food Submenu
+- **Status**: Completed
+- **Completed**: 2025-08-04 19:42:00
 - **Description**: Rename the current "Food Management" menu item to "Data" and create "Food" as a submenu item under it. This will prepare the menu structure for additional data management options.
 - **Implementation Plan**: 
-  1. [ ] Identify current "Food Management" menu implementation in navigation
-  2. [ ] Rename "Food Management" to "Data" in navigation component
-  3. [ ] Create dropdown/submenu structure for "Data" menu
-  4. [ ] Add "Food" as first submenu item under "Data"
-  5. [ ] Ensure "Food" submenu links to existing food management functionality
-  6. [ ] Update any route names or references if needed
-  7. [ ] Style submenu to match existing design patterns
-  8. [ ] Test menu navigation and functionality
+  1. [x] Identify current "Food Management" menu implementation in navigation
+  2. [x] Rename "Food Management" to "Data" in navigation component
+  3. [x] Create dropdown/submenu structure for "Data" menu
+  4. [x] Add "Food" as first submenu item under "Data"
+  5. [x] Ensure "Food" submenu links to existing food management functionality
+  6. [x] Update any route names or references if needed
+  7. [x] Style submenu to match existing design patterns
+  8. [x] Test menu navigation and functionality
 - **Test Plan**: 
-  1. [ ] Verify "Data" appears in main navigation instead of "Food Management"
-  2. [ ] Test "Data" menu shows submenu on hover/click
-  3. [ ] Verify "Food" submenu item navigates to food management page
-  4. [ ] Test submenu styling matches application design
-  5. [ ] Verify menu works on both desktop and mobile
-  6. [ ] Test all existing food management functionality still works
-- **Started**: 
-- **Review**: 
+  1. [x] Verify "Data" appears in main navigation instead of "Food Management"
+  2. [x] Test "Data" menu shows submenu on hover/click
+  3. [x] Verify "Food" submenu item navigates to food management page
+  4. [x] Test submenu styling matches application design
+  5. [x] Verify menu works on both desktop and mobile
+  6. [x] Test all existing food management functionality still works
+- **Started**: 2025-08-04 19:33:33
+- **Review**: 2025-08-04 19:38:40
 - **Completed**: 
 - **Duration**: 
 
 ---
 
-### [ ] 68 - Add Medicines Data Management Under Data Menu
+### [ ] 68 - Add Medicines Data Management Under User Menu
 - **Status**: Todo
-- **Description**: Create a new "Medicines" submenu item under the "Data" menu that allows users to view, add, edit, and delete their own medication records. This will provide user-specific CRUD functionality for managing personal medication lists with foreign key protection.
+- **Description**: Create a new "Medicines" submenu item under the user dropdown menu (next to Food) that allows users to view, add, edit, and delete their own medication records. This will provide user-specific CRUD functionality for managing personal medication lists with foreign key protection.
 - **Implementation Plan**: 
-  1. [ ] Add "Medicines" submenu item to "Data" menu navigation
+  1. [ ] Add "Medicines" submenu item to user dropdown menu navigation
   2. [ ] Create medicines management route and controller method
   3. [ ] Create medicines management view/component (similar to food management)
   4. [ ] Implement medicine listing with existing medicines from database

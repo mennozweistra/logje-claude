@@ -36,9 +36,6 @@ new class extends Component
                     <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')" wire:navigate>
                         {{ __('Reports') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('food-management')" :active="request()->routeIs('food-management')" wire:navigate>
-                        {{ __('Food Management') }}
-                    </x-nav-link>
                 </div>
             </div>
 
@@ -60,6 +57,11 @@ new class extends Component
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile')" wire:navigate>
                             {{ __('Profile') }}
+                        </x-dropdown-link>
+
+                        <!-- Data Management -->
+                        <x-dropdown-link :href="route('food-management')" wire:navigate>
+                            {{ __('Food') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -93,9 +95,15 @@ new class extends Component
             <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')" wire:navigate>
                 {{ __('Reports') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('food-management')" :active="request()->routeIs('food-management')" wire:navigate>
-                {{ __('Food Management') }}
-            </x-responsive-nav-link>
+            <!-- Mobile Data Menu -->
+            <div class="space-y-1">
+                <div class="text-gray-600 font-medium px-4 py-2 text-sm border-l-4 border-transparent">
+                    {{ __('Data') }}
+                </div>
+                <x-responsive-nav-link :href="route('food-management')" :active="request()->routeIs('food-management')" wire:navigate class="pl-8">
+                    {{ __('Food') }}
+                </x-responsive-nav-link>
+            </div>
         </div>
 
         <!-- Responsive Settings Options -->
