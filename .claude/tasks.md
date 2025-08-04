@@ -768,8 +768,8 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 71 - Update Medicines Management to be User-Specific  
-- **Status**: Review
+### [x] 71 - Update Medicines Management to be User-Specific  
+- **Status**: Completed
 - **Description**: Update the medicines management system to be user-specific with proper authorization and foreign key protection. Currently shows all medicines to all users. Since Task 68 (user foreign keys) is now completed, this task can implement user-specific medicine management following the same pattern as Task 69 (food management).
 - **Implementation Plan**: 
   1. [x] Update MedicinesManagement Livewire component to filter medicines by authenticated user
@@ -796,33 +796,33 @@ All remaining tasks completed on 2025-08-03:
   11. [x] All 18 tests passing - comprehensive user-specific functionality verified
 - **Started**: 2025-08-04 22:20:18
 - **Review**: 2025-08-04 22:24:20
-- **Completed**: 
-- **Duration**: 
+- **Completed**: 2025-08-04 22:31:37
+- **Duration**: 11 minutes 19 seconds
 - **Issues Summary**: No issues found during implementation and testing. All user-specific functionality implemented successfully with comprehensive test coverage (18 passing tests). Medicine management now properly isolates user data with authorization checks, foreign key protection, and user-scoped queries following the same pattern as Task 69 (food management).
 
 ---
 
-### [ ] 72 - Add Critical Retrospective Test Coverage (Phase 1)
-- **Status**: Todo
+### [✅] 72 - Add Critical Retrospective Test Coverage (Phase 1)
+- **Status**: Completed
 - **Description**: Add test coverage for the most critical completed features that lack automated testing. This first phase focuses on user-facing functionality and navigation changes to ensure regression protection. **NOTE**: This task was broken down from a larger task that exceeded target duration.
 - **Implementation Plan**: 
-  1. [ ] Create `tests/Feature/Navigation/UserDropdownMenuTest.php` - Test Food/Medicines menu in user dropdown (Tasks 67, 70)
-  2. [ ] Create `tests/Feature/Dashboard/FilterCollapseTest.php` - Test filter collapse functionality (Task 60)  
-  3. [ ] Create `tests/Feature/Dashboard/DateEntryRemovalTest.php` - Test date entry removal (Task 57)
-  4. [ ] Create `tests/Feature/PWA/ServiceWorkerRemovalTest.php` - Test PWA removal is complete (Task 66)
+  1. [x] Create `tests/Feature/Navigation/UserDropdownMenuTest.php` - Test Food/Medicines menu in user dropdown (Tasks 67, 70)
+  2. [x] Create `tests/Feature/Dashboard/FilterCollapseTest.php` - Test filter collapse functionality (Task 60)  
+  3. [x] Create `tests/Feature/Dashboard/DateEntryRemovalTest.php` - Test date entry removal (Task 57)
+  4. [x] Create `tests/Feature/PWA/ServiceWorkerRemovalTest.php` - Test PWA removal is complete (Task 66)
 - **Test Plan**: 
   **Feature Tests:**  
-  1. [ ] Test navigation menu shows Food and Medicines under user dropdown
-  2. [ ] Test filter collapse/expand functionality works correctly
-  3. [ ] Test date entry input has been removed from dashboard
-  4. [ ] Test PWA service worker and manifest files are properly removed
+  1. [x] Test navigation menu shows Food and Medicines under user dropdown
+  2. [x] Test filter collapse/expand functionality works correctly
+  3. [x] Test date entry input has been removed from dashboard
+  4. [x] Test PWA service worker and manifest files are properly removed
   **Manual Tests:**
-  5. [ ] Verify all navigation links work correctly after test creation
-  6. [ ] Run full test suite to ensure no regressions
-- **Started**: 
-- **Review**: 
-- **Completed**: 
-- **Duration**: 
+  5. [x] Verify all navigation links work correctly after test creation
+  6. [x] Run full test suite to ensure no regressions
+- **Started**: 2025-08-04 22:33:10
+- **Review**: 2025-08-04 22:43:00
+- **Completed**: 2025-08-04 22:43:00
+- **Duration**: 10 minutes
 
 ---
 
