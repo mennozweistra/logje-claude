@@ -38,3 +38,17 @@
 12. Archive completed tasks when requested by user
 
 Refer to `./.claude/workflow.md` for complete workflow details and requirements.
+
+## Testing Credentials
+
+**Production URL**: https://logje.nl
+- **Email**: test@example.com
+- **Password**: f~s!6hfi}BnLtEE
+
+**Development Machine**: Local development
+- **Email**: test@example.com
+- **Password**: password
+
+Note: logje.server.logje.nl is the CapRover internal URL, not a separate environment.
+
+Use these credentials for testing login functionality and deployments.
