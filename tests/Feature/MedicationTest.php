@@ -19,7 +19,7 @@ test('it can create a medication', function () {
 test('it has fillable attributes', function () {
     $medication = new Medication();
     
-    expect($medication->getFillable())->toEqual(['name', 'description']);
+    expect($medication->getFillable())->toEqual(['name', 'description', 'user_id']);
 });
 
 test('it can be associated with measurements', function () {

@@ -12,10 +12,10 @@ beforeEach(function () {
     $this->user = User::factory()->create();
     $this->medicationType = MeasurementType::where('slug', 'medication')->first();
     
-    // Create medications for testing
-    $this->rybelsus = Medication::factory()->create(['name' => 'Rybelsus']);
-    $this->metformine = Medication::factory()->create(['name' => 'Metformine']);
-    $this->amlodipine = Medication::factory()->create(['name' => 'Amlodipine']);
+    // Create medications for testing - assign to user
+    $this->rybelsus = Medication::factory()->create(['name' => 'Rybelsus', 'user_id' => $this->user->id]);
+    $this->metformine = Medication::factory()->create(['name' => 'Metformine', 'user_id' => $this->user->id]);
+    $this->amlodipine = Medication::factory()->create(['name' => 'Amlodipine', 'user_id' => $this->user->id]);
 });
 
 test('it displays medication button on dashboard', function () {

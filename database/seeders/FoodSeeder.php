@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class FoodSeeder extends Seeder
 {
@@ -148,10 +149,23 @@ class FoodSeeder extends Seeder
             ],
         ];
 
+        // Get the first user to assign foods to (for development/testing)
+        $firstUser = User::first();
+        
+        if (!$firstUser) {
+            // No users exist, skip seeding foods
+            return;
+        }
+
         foreach ($foods as $food) {
-            $existingFood = DB::table('foods')->where('name', $food['name'])->first();
+            // Check if this user already has a food with this name
+            $existingFood = DB::table('foods')
+                ->where('name', $food['name'])
+                ->where('user_id', $firstUser->id)
+                ->first();
             
             if (!$existingFood) {
+                $food['user_id'] = $firstUser->id;
                 $food['created_at'] = now();
                 $food['updated_at'] = now();
                 DB::table('foods')->insert($food);

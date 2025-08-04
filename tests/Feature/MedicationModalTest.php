@@ -11,13 +11,13 @@ beforeEach(function () {
     $this->user = User::factory()->create();
     $this->medicationType = MeasurementType::where('slug', 'medication')->first();
     
-    // Create medications for testing
+    // Create medications for testing - assign to user
     $this->medications = collect([
-        Medication::factory()->create(['name' => 'Rybelsus']),
-        Medication::factory()->create(['name' => 'Metformine']),
-        Medication::factory()->create(['name' => 'Amlodipine']),
-        Medication::factory()->create(['name' => 'Kaliumlosartan']),
-        Medication::factory()->create(['name' => 'Atorvastatine']),
+        Medication::factory()->create(['name' => 'Rybelsus', 'user_id' => $this->user->id]),
+        Medication::factory()->create(['name' => 'Metformine', 'user_id' => $this->user->id]),
+        Medication::factory()->create(['name' => 'Amlodipine', 'user_id' => $this->user->id]),
+        Medication::factory()->create(['name' => 'Kaliumlosartan', 'user_id' => $this->user->id]),
+        Medication::factory()->create(['name' => 'Atorvastatine', 'user_id' => $this->user->id]),
     ]);
 });
 
@@ -171,7 +171,6 @@ it('prevents duplicate timestamps for same measurement type', function () {
         ->set('medicationTime', '08:00')
         ->call('save');
         
-    // Should not create a new measurement (duplicate prevention working)
-    // TODO: Fix duplicate timestamp prevention logic
-    expect(\App\Models\Measurement::count())->toBeGreaterThan($initialCount); // Temporarily expect it to fail
+    // Duplicate prevention should prevent creating the second measurement
+    expect(\App\Models\Measurement::count())->toBe($initialCount); // Should stay the same (no duplicate created)
 });

@@ -98,11 +98,11 @@ it('renders date navigation properly', function () {
     $content = $response->getContent();
     
     // Should see date navigation elements (Livewire compiles these at runtime)
+    // Date input was removed in Task 57, but navigation buttons remain
     expect($content)->toContain('wire:');
-    expect($content)->toContain('selectedDate');
-    expect($content)->toContain('type="text"');
     expect($content)->toContain('wire:click="previousDay"');
     expect($content)->toContain('wire:click="nextDay"');
+    expect($content)->toContain('wire:click="goToToday"');
 });
 
 it('has proper Livewire component structure', function () {

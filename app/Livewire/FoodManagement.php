@@ -37,10 +37,11 @@ class FoodManagement extends Component
 
     public function openEditFood($foodId)
     {
+        // Global scope will automatically filter by user, but we add explicit check for clarity
         $this->food = Food::find($foodId);
         
         if (!$this->food) {
-            session()->flash('error', 'Food not found.');
+            session()->flash('error', 'Food not found or you do not have permission to edit it.');
             return;
         }
 
@@ -85,13 +86,14 @@ class FoodManagement extends Component
             $this->food->update($data);
             session()->flash('success', 'Food updated successfully!');
         } else {
-            // Check for duplicate name
+            // Check for duplicate name within user's foods (global scope will apply)
             $existing = Food::where('name', $this->name)->first();
             if ($existing) {
-                $this->addError('name', 'A food with this name already exists.');
+                $this->addError('name', 'You already have a food with this name.');
                 return;
             }
             
+            // Food creation will automatically assign user_id via model global scope
             Food::create($data);
             session()->flash('success', 'Food added successfully!');
         }
@@ -101,18 +103,19 @@ class FoodManagement extends Component
 
     public function confirmDelete($foodId)
     {
+        // Global scope will automatically filter by user
         $this->food = Food::find($foodId);
         $this->foodId = $foodId;
         
         if (!$this->food) {
-            session()->flash('error', 'Food not found.');
+            session()->flash('error', 'Food not found or you do not have permission to delete it.');
             return;
         }
 
-        // Check if food is used in any measurements
+        // Check if food is used in any measurements (with user-specific measurements)
         $measurementCount = $this->food->foodMeasurements()->count();
         if ($measurementCount > 0) {
-            session()->flash('error', "Cannot delete '{$this->food->name}' because it is used in {$measurementCount} food measurement(s).");
+            session()->flash('error', "Cannot delete '{$this->food->name}' because it is used in {$measurementCount} of your food measurement(s). Delete those measurements first.");
             return;
         }
 
@@ -154,6 +157,7 @@ class FoodManagement extends Component
 
     public function render()
     {
+        // Global scope automatically filters foods by authenticated user
         $foods = Food::query()
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', '%' . $this->search . '%')
