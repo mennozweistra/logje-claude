@@ -2,7 +2,7 @@
 
 ## Configuration
 - **Target Task Duration**: 15 minutes (tasks should be broken down if expected to exceed this)
-- **Last Task Number**: 80 (strictly updated after task creation, represents total tasks created)
+- **Last Task Number**: 84 (strictly updated after task creation, represents total tasks created)
 
 This workflow defines how tasks are managed throughout the project lifecycle using the task tracking system in `./.claude/tasks.md`.
 
@@ -55,6 +55,11 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
   - AI actively implementing the planned steps
   - Must review and follow requirements from `requirements.md`
   - Must follow architectural guidance from `architecture.md`
+  - **Scope Expansion Protocol**: If task scope expands significantly during implementation (estimated to exceed twice the target duration), AI must:
+    1. Pause implementation
+    2. Document current progress and discovered scope expansion
+    3. Propose breaking the task into focused sub-tasks
+    4. Request user approval before continuing with expanded scope
 - **Transition from**: Planned or Review (if corrections needed)
 
 ### 4. Testing

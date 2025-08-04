@@ -85,6 +85,69 @@ describe('Glucose Validation', function () {
             ->call('save')
             ->assertHasErrors(['glucoseTime' => 'date_format']);
     });
+
+    // Specific tests for 0-12 mmol/L range (Task 58)
+    it('accepts glucose value at minimum boundary (0.0 mmol/L)', function () {
+        Livewire::actingAs($this->user)
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
+            ->set('glucoseValue', '0.0')
+            ->set('glucoseTime', '08:30')
+            ->call('save')
+            ->assertHasNoErrors();
+    });
+
+    it('accepts glucose value at maximum boundary (12.0 mmol/L)', function () {
+        Livewire::actingAs($this->user)
+            ->test(MeasurementModal::class)
+            ->call('openAddMeasurement', 'glucose')
+            ->set('glucoseValue', '12.0')
+            ->set('glucoseTime', '08:30')
+            ->call('save')
+            ->assertHasNoErrors();
+    });
+
+    it('accepts realistic fasting glucose values (4.0-7.0 mmol/L)', function () {
+        $fastingValues = ['4.0', '5.5', '6.2', '7.0'];
+        
+        foreach ($fastingValues as $value) {
+            Livewire::actingAs($this->user)
+                ->test(MeasurementModal::class)
+                ->call('openAddMeasurement', 'glucose')
+                ->set('glucoseValue', $value)
+                ->set('glucoseTime', '08:30')
+                ->call('save')
+                ->assertHasNoErrors();
+        }
+    });
+
+    it('rejects glucose values above 12.0 mmol/L range', function () {
+        $invalidValues = ['12.1', '15.0', '20.0'];
+        
+        foreach ($invalidValues as $value) {
+            Livewire::actingAs($this->user)
+                ->test(MeasurementModal::class)
+                ->call('openAddMeasurement', 'glucose')
+                ->set('glucoseValue', $value)
+                ->set('glucoseTime', '08:30')
+                ->call('save')
+                ->assertHasErrors(['glucoseValue' => 'max']);
+        }
+    });
+
+    it('rejects negative glucose values below 0.0 mmol/L range', function () {
+        $invalidValues = ['-0.1', '-1.0', '-5.0'];
+        
+        foreach ($invalidValues as $value) {
+            Livewire::actingAs($this->user)
+                ->test(MeasurementModal::class)
+                ->call('openAddMeasurement', 'glucose')
+                ->set('glucoseValue', $value)
+                ->set('glucoseTime', '08:30')
+                ->call('save')
+                ->assertHasErrors(['glucoseValue' => 'min']);
+        }
+    });
 });
 
 describe('Weight Validation', function () {

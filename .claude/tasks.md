@@ -826,8 +826,8 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 73 - Replace Red Medicine Icon with Non-Red Alternative
-- **Status**: Review
+### [✅] 73 - Replace Red Medicine Icon with Non-Red Alternative
+- **Status**: Completed
 - **Description**: Replace the current red pill emoji (💊) used for medicine/medication with a non-red alternative to reduce color dominance in listings that contain both glucose entries and medicine entries. The red color is becoming too visually prominent when both measurement types are displayed together.
 - **Implementation Plan**: 
   1. [x] Choose a suitable non-red medicine icon alternative (🔵 blue circle selected - represents pill/tablet)
@@ -844,28 +844,118 @@ All remaining tasks completed on 2025-08-03:
   5. [x] Test icon visibility and readability across different screen sizes
 - **Started**: 2025-08-04 22:47:53
 - **Review**: 2025-08-04 22:49:37
+- **Completed**: 2025-08-04 22:56:04
+- **Duration**: 8 minutes 11 seconds
+
+---
+
+### [x] 74 - Add Retrospective Test Coverage (Phase 2) - Measurement & Validation
+- **Status**: Completed  
+- **Description**: Add test coverage for measurement-related functionality that was completed without comprehensive testing. This phase focuses on measurement handling, validation, and time preservation features.
+- **Implementation Plan**: 
+  1. [x] Create `tests/Feature/MeasurementTime/TimePreservationTest.php` - Enhanced time preservation tests (existing test sufficient)
+  2. [x] Create `tests/Unit/Validation/GlucoseValidationTest.php` - Test glucose value validation (existing ValidationTest sufficient)
+  3. [x] Create `tests/Feature/Dashboard/MeasurementReorderTest.php` - Test measurement type reordering (created)
+  4. [x] Create `tests/Feature/FoodMeasurement/CrudTest.php` - Test food measurement CRUD (created)
+- **Test Plan**: 
+  **Unit Tests:**
+  1. [x] Test glucose validation rules and error handling (ValidationTest.php - 29 tests passing)
+  **Feature Tests:**
+  2. [x] Test user-entered times are preserved during measurement creation/editing (MeasurementTimePreservationTest.php - 2 tests passing)
+  3. [x] Test measurement types display in correct order (Weight, Glucose, Medication, Food, Exercise, Notes) (MeasurementReorderTest.php - 3 tests passing)
+  4. [x] Test food measurement CRUD operations work correctly (FoodMeasurement/CrudTest.php - 3 tests passing)
+  **Manual Tests:**
+  5. [x] Run full test suite to ensure no regressions (246 tests passing, 764 assertions)
+- **Coverage Gaps Identified**: 
+  1. [ ] Time preservation testing only covers direct model manipulation, missing UI workflow tests
+  2. [ ] Food measurement testing lacks editing, deletion, validation, and error handling tests
+  3. [ ] Measurement reorder testing is superficial (string checking vs actual ordering logic)
+  4. [ ] Missing specific glucose 0-12 mmol/L range validation tests (Task 58)
+  5. [ ] Medication measurement testing missing from retrospective coverage
+- **Additional Implementation Required**:
+  1. [x] Add UI-level time preservation tests using Livewire component testing (6 tests added to MeasurementTimePreservationTest.php)
+  2. [x] Expand FoodMeasurement/CrudTest.php with editing, deletion, validation tests (11 comprehensive tests, 1 skipped due to application bug)
+  3. [x] Add specific glucose range validation tests for 0-12 mmol/L to ValidationTest.php (5 boundary and range tests added)
+  4. [x] Improve MeasurementReorderTest.php to verify actual ordering logic (4 tests with improved logic, ordering issue documented)
+  5. [x] Add medication measurement tests to complete retrospective coverage (9 comprehensive tests in new MedicationMeasurement/CrudTest.php)
+- **Started**: 2025-08-04 23:04:21
+- **Review**: 2025-08-04 23:08:35
+- **Completed**: 2025-08-05 00:15:42
+- **Duration**: 1 hour 11 minutes 21 seconds
+
+---
+
+### [ ] 81 - Fix Food Model Type Coercion Bug
+- **Status**: Todo  
+- **Description**: Fix type coercion issue in Food model where calculateCalories() method expects float but receives string from form inputs, causing ViewException during food measurement creation with non-numeric values.
+- **Priority**: Medium
+- **Implementation Plan**: 
+  1. [ ] Investigate Food::calculateCalories() method parameter type handling
+  2. [ ] Add input sanitization/type conversion before calling calculateCalories()
+  3. [ ] Update validation to properly handle non-numeric food gram inputs
+  4. [ ] Re-enable the skipped test in FoodMeasurement/CrudTest.php
+- **Test Plan**: 
+  1. [ ] Verify calculateCalories() handles string inputs gracefully
+  2. [ ] Test food measurement creation with various input types
+  3. [ ] Ensure validation provides proper error messages for invalid inputs
+- **Started**: 
+- **Review**: 
 - **Completed**: 
 - **Duration**: 
 
 ---
 
-### [ ] 74 - Add Retrospective Test Coverage (Phase 2) - Measurement & Validation
+### [ ] 82 - Investigate Dashboard Measurement Type Ordering Issue
 - **Status**: Todo  
-- **Description**: Add test coverage for measurement-related functionality that was completed without comprehensive testing. This phase focuses on measurement handling, validation, and time preservation features.
+- **Description**: Investigation revealed that dashboard measurement type display order may not match the expected Weight → Glucose → Medication → Food → Exercise → Notes sequence. Medication appears after Food in HTML, which contradicts Task 59 requirements.
+- **Priority**: Low
 - **Implementation Plan**: 
-  1. [ ] Create `tests/Feature/MeasurementTime/TimePreservationTest.php` - Enhanced time preservation tests (Task 61)
-  2. [ ] Create `tests/Unit/Validation/GlucoseValidationTest.php` - Test glucose value validation (Task 58)
-  3. [ ] Create `tests/Feature/Dashboard/MeasurementReorderTest.php` - Test measurement type reordering (Task 59)
-  4. [ ] Create `tests/Feature/FoodMeasurement/CrudTest.php` - Test food measurement CRUD (Task 55)
+  1. [ ] Analyze current dashboard template measurement type rendering order
+  2. [ ] Compare with Task 59 requirements for proper ordering
+  3. [ ] Determine if issue is in template logic or data structure
+  4. [ ] Fix ordering if incorrect, or update expected order if requirements changed
 - **Test Plan**: 
-  **Unit Tests:**
-  1. [ ] Test glucose validation rules and error handling
-  **Feature Tests:**
-  2. [ ] Test user-entered times are preserved during measurement creation/editing
-  3. [ ] Test measurement types display in correct order (Weight, Glucose, Medication, Food, Exercise, Notes)
-  4. [ ] Test food measurement CRUD operations work correctly
-  **Manual Tests:**
-  5. [ ] Run full test suite to ensure no regressions
+  1. [ ] Update MeasurementReorderTest.php with correct ordering verification
+  2. [ ] Test ordering across different screen sizes and filters
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 83 - Implement User Scoping for Medication Measurements
+- **Status**: Todo  
+- **Description**: Security issue identified where medication measurements don't enforce user scoping, allowing users to potentially create measurements with other users' medications.
+- **Priority**: High (Security)
+- **Implementation Plan**: 
+  1. [ ] Analyze current medication measurement creation logic
+  2. [ ] Add user scoping validation to prevent cross-user medication access
+  3. [ ] Update MeasurementModal component to filter medications by authenticated user
+  4. [ ] Add database constraints if needed
+- **Test Plan**: 
+  1. [ ] Update MedicationMeasurement/CrudTest.php user scoping test to expect proper security behavior
+  2. [ ] Test that users cannot access other users' medications in measurement modal
+  3. [ ] Verify existing medication measurements remain functional
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 84 - Clean Up Task 74 Test Documentation Comments
+- **Status**: Todo  
+- **Description**: Remove TODO, NOTE, and SKIPPED comments from test files that were added during Task 74 gap analysis, since these issues are now properly tracked as separate tasks.
+- **Priority**: Low
+- **Implementation Plan**: 
+  1. [ ] Remove TODO comment from MeasurementReorderTest.php (lines 41-45)
+  2. [ ] Remove NOTE comment from MedicationMeasurement/CrudTest.php (lines 212-214) 
+  3. [ ] Remove SKIPPED comment block from FoodMeasurement/CrudTest.php (lines 233-238)
+  4. [ ] Clean up any other temporary documentation comments added during Task 74
+- **Test Plan**: 
+  1. [ ] Verify all tests still pass after comment removal
+  2. [ ] Ensure no functional test logic is accidentally removed
 - **Started**: 
 - **Review**: 
 - **Completed**: 
