@@ -38,7 +38,7 @@ class MedicinesManagement extends Component
         $this->medication = Medication::find($medicationId);
         
         if (!$this->medication) {
-            session()->flash('error', 'Medicine not found.');
+            session()->flash('error', 'Medicine not found or you do not have permission to edit it.');
             return;
         }
 
@@ -69,10 +69,10 @@ class MedicinesManagement extends Component
             $this->medication->update($data);
             session()->flash('success', 'Medicine updated successfully!');
         } else {
-            // Check for duplicate name
+            // Check for duplicate name (user-scoped due to global scope)
             $existing = Medication::where('name', $this->name)->first();
             if ($existing) {
-                $this->addError('name', 'A medicine with this name already exists.');
+                $this->addError('name', 'You already have a medicine with this name.');
                 return;
             }
             
@@ -89,14 +89,14 @@ class MedicinesManagement extends Component
         $this->medicationId = $medicationId;
         
         if (!$this->medication) {
-            session()->flash('error', 'Medicine not found.');
+            session()->flash('error', 'Medicine not found or you do not have permission to delete it.');
             return;
         }
 
         // Check if medicine is used in any measurements
         $measurementCount = $this->medication->medicationMeasurements()->count();
         if ($measurementCount > 0) {
-            session()->flash('error', "Cannot delete '{$this->medication->name}' because it is used in {$measurementCount} medication measurement(s).");
+            session()->flash('error', "Cannot delete '{$this->medication->name}' because it is used in {$measurementCount} medication measurement(s). Please remove the medication from those measurements first.");
             return;
         }
 

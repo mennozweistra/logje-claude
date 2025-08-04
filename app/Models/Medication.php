@@ -26,7 +26,15 @@ class Medication extends Model
 
     public function measurements(): BelongsToMany
     {
-        return $this->belongsToMany(Measurement::class);
+        return $this->belongsToMany(Measurement::class, 'measurement_medication');
+    }
+
+    /**
+     * Alias for measurements relationship to match component usage
+     */
+    public function medicationMeasurements(): BelongsToMany
+    {
+        return $this->measurements();
     }
 
     /**
