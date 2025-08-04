@@ -693,35 +693,7 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 68 - Add Medicines Data Management Under User Menu
-- **Status**: Todo
-- **Description**: Create a new "Medicines" submenu item under the user dropdown menu (next to Food) that allows users to view, add, edit, and delete their own medication records. This will provide user-specific CRUD functionality for managing personal medication lists with foreign key protection.
-- **Implementation Plan**: 
-  1. [ ] Add "Medicines" submenu item to user dropdown menu navigation
-  2. [ ] Create medicines management route and controller method
-  3. [ ] Create medicines management view/component (similar to food management)
-  4. [ ] Implement medicine listing with existing medicines from database
-  5. [ ] Add create new medicine functionality with form (name, description)
-  6. [ ] Add edit existing medicine functionality
-  7. [ ] Add delete medicine functionality with confirmation
-  8. [ ] Style medicines management to match food management design
-- **Test Plan**: 
-  1. [ ] Verify "Medicines" appears as submenu under "Data"
-  2. [ ] Test medicines page loads and displays existing medications
-  3. [ ] Test creating new medicine record
-  4. [ ] Test editing existing medicine (name, description)
-  5. [ ] Test deleting medicine with proper confirmation
-  6. [ ] Verify medicines page styling matches application design
-  7. [ ] Test responsive layout on mobile devices
-  8. [ ] Verify medicine changes reflect in measurement entry forms
-- **Started**: 
-- **Review**: 
-- **Completed**: 
-- **Duration**: 
-
----
-
-### [ ] 69 - Add User Foreign Key to Foods and Medications Tables
+### [ ] 68 - Add User Foreign Key to Foods and Medications Tables
 - **Status**: Todo
 - **Description**: Add user_id foreign key columns to both foods and medications tables to make them user-specific. Create migration to add the columns and update existing records with proper user associations.
 - **Implementation Plan**: 
@@ -731,15 +703,22 @@ All remaining tasks completed on 2025-08-03:
   4. [ ] Update existing medication records to associate with appropriate users (or admin user)
   5. [ ] Add foreign key constraints for user_id columns
   6. [ ] Update Food and Medication models to include user relationship
-  7. [ ] Test that foreign key constraints work properly
-  8. [ ] Verify data integrity after migration
+  7. [ ] Create unit tests for model relationships and foreign key constraints
+  8. [ ] Test that foreign key constraints work properly
+  9. [ ] Verify data integrity after migration
 - **Test Plan**: 
-  1. [ ] Verify user_id columns are added to both tables
-  2. [ ] Test that foreign key constraints prevent orphaned records
-  3. [ ] Verify existing data is properly associated with users
-  4. [ ] Test model relationships work correctly
-  5. [ ] Verify cascading deletes work if user is deleted
-  6. [ ] Test migration rollback functionality
+  **Unit Tests:**
+  1. [ ] Create `tests/Unit/Models/FoodTest.php` - Test Food model user relationship
+  2. [ ] Create `tests/Unit/Models/MedicationTest.php` - Test Medication model user relationship
+  3. [ ] Create `tests/Feature/Database/UserForeignKeyMigrationTest.php` - Test migration up/down
+  4. [ ] Create `tests/Feature/Database/ForeignKeyConstraintsTest.php` - Test constraint enforcement
+  **Manual Tests:**
+  5. [ ] Verify user_id columns are added to both tables
+  6. [ ] Test that foreign key constraints prevent orphaned records
+  7. [ ] Verify existing data is properly associated with users
+  8. [ ] Test model relationships work correctly
+  9. [ ] Verify cascading deletes work if user is deleted
+  10. [ ] Test migration rollback functionality
 - **Started**: 
 - **Review**: 
 - **Completed**: 
@@ -747,7 +726,7 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 70 - Update Food Management to be User-Specific with CRUD Operations
+### [ ] 69 - Update Food Management to be User-Specific with CRUD Operations
 - **Status**: Todo
 - **Description**: Update the food management system to be user-specific with full CRUD operations and foreign key protection. Users can only see and manage their own foods, with deletion protection when foods are referenced by measurements.
 - **Implementation Plan**: 
@@ -758,15 +737,22 @@ All remaining tasks completed on 2025-08-03:
   5. [ ] Add error handling for deletion attempts when food is referenced
   6. [ ] Update food management views to show user-specific foods only
   7. [ ] Add confirmation dialogs for food deletion
-  8. [ ] Update food seeding to work with user-specific food records
+  8. [ ] Create unit tests for user-specific food management functionality
+  9. [ ] Update food seeding to work with user-specific food records
 - **Test Plan**: 
-  1. [ ] Test users only see their own foods in management interface
-  2. [ ] Test food creation associates with correct user
-  3. [ ] Test food editing only works for owned foods
-  4. [ ] Test food deletion is blocked when referenced by measurements
-  5. [ ] Test error messages for blocked deletions are clear
-  6. [ ] Test confirmation dialogs work properly
-  7. [ ] Verify food filtering in measurement entry still works
+  **Unit Tests:**
+  1. [ ] Create `tests/Unit/Livewire/FoodManagementTest.php` - Test component user scoping
+  2. [ ] Create `tests/Feature/FoodManagement/UserSpecificCrudTest.php` - Test CRUD operations
+  3. [ ] Create `tests/Feature/FoodManagement/ForeignKeyProtectionTest.php` - Test deletion protection
+  4. [ ] Create `tests/Feature/FoodManagement/AuthorizationTest.php` - Test user can only access own foods
+  **Manual Tests:**
+  5. [ ] Test users only see their own foods in management interface
+  6. [ ] Test food creation associates with correct user
+  7. [ ] Test food editing only works for owned foods
+  8. [ ] Test food deletion is blocked when referenced by measurements
+  9. [ ] Test error messages for blocked deletions are clear
+  10. [ ] Test confirmation dialogs work properly
+  11. [ ] Verify food filtering in measurement entry still works
 - **Started**: 
 - **Review**: 
 - **Completed**: 
@@ -774,26 +760,71 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 71 - Update Medication Management to be User-Specific with CRUD Operations
-- **Status**: Todo
-- **Description**: Update the medication management system to be user-specific with full CRUD operations and foreign key protection. Users can only see and manage their own medications, with deletion protection when medications are referenced by measurements.
+### [ ] 70 - Add Medicines Data Management Under User Menu
+- **Status**: Review
+- **Started**: 2025-08-04 19:45:00
+- **Review**: 2025-08-04 19:50:00
+- **Description**: Create a new "Medicines" submenu item under the user dropdown menu (next to Food) that allows users to view, add, edit, and delete their own medication records. This will provide user-specific CRUD functionality for managing personal medication lists with foreign key protection. **DEPENDS ON**: Task 68 (foreign keys) and Task 69 (user-specific food management).
 - **Implementation Plan**: 
-  1. [ ] Create MedicationController for medication CRUD operations
-  2. [ ] Update medication queries to filter by authenticated user
-  3. [ ] Implement medication creation to associate with current user
-  4. [ ] Implement medication editing functionality for user's own medications
-  5. [ ] Implement medication deletion with foreign key constraint checking
-  6. [ ] Add error handling for deletion attempts when medication is referenced
-  7. [ ] Create medication management views similar to food management
-  8. [ ] Update medication seeding to work with user-specific medication records
+  1. [x] Add "Medicines" submenu item to user dropdown menu navigation
+  2. [x] Create medicines management route and controller method  
+  3. [x] Create medicines management view/component (similar to food management)
+  4. [x] Create basic CRUD operations (currently shows all medicines to all users)
+  5. [ ] Update medication queries to filter by authenticated user (requires Task 68)
+  6. [ ] Update medication creation to associate with current user (requires Task 68)
+  7. [ ] Implement medication deletion with foreign key constraint checking (requires Task 68)
+  8. [ ] Add error handling for deletion attempts when medication is referenced
+  9. [ ] Create unit tests for user-specific medicine management functionality
+  10. [ ] Update medication seeding to work with user-specific medication records
 - **Test Plan**: 
-  1. [ ] Test users only see their own medications in management interface
-  2. [ ] Test medication creation associates with correct user
-  3. [ ] Test medication editing only works for owned medications
-  4. [ ] Test medication deletion is blocked when referenced by measurements
-  5. [ ] Test error messages for blocked deletions are clear
-  6. [ ] Test confirmation dialogs work properly
-  7. [ ] Verify medication filtering in measurement entry still works
+  **Unit Tests:**
+  1. [ ] Create `tests/Unit/Livewire/MedicinesManagementTest.php` - Test component user scoping
+  2. [ ] Create `tests/Feature/MedicinesManagement/UserSpecificCrudTest.php` - Test CRUD operations
+  3. [ ] Create `tests/Feature/MedicinesManagement/ForeignKeyProtectionTest.php` - Test deletion protection
+  4. [ ] Create `tests/Feature/MedicinesManagement/AuthorizationTest.php` - Test user can only access own medicines
+  5. [ ] Create `tests/Feature/MedicinesManagement/NavigationTest.php` - Test menu navigation
+  **Manual Tests:**
+  6. [x] Verify "Medicines" appears as submenu under user dropdown
+  7. [x] Test medicines page loads and displays existing medications  
+  8. [x] Test creating new medicine record
+  9. [x] Test editing existing medicine (name, description)
+  10. [x] Test deleting medicine with proper confirmation
+  11. [x] Verify medicines page styling matches application design
+  12. [ ] Test users only see their own medications in management interface (requires Task 68)
+  13. [ ] Test medication creation associates with correct user (requires Task 68)
+  14. [ ] Test medication editing only works for owned medications (requires Task 68)
+  15. [ ] Test medication deletion is blocked when referenced by measurements (requires Task 68)
+  16. [ ] Test error messages for blocked deletions are clear (requires Task 68)
+  17. [ ] Verify medicine changes reflect in measurement entry forms
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---
+
+### [ ] 71 - Add Retrospective Unit Test Coverage for Completed Features
+- **Status**: Todo
+- **Description**: Add comprehensive unit test coverage for major features that were completed without proper automated testing. This ensures regression protection and validates existing functionality.
+- **Implementation Plan**: 
+  1. [ ] Create `tests/Feature/PWA/ServiceWorkerTest.php` - Test PWA removal (Task 66)
+  2. [ ] Create `tests/Feature/Navigation/UserDropdownTest.php` - Test Food/Medicines menu in user dropdown (Task 67)
+  3. [ ] Create `tests/Feature/MeasurementTime/TimePreservationTest.php` - Enhanced time preservation tests (Task 61)
+  4. [ ] Create `tests/Feature/Dashboard/FilterCollapseTest.php` - Test filter collapse functionality (Task 60)
+  5. [ ] Create `tests/Feature/Dashboard/DateEntryRemovalTest.php` - Test date entry removal (Task 57)
+  6. [ ] Create `tests/Unit/Validation/GlucoseValidationTest.php` - Test glucose value validation (Task 58)
+  7. [ ] Create `tests/Feature/Dashboard/MeasurementReorderTest.php` - Test measurement type reordering (Task 59)
+  8. [ ] Create `tests/Feature/Reports/NutritionChartsTest.php` - Test nutrition chart functionality (Task 56)
+  9. [ ] Create `tests/Feature/FoodMeasurement/CrudTest.php` - Test food measurement CRUD (Task 55)
+  10. [ ] Create `tests/Unit/Models/FoodModelTest.php` - Test Food model methods and relationships (Task 54)
+- **Test Plan**: 
+  **Unit Tests (to be created):**  
+  1. [ ] All tests listed in implementation plan above
+  2. [ ] Run full test suite to ensure no regressions
+  3. [ ] Achieve >80% code coverage on new test files
+  **Manual Tests:**
+  4. [ ] Verify all existing functionality still works after test additions
+  5. [ ] Test that CI/CD pipeline runs all new tests
 - **Started**: 
 - **Review**: 
 - **Completed**: 

@@ -26,6 +26,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('food-management', function () {
         return view('food-management');
     })->name('food-management');
+    
+    Route::get('medicines-management', function () {
+        return view('medicines-management');
+    })->name('medicines-management');
 });
 
 Route::view('profile', 'profile')

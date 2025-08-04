@@ -63,6 +63,10 @@ new class extends Component
                         <x-dropdown-link :href="route('food-management')" wire:navigate>
                             {{ __('Food') }}
                         </x-dropdown-link>
+                        
+                        <x-dropdown-link :href="route('medicines-management')" wire:navigate>
+                            {{ __('Medicines') }}
+                        </x-dropdown-link>
 
                         <!-- Authentication -->
                         <button wire:click="logout" class="w-full text-start">
