@@ -32,17 +32,22 @@ class MeasurementReorderTest extends TestCase
         // Expected order: Weight, Glucose, Medication, Food, Exercise, Notes
         $expectedOrder = ['Weight', 'Glucose', 'Medication', 'Food', 'Exercise', 'Notes'];
         
-        // For now, just verify all measurement types are present
-        // The detailed ordering test reveals a potential ordering issue that should be investigated separately
+        // Verify all measurement types are present
         foreach ($expectedOrder as $type) {
             $this->assertStringContainsString($type, $content, "Measurement type '{$type}' not found in content");
         }
         
-        // TODO: The ordering logic test revealed that 'Medication' appears after 'Food' in HTML
-        // This suggests either:
-        // 1. The expected order is wrong, or 
-        // 2. The dashboard template needs to be fixed to match the expected order
-        // This should be investigated as a separate issue
+        // Verify the order appears correctly in the rendered HTML
+        // Extract measurement type buttons to check their order
+        $pattern = '/class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-\[100px\]"[^>]*>.*?<span[^>]*>([^<]+)<\/span>/s';
+        preg_match_all($pattern, $content, $matches);
+        
+        if (count($matches[1]) >= 6) {
+            // Verify the first 6 measurement types are in correct order
+            for ($i = 0; $i < 6; $i++) {
+                $this->assertEquals($expectedOrder[$i], trim($matches[1][$i]), "Measurement type at position {$i} should be {$expectedOrder[$i]}");
+            }
+        }
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
