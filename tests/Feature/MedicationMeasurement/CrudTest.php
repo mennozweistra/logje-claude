@@ -207,12 +207,12 @@ class CrudTest extends TestCase
         // Try to create measurement with other user's medication
         $component->call('openAddMeasurement', 'medication', today()->format('Y-m-d'))
                   ->set('selectedMedications', [$otherUserMedication->id])
-                  ->call('save');
+                  ->call('save')
+                  ->assertHasErrors('selectedMedications.0');
 
-        // NOTE: Currently user scoping is not enforced for medication measurements
-        // This is a potential security issue that should be addressed separately
-        // For now, verify the measurement was created (current behavior)
-        $this->assertDatabaseHas('measurement_medication', [
+        // Security fix: User scoping is now enforced for medication measurements
+        // Verify the measurement was NOT created (proper security behavior)
+        $this->assertDatabaseMissing('measurement_medication', [
             'medication_id' => $otherUserMedication->id,
         ]);
     }

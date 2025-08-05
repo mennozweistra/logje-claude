@@ -411,7 +411,7 @@ class MeasurementModal extends Component
                         'array',
                         'min:1',
                     ],
-                    'selectedMedications.*' => 'exists:medications,id',
+                    'selectedMedications.*' => 'exists:medications,id,user_id,' . auth()->id(),
                     'medicationTime' => 'required|date_format:H:i',
                     'medicationNotes' => 'nullable|string|max:1000',
                 ], [
@@ -573,7 +573,7 @@ class MeasurementModal extends Component
     public function render(MeasurementTypeRepository $measurementTypeRepository)
     {
         $measurementTypes = $measurementTypeRepository->getAll();
-        $medications = Medication::all();
+        $medications = Medication::where('user_id', auth()->id())->get();
         $foods = collect();
         
         // Get foods for selected food entries
