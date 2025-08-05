@@ -149,85 +149,33 @@
                                 {{ $measurement->created_at->format('H:i') }}
                             </td>
                             
-                            {{-- Type --}}
-                            <td class="py-2 md:py-3 px-1 text-xs md:text-sm font-mono text-black leading-none">
+                            {{-- Combined Text --}}
+                            <td class="py-2 md:py-3 px-2 md:px-3 text-xs md:text-sm font-mono text-black leading-none">
                                 @switch($measurement->measurementType->slug)
                                     @case('weight')
-                                        Weight:
+                                        <span>{{ $measurement->value }} kg</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
                                         @break
                                     @case('glucose')
-                                        Glucose:
+                                        <span>{{ $measurement->value }} mmol/L</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif@if($measurement->is_fasting)<span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full font-sans">Fasting</span>@endif
                                         @break
                                     @case('exercise')
-                                        Exercise:
-                                        @break
-                                    @case('notes')
-                                        Note:
+                                        <span>@if($measurement->duration){{ $measurement->duration }} min @endif{{ lcfirst($measurement->description) }}</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
                                         @break
                                     @case('medication')
-                                        Medication:
-                                        @break
-                                    @case('food')
-                                        Food:
-                                        @break
-                                @endswitch
-                            </td>
-                            
-                            {{-- Value --}}
-                            <td class="py-2 md:py-3 px-1 text-xs md:text-sm font-mono text-black leading-none @if($measurement->measurementType->slug === 'notes') hidden @endif">
-                                @switch($measurement->measurementType->slug)
-                                    @case('weight')
-                                        <span>{{ $measurement->value }} kg</span>
-                                        @break
-                                    @case('glucose')
-                                        <span>{{ $measurement->value }} mmol/L</span>
-                                        @if($measurement->is_fasting)
-                                            <span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full font-sans">Fasting</span>
-                                        @endif
-                                        @break
-                                    @case('exercise')
-                                        @if($measurement->duration)
-                                            <span>{{ $measurement->duration }} min</span>
-                                            <span class="text-gray-400 mx-2">•</span>
-                                        @endif
-                                        <span>{{ $measurement->description }}</span>
-                                        @break
-                                    @case('medication')
-                                        <span>{{ $measurement->medications->sortBy('name')->pluck('name')->join(', ') }}</span>
+                                        <span>{{ $measurement->medications->sortBy('name')->pluck('name')->join(', ') }}</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
                                         @break
                                     @case('food')
                                         @php
                                             $totalCalories = $measurement->foodMeasurements->sum('calculated_calories');
                                             $totalCarbs = $measurement->foodMeasurements->sum('calculated_carbs');
-                                            $foodItems = $measurement->foodMeasurements->map(function($fm) {
-                                                return $fm->food->name . ' (' . $fm->grams_consumed . 'g)';
-                                            })->take(2);
                                         @endphp
-                                        <div class="space-y-1">
-                                            <div class="font-medium">{{ round($totalCalories) }} cal | {{ round($totalCarbs, 1) }}g carbs</div>
-                                            <div class="text-xs text-gray-600">
-                                                {{ $foodItems->join(', ') }}
-                                                @if($measurement->foodMeasurements->count() > 2)
-                                                    <span class="text-gray-500">+{{ $measurement->foodMeasurements->count() - 2 }} more</span>
-                                                @endif
-                                            </div>
-                                        </div>
+                                        <span>{{ round($totalCalories) }} cal, {{ round($totalCarbs, 1) }}g carbs</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
+                                        @break
+                                    @case('notes')
+                                        <span>{{ $measurement->notes }}</span>
                                         @break
                                 @endswitch
                             </td>
-                            
-                            {{-- Notes --}}
-                            @if($measurement->measurementType->slug === 'notes')
-                                <td class="py-2 md:py-3 px-2 md:px-3 text-xs md:text-sm font-mono text-black leading-none col-span-2" colspan="2">
-                                    <span class="truncate">{{ $measurement->notes }}</span>
-                                </td>
-                            @else
-                                <td class="py-2 md:py-3 px-2 md:px-3 text-xs md:text-sm font-mono text-black leading-none">
-                                    @if($measurement->notes)
-                                        <span class="truncate">{{ $measurement->notes }}</span>
-                                    @endif
-                                </td>
-                            @endif
                         </tr>
                     @endforeach
                 </tbody>

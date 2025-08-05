@@ -52,4 +52,11 @@
     .measurement-button-mobile:active {
         background-color: #dbeafe;
     }
+    
+    /* Hide measurement type column on mobile landscape */
+    @media (max-height: 500px) and (max-width: 900px) {
+        .mobile-landscape-hide {
+            display: none;
+        }
+    }
 }
