@@ -245,7 +245,6 @@
 
     {{-- Add Measurement Section - Mobile Only (Bottom) --}}
     <div class="md:hidden bg-white rounded-lg shadow p-4">
-        <h3 class="text-sm font-medium text-gray-900 mb-3 text-center">Add Measurement</h3>
         <div class="grid grid-cols-3 gap-3">
             @php
                 // Reorder measurement types: Weight, Glucose, Medication, Food, Exercise, Notes
