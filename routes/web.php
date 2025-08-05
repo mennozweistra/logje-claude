@@ -7,7 +7,7 @@ Route::get('/', function () {
 });
 
 Route::get('dashboard', function () {
-    return view('dashboard-livewire');
+    return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
