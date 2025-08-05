@@ -1,30 +1,30 @@
-<div class="max-w-4xl mx-auto p-4 space-y-6">
+<div class="max-w-4xl mx-auto p-3 md:p-4 space-y-4 md:space-y-6">
     {{-- Date Navigation Header --}}
-    <div class="bg-white rounded-lg shadow p-6">
+    <div class="bg-white rounded-lg shadow p-4 md:p-6">
         <div class="flex items-center justify-between">
             {{-- Left: Date Display --}}
             <div class="flex-1">
-                <h1 class="text-2xl font-bold text-gray-900">{{ $selectedDateFormatted }}</h1>
+                <h1 class="text-lg md:text-2xl font-bold text-gray-900">{{ $selectedDateFormatted }}</h1>
             </div>
 
             {{-- Right: Navigation Buttons --}}
-            <div class="flex items-center space-x-3">
+            <div class="flex items-center space-x-2 md:space-x-3">
                 <button wire:click="previousDay" 
-                        class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors w-10 h-10 flex items-center justify-center">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors w-11 h-11 md:w-10 md:h-10 flex items-center justify-center">
+                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
 
                 <button wire:click="goToToday" 
-                        class="px-4 py-2 text-white rounded-lg transition-colors text-sm font-medium w-20 h-10 flex items-center justify-center {{ $isToday ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700' }}">
+                        class="px-3 py-2 md:px-4 text-white rounded-lg transition-colors text-xs md:text-sm font-medium min-w-[44px] md:w-20 h-11 md:h-10 flex items-center justify-center {{ $isToday ? 'bg-sky-400 hover:bg-sky-500' : 'bg-blue-600 hover:bg-blue-700' }}">
                     Today
                 </button>
 
                 <button wire:click="nextDay" 
                         @if($isToday) disabled @endif
-                        class="p-2 rounded-lg transition-colors w-10 h-10 flex items-center justify-center {{ $isToday ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        class="p-2 rounded-lg transition-colors w-11 h-11 md:w-10 md:h-10 flex items-center justify-center {{ $isToday ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : 'bg-gray-100 hover:bg-gray-200' }}">
+                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
@@ -62,10 +62,10 @@
 
 
     {{-- Measurements --}}
-    <div class="bg-white rounded-lg shadow p-6">
-        <div class="mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-900">Measurements</h2>
+    <div class="bg-white rounded-lg shadow p-4 md:p-6">
+        <div class="mb-4 md:mb-6">
+            <div class="flex items-center justify-between mb-3 md:mb-4">
+                <h2 class="text-base md:text-lg font-semibold text-gray-900">Measurements</h2>
                 <button 
                     wire:click="toggleFilters"
                     class="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
@@ -119,7 +119,7 @@
                         <tr class="border-t border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
                             wire:click="openEditMeasurement({{ $measurement->id }})">
                             {{-- Icon --}}
-                            <td class="py-3 px-1 text-lg leading-none">
+                            <td class="py-2 md:py-3 px-1 text-lg leading-none">
                                 @switch($measurement->measurementType->slug)
                                     @case('glucose')
                                         <x-lucide-droplet class="w-4 h-4" />
@@ -145,12 +145,12 @@
                             </td>
                             
                             {{-- Time --}}
-                            <td class="py-3 px-1 text-sm font-mono text-black leading-none">
+                            <td class="py-2 md:py-3 px-1 text-xs md:text-sm font-mono text-black leading-none">
                                 {{ $measurement->created_at->format('H:i') }}
                             </td>
                             
                             {{-- Type --}}
-                            <td class="py-3 px-1 text-sm font-mono text-black leading-none">
+                            <td class="py-2 md:py-3 px-1 text-xs md:text-sm font-mono text-black leading-none">
                                 @switch($measurement->measurementType->slug)
                                     @case('weight')
                                         Weight:
@@ -174,7 +174,7 @@
                             </td>
                             
                             {{-- Value --}}
-                            <td class="py-3 px-1 text-sm font-mono text-black leading-none @if($measurement->measurementType->slug === 'notes') hidden @endif">
+                            <td class="py-2 md:py-3 px-1 text-xs md:text-sm font-mono text-black leading-none @if($measurement->measurementType->slug === 'notes') hidden @endif">
                                 @switch($measurement->measurementType->slug)
                                     @case('weight')
                                         <span>{{ $measurement->value }} kg</span>
@@ -218,11 +218,11 @@
                             
                             {{-- Notes --}}
                             @if($measurement->measurementType->slug === 'notes')
-                                <td class="py-3 px-3 text-sm font-mono text-black leading-none col-span-2" colspan="2">
+                                <td class="py-2 md:py-3 px-2 md:px-3 text-xs md:text-sm font-mono text-black leading-none col-span-2" colspan="2">
                                     <span class="truncate">{{ $measurement->notes }}</span>
                                 </td>
                             @else
-                                <td class="py-3 px-3 text-sm font-mono text-black leading-none">
+                                <td class="py-2 md:py-3 px-2 md:px-3 text-xs md:text-sm font-mono text-black leading-none">
                                     @if($measurement->notes)
                                         <span class="truncate">{{ $measurement->notes }}</span>
                                     @endif
