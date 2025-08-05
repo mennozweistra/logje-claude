@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .measurement-buttons-desktop {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .measurement-button-desktop {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        min-height: 100px;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    .measurement-button-desktop:hover {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+    }
+    
+    .measurement-buttons-mobile {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .measurement-button-mobile {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        min-height: 70px;
+        transition: all 0.2s ease-in-out;
+    }
+    
+    .measurement-button-mobile:hover {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+    }
+    
+    .measurement-button-mobile:active {
+        background-color: #dbeafe;
+    }
+}

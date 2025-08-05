@@ -33,8 +33,8 @@
     </div>
 
     {{-- Add Measurement Section - Desktop Only --}}
-    <div class="hidden md:block bg-white rounded-lg shadow p-4">
-        <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
+    <div class="hidden md:block bg-white rounded-lg shadow p-5">
+        <div class="grid grid-cols-6 gap-3">
             @php
                 // Reorder measurement types: Weight, Glucose, Medication, Food, Exercise, Notes
                 $measurementTypes = [
@@ -49,9 +49,9 @@
             @foreach ($measurementTypes as $type)
                 <button 
                     wire:click="openAddMeasurement('{{ $type['slug'] }}')"
-                    class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[100px]"
+                    class="flex flex-col items-center justify-center p-2 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[70px]"
                 >
-                    <div class="text-lg mb-2">
+                    <div class="mb-1">
                         <x-dynamic-component :component="'lucide-' . $type['icon']" class="w-5 h-5" />
                     </div>
                     <span class="text-sm font-medium text-gray-900 text-center">{{ $type['name'] }}</span>
