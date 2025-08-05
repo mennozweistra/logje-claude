@@ -84,10 +84,10 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
 - **When**: User confirms task completion after review
 - **Requirements**: 
   - Only user can set this status
-  - **MANDATORY GIT CHECK**: AI must run `git status` before marking as Completed
-  - **COMMIT REMINDER**: If uncommitted changes exist, AI must ask user if it can commit changes BEFORE marking completed
-  - **ONLY AFTER COMMIT**: Mark task as completed with timestamp and duration
-  - Duration calculated from Started to Completed timestamps
+  - **BEFORE COMMIT**: Mark task as completed with timestamp and duration
+    - Duration calculated from Started to Completed timestamps
+  - **MANDATORY GIT CHECK**: AI must run `git status` after marking as Completed
+  - **COMMIT**: If uncommitted changes exist, AI commit changes
 - **Transition from**: Review (user approval only)
 
 ## Task Structure
