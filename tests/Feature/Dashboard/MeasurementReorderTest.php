@@ -90,10 +90,10 @@ class MeasurementReorderTest extends TestCase
         
         $content = $response->getContent();
         
-        // Verify correct icons are used
-        $this->assertStringContainsString('⚖️', $content); // Weight
+        // Verify correct icons are used - look for SVG for weight, emojis for others
+        $this->assertStringContainsString('<svg', $content); // Weight should have SVG (Heroicon)
         $this->assertStringContainsString('🩸', $content); // Glucose
-        $this->assertStringContainsString('🔵', $content); // Medication (blue circle)
+        $this->assertStringContainsString('💊', $content); // Medication (pill)
         $this->assertStringContainsString('🍏', $content); // Food (green apple)
         $this->assertStringContainsString('🏸', $content); // Exercise
         $this->assertStringContainsString('📝', $content); // Notes

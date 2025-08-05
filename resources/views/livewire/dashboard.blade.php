@@ -38,12 +38,12 @@
             @php
                 // Reorder measurement types: Weight, Glucose, Medication, Food, Exercise, Notes
                 $measurementTypes = [
-                    ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
-                    ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
-                    ['slug' => 'medication', 'name' => 'Medication', 'icon' => '🔵'],
-                    ['slug' => 'food', 'name' => 'Food', 'icon' => '🍏'],
-                    ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
-                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
+                    ['slug' => 'weight', 'name' => 'Weight', 'icon' => 'weight'],
+                    ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => 'droplet'],
+                    ['slug' => 'medication', 'name' => 'Medication', 'icon' => 'pill'],
+                    ['slug' => 'food', 'name' => 'Food', 'icon' => 'apple'],
+                    ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => 'activity'],
+                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text']
                 ];
             @endphp
             @foreach ($measurementTypes as $type)
@@ -51,7 +51,9 @@
                     wire:click="openAddMeasurement('{{ $type['slug'] }}')"
                     class="flex flex-col items-center justify-center p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[100px]"
                 >
-                    <div class="text-lg mb-2">{{ $type['icon'] }}</div>
+                    <div class="text-lg mb-2">
+                        <x-dynamic-component :component="'lucide-' . $type['icon']" class="w-5 h-5" />
+                    </div>
                     <span class="text-sm font-medium text-gray-900 text-center">{{ $type['name'] }}</span>
                 </button>
             @endforeach
@@ -82,12 +84,12 @@
                 @php
                     // Reorder filters to match buttons: Weight, Glucose, Medication, Food, Exercise, Notes
                     $types = [
-                        ['slug' => 'weight', 'name' => 'Weight', 'icon' => '⚖️'],
-                        ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => '🩸'],
-                        ['slug' => 'medication', 'name' => 'Medication', 'icon' => '🔵'],
-                        ['slug' => 'food', 'name' => 'Food', 'icon' => '🍏'],
-                        ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => '🏸'],
-                        ['slug' => 'notes', 'name' => 'Notes', 'icon' => '📝']
+                        ['slug' => 'weight', 'name' => 'Weight', 'icon' => 'weight'],
+                        ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => 'droplet'],
+                        ['slug' => 'medication', 'name' => 'Medication', 'icon' => 'pill'],
+                        ['slug' => 'food', 'name' => 'Food', 'icon' => 'apple'],
+                        ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => 'activity'],
+                        ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text']
                     ];
                 @endphp
                 @foreach($types as $type)
@@ -97,7 +99,9 @@
                                value="{{ $type['slug'] }}"
                                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0 mr-2">
                         <span class="flex items-center text-sm text-gray-700">
-                            <span class="mr-2 text-lg">{{ $type['icon'] }}</span>
+                            <span class="mr-2 text-lg">
+                                <x-dynamic-component :component="'lucide-' . $type['icon']" class="w-4 h-4" />
+                            </span>
                             {{ $type['name'] }}
                         </span>
                     </label>
@@ -118,25 +122,25 @@
                             <td class="py-3 px-1 text-lg leading-none">
                                 @switch($measurement->measurementType->slug)
                                     @case('glucose')
-                                        🩸
+                                        <x-lucide-droplet class="w-4 h-4" />
                                         @break
                                     @case('weight')
-                                        ⚖️
+                                        <x-lucide-weight class="w-4 h-4" />
                                         @break
                                     @case('exercise')
-                                        🏸
+                                        <x-lucide-activity class="w-4 h-4" />
                                         @break
                                     @case('notes')
-                                        📝
+                                        <x-lucide-notebook-text class="w-4 h-4" />
                                         @break
                                     @case('medication')
-                                        🔵
+                                        <x-lucide-pill class="w-4 h-4" />
                                         @break
                                     @case('food')
-                                        🍏
+                                        <x-lucide-apple class="w-4 h-4" />
                                         @break
                                     @default
-                                        📊
+                                        <x-lucide-bar-chart class="w-4 h-4" />
                                 @endswitch
                             </td>
                             

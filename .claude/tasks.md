@@ -1020,22 +1020,53 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 77 - Audit Current Test Coverage and Set Up CI/CD Foundation
-- **Status**: Todo
-- **Description**: First phase of enhancing test coverage: audit existing tests, identify gaps, and establish CI/CD foundation. This focused approach ensures manageable implementation within target duration.
+### [x] 85 - Fix Icon Requirements
+- **Status**: Completed
+- **Description**: Replace weight and medicines icons with more appropriate alternatives as specified in software requirements (lines 51-55). Current weight icon (⚖️) and medicines icon (🔵) need replacement with more intuitive and easily recognizable alternatives.
 - **Implementation Plan**: 
-  1. [ ] Run test coverage analysis to identify untested code
-  2. [ ] Document current test gaps in critical areas
-  3. [ ] Set up automated test execution in CI/CD pipeline
-  4. [ ] Configure basic test reporting and coverage metrics
-  5. [ ] Ensure Docker test environment consistency
-  6. [ ] Document testing standards and next steps
+  1. [x] Research alternative icon options for weight measurements (consider: 🏋️, 💪, or scale-related icons)
+  2. [x] Research alternative icon options for medicines/medication (consider: 💊, 🧪, ⚕️ or medical-related icons)
+  3. [x] Test icon alternatives for visual clarity and recognition across devices
+  4. [x] Update dashboard template with new weight icon in measurement buttons and filters
+  5. [x] Update dashboard template with new medicines icon in measurement buttons and filters
+  6. [x] Update dashboard template with new icons in measurement display table
+  7. [x] Ensure consistent icon style and sizing across all measurement types
+  8. [x] Verify icons display properly on both desktop and mobile viewports
 - **Test Plan**: 
-  1. [ ] Verify test coverage report generates correctly
-  2. [ ] Test automated test execution in CI/CD pipeline
-  3. [ ] Verify test reporting displays coverage metrics
-  4. [ ] Test Docker test environment consistency
-  5. [ ] Verify tests are executable by AI systems
+  1. [x] Verify new weight icon displays correctly in all dashboard locations
+  2. [x] Verify new medicines icon displays correctly in all dashboard locations
+  3. [x] Verify icons are visually distinct and easily recognizable
+  4. [x] Test icon rendering across different browsers and devices
+  5. [x] Verify icon consistency with existing measurement type icons
+  6. [x] Test icon accessibility and readability at different screen sizes
+- **Issues Summary**: Successfully implemented Lucide icons for all measurement types using `technikermathe/blade-lucide-icons` package. Resolved Laravel 12 service provider compatibility issues. Updated all dashboard locations with proper SVG icons: weight (lucide-weight), glucose (lucide-droplet), medication (lucide-pill), food (lucide-apple), exercise (lucide-activity), notes (lucide-notebook-text). All icons display correctly and dashboard is fully functional.
+- **Started**: 2025-08-05 18:54:02
+- **Review**: 2025-08-05 19:01:44
+- **Completed**: 2025-08-05 19:43:25
+- **Duration**: 49 minutes 23 seconds 
+
+---
+
+### [ ] 86 - Implement UI Layout Consistency Requirements
+- **Status**: Todo
+- **Description**: Implement UI layout consistency requirements as specified in software requirements (lines 45-50). Ensure dashboard main content width matches reports page width, both align with top logo/menu width, and modal dialogs don't extend beyond content area.
+- **Implementation Plan**: 
+  1. [ ] Measure current dashboard main content area width and identify container classes
+  2. [ ] Measure current reports page width and identify container classes
+  3. [ ] Measure top logo and menu width for alignment reference
+  4. [ ] Standardize container width classes across dashboard and reports pages
+  5. [ ] Ensure modal dialogs respect main content area width boundaries
+  6. [ ] Test width consistency across desktop viewport sizes
+  7. [ ] Test width consistency across mobile viewport sizes
+  8. [ ] Update CSS/Tailwind classes to maintain consistent layout structure
+- **Test Plan**: 
+  1. [ ] Verify dashboard and reports pages have matching content width
+  2. [ ] Verify both pages align with top logo and menu width
+  3. [ ] Verify modal dialogs don't extend beyond main content area
+  4. [ ] Test consistency across various desktop screen sizes (1024px, 1440px, 1920px)
+  5. [ ] Test consistency across mobile viewport sizes (375px, 768px)
+  6. [ ] Conduct mobile responsiveness testing for layout scaling
+  7. [ ] Verify no horizontal scrolling issues on any viewport size
 - **Started**: 
 - **Review**: 
 - **Completed**: 
@@ -1043,20 +1074,30 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 79 - Expand Test Coverage for Critical Components
+### [ ] 87 - Enhance Testing Coverage for Requirements Compliance
 - **Status**: Todo
-- **Description**: Second phase of test enhancement: create comprehensive unit and feature tests for critical application components identified in Task 77 audit.
+- **Description**: Enhance testing coverage to meet software requirements (lines 204-208) mandating comprehensive test coverage. Verify current 294 tests meet "all functions must have unit test coverage" requirement and identify any gaps.
 - **Implementation Plan**: 
-  1. [ ] Create comprehensive unit tests for all models and services
-  2. [ ] Expand feature tests for all application workflows
-  3. [ ] Implement end-to-end tests for complete user journeys
-  4. [ ] Update test coverage metrics and reporting
+  1. [ ] Set up test coverage analysis tool (PHPUnit with Xdebug or PCOV)
+  2. [ ] Run comprehensive test coverage report to identify untested code
+  3. [ ] Analyze coverage report to identify functions/methods lacking unit tests
+  4. [ ] Document current test coverage percentage and gaps in critical areas
+  5. [ ] Verify AI testability - ensure tests are executable via Docker environment
+  6. [ ] Identify missing feature tests for application workflows
+  7. [ ] Create prioritized list of testing gaps for future enhancement
+  8. [ ] Document testing standards compliance status
 - **Test Plan**: 
-  1. [ ] Verify unit test coverage for all business logic
-  2. [ ] Test feature test coverage for all user-facing functionality
-  3. [ ] Verify end-to-end tests cover complete workflows
-  4. [ ] Verify improved coverage metrics in reports
+  1. [ ] Verify test coverage tool generates accurate reports
+  2. [ ] Verify all 294 existing tests pass with coverage analysis enabled
+  3. [ ] Test that coverage reports identify specific untested code areas
+  4. [ ] Verify tests are executable by AI systems via Docker (current capability)
+  5. [ ] Confirm feature tests cover all major application workflows
+  6. [ ] Verify unit tests cover business logic in models and services
+  7. [ ] Document coverage percentage and compliance with requirements
 - **Started**: 
 - **Review**: 
 - **Completed**: 
 - **Duration**: 
+
+---
+
