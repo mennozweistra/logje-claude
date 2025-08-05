@@ -1,4 +1,4 @@
-<div>
+<div class="space-y-6">
     {{-- Date Navigation Header --}}
     <div class="bg-white rounded-lg shadow p-4 md:p-6">
         <div class="flex items-center justify-between">
