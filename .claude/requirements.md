@@ -31,12 +31,28 @@ This document contains the requirements for the Logje health tracking web applic
 - **Default View**: Today's date as default view with Dutch date format (dd-mm-yyyy)
 - **Date Navigation**: Users can navigate to any past date for data entry/editing with previous/next buttons
 - **Auto-population**: Current time pre-filled for new measurements (editable by user)
+- **Time Format Requirements**: All time data entry and display must use military time (24-hour format), Dutch style
+  - Time entry format: HH:MM (e.g., 14:30, 09:15, 23:45)
+  - Time display format: HH:MM throughout the application
+  - Default times must be based on user's local browser timezone, not UTC
+  - No AM/PM format - strictly 24-hour military time format
 - **Multiple Entries**: Support multiple measurements per type per day
 - **Data Validation**: Prevent future date entries with realistic glucose ranges (0-12 mmol/L)
 - **CRUD Operations**: Create, read, update, delete measurements for any past date
 - **Responsive Design**: 6-column grid layout for measurement type buttons, mobile-optimized
 - **Filtering System**: Collapsible measurement type filters for dashboard view
 - **Time Preservation**: User-entered times are preserved during measurement creation and editing
+- **UI Layout Consistency Requirements**: All page layouts must maintain consistent width alignment
+  - Dashboard main content area width must match reports page width
+  - Both dashboard and reports width must align with top logo and menu width
+  - Modal dialogs on dashboard must not extend beyond the main dashboard content area width
+  - All width consistency must be maintained across desktop and mobile viewports
+  - Conduct mobile responsiveness testing to ensure consistent layout scaling
+- **Icon Requirements**: Measurement type icons must be clear and distinguishable
+  - Current weight and medicines icons need replacement with more appropriate alternatives
+  - All icons should be intuitive and easily recognizable for their measurement types
+  - Consider research into alternative icon libraries if current library lacks suitable options
+  - Maintain consistent icon style and sizing across all measurement types
 
 ### Food Tracking Features
 
@@ -59,6 +75,10 @@ This document contains the requirements for the Logje health tracking web applic
 - **Food Entry System**: Users can log actual food consumption with:
   - Search and select foods from database (separate from food management)
   - Enter actual consumed amount in grams (customizable portions)
+  - **Integer-Only Data Entry**: All food amounts must be entered as whole numbers (integers) for simplicity
+    - Users enter portions like "150g" not "150.5g" - no decimal input required or allowed
+    - UI validation ensures only whole number grams are accepted
+    - Internal calculations may use floating point math, but user interface remains integer-based
   - Multiple foods per meal/entry with timestamp
   - Automatic calculation of total calories and carbohydrates based on actual portion size
   - Real-time nutritional information display during entry

@@ -386,8 +386,8 @@
                                                 <div class="flex-1">
                                                     <div class="font-medium">{{ $food->name }}</div>
                                                     <div class="text-sm text-gray-500">
-                                                        {{ number_format($food->calculateCalories($grams), 1) }} cal | 
-                                                        {{ number_format($food->calculateCarbs($grams), 1) }}g carbs
+                                                        {{ number_format($food->calculateCalories((float) $grams), 1) }} cal | 
+                                                        {{ number_format($food->calculateCarbs((float) $grams), 1) }}g carbs
                                                     </div>
                                                 </div>
                                                 <div class="flex items-center space-x-2">

@@ -230,12 +230,30 @@ class CrudTest extends TestCase
                   ->assertHasErrors(['foodEntries.' . $apple->id => 'max']);
     }
 
-    // #[\PHPUnit\Framework\Attributes\Test]
-    // public function validates_food_grams_must_be_numeric()
-    // {
-    //     // SKIPPED: This test reveals a bug in the Food model where calculateCalories expects float but gets string
-    //     // This is an application bug that should be fixed separately, not a test coverage issue
-    // }
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function validates_food_grams_must_be_integer()
+    {
+        $this->actingAs($this->user);
+
+        $apple = Food::factory()->create([
+            'name' => 'Apple',
+            'user_id' => $this->user->id,
+        ]);
+
+        $component = Livewire::test(\App\Livewire\MeasurementModal::class);
+        
+        // Test non-numeric input
+        $component->call('openAddMeasurement', 'food', today()->format('Y-m-d'))
+                  ->set('foodEntries', [$apple->id => 'not-a-number'])
+                  ->call('save')
+                  ->assertHasErrors(['foodEntries.' . $apple->id => 'integer']);
+                  
+        // Test decimal input (should be rejected for integer-only UI)
+        $component->call('openAddMeasurement', 'food', today()->format('Y-m-d'))
+                  ->set('foodEntries', [$apple->id => '150.5'])
+                  ->call('save')
+                  ->assertHasErrors(['foodEntries.' . $apple->id => 'integer']);
+    }
 
     #[\PHPUnit\Framework\Attributes\Test]
     public function handles_non_existent_food_gracefully()

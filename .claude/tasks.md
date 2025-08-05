@@ -886,20 +886,23 @@ All remaining tasks completed on 2025-08-03:
 ---
 
 ### [ ] 81 - Fix Food Model Type Coercion Bug
-- **Status**: Todo  
+- **Status**: Review  
 - **Description**: Fix type coercion issue in Food model where calculateCalories() method expects float but receives string from form inputs, causing ViewException during food measurement creation with non-numeric values.
 - **Priority**: Medium
 - **Implementation Plan**: 
-  1. [ ] Investigate Food::calculateCalories() method parameter type handling
-  2. [ ] Add input sanitization/type conversion before calling calculateCalories()
-  3. [ ] Update validation to properly handle non-numeric food gram inputs
-  4. [ ] Re-enable the skipped test in FoodMeasurement/CrudTest.php
+  1. [x] Investigate Food::calculateCalories() method parameter type handling
+  2. [x] Revert Food model to strict float typing (keep domain model clean)
+  3. [x] Update validation from 'numeric' to 'integer' to enforce integer-only UI input
+  4. [x] Add explicit float casting at call sites before calling calculateCalories()
+  5. [x] Re-enable the skipped test in FoodMeasurement/CrudTest.php with proper integer validation
+  6. [x] Update requirements documentation to specify integer-only food data entry
 - **Test Plan**: 
-  1. [ ] Verify calculateCalories() handles string inputs gracefully
-  2. [ ] Test food measurement creation with various input types
-  3. [ ] Ensure validation provides proper error messages for invalid inputs
-- **Started**: 
-- **Review**: 
+  1. [x] Verify calculateCalories() maintains strict float typing and accurate calculations
+  2. [x] Test food measurement creation with integer inputs and proper casting
+  3. [x] Ensure validation provides proper error messages for non-integer inputs
+  4. [x] Test that decimal inputs are rejected by validation
+- **Started**: 2025-08-05 18:14:01
+- **Review**: 2025-08-05 18:31:14
 - **Completed**: 
 - **Duration**: 
 
@@ -924,8 +927,8 @@ All remaining tasks completed on 2025-08-03:
 
 ---
 
-### [ ] 83 - Implement User Scoping for Medication Measurements
-- **Status**: Review  
+### [x] 83 - Implement User Scoping for Medication Measurements
+- **Status**: Completed  
 - **Description**: Security issue identified where medication measurements don't enforce user scoping, allowing users to potentially create measurements with other users' medications.
 - **Priority**: High (Security)
 - **Implementation Plan**: 
@@ -939,8 +942,8 @@ All remaining tasks completed on 2025-08-03:
   3. [x] Verify existing medication measurements remain functional
 - **Started**: 2025-08-05 09:06:08
 - **Review**: 2025-08-05 09:07:53
-- **Completed**: 
-- **Duration**: 
+- **Completed**: 2025-08-05 18:11:18
+- **Duration**: 1 minute 45 seconds
 
 ---
 

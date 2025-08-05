@@ -208,8 +208,8 @@ class MeasurementModal extends Component
                         'measurement_id' => $measurement->id,
                         'food_id' => $foodId,
                         'grams_consumed' => $grams,
-                        'calculated_calories' => $food->calculateCalories($grams),
-                        'calculated_carbs' => $food->calculateCarbs($grams),
+                        'calculated_calories' => $food->calculateCalories((float) $grams),
+                        'calculated_carbs' => $food->calculateCarbs((float) $grams),
                     ]);
                 }
             }
@@ -253,8 +253,8 @@ class MeasurementModal extends Component
                         'measurement_id' => $this->measurement->id,
                         'food_id' => $foodId,
                         'grams_consumed' => $grams,
-                        'calculated_calories' => $food->calculateCalories($grams),
-                        'calculated_carbs' => $food->calculateCarbs($grams),
+                        'calculated_calories' => $food->calculateCalories((float) $grams),
+                        'calculated_carbs' => $food->calculateCarbs((float) $grams),
                     ]);
                 }
             }
@@ -432,7 +432,7 @@ class MeasurementModal extends Component
                     ],
                     'foodEntries.*' => [
                         'required',
-                        'numeric',
+                        'integer',
                         'min:1',
                         'max:10000',
                     ],
@@ -443,7 +443,7 @@ class MeasurementModal extends Component
                     'foodEntries.array' => 'Food entries must be an array.',
                     'foodEntries.min' => 'At least one food item must be selected.',
                     'foodEntries.*.required' => 'Food amount is required.',
-                    'foodEntries.*.numeric' => 'Food amount must be a number.',
+                    'foodEntries.*.integer' => 'Food amount must be a whole number.',
                     'foodEntries.*.min' => 'Food amount must be at least 1 gram.',
                     'foodEntries.*.max' => 'Food amount cannot exceed 10000 grams.',
                     'foodTime.required' => 'Time is required.',
