@@ -85,7 +85,7 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
 - **Requirements**: 
   - Only user can set this status
   - **MANDATORY GIT CHECK**: AI must run `git status` before marking as Completed
-  - **COMMIT REMINDER**: If uncommitted changes exist, AI must remind user to commit BEFORE marking completed
+  - **COMMIT REMINDER**: If uncommitted changes exist, AI must ask user if it can commit changes BEFORE marking completed
   - **ONLY AFTER COMMIT**: Mark task as completed with timestamp and duration
   - Duration calculated from Started to Completed timestamps
 - **Transition from**: Review (user approval only)
