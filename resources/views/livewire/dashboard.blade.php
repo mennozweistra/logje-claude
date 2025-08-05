@@ -17,7 +17,7 @@
                 </button>
 
                 <button wire:click="goToToday" 
-                        class="px-3 py-2 md:px-4 text-white rounded-lg transition-colors text-xs md:text-sm font-medium min-w-[44px] md:w-20 h-11 md:h-10 flex items-center justify-center {{ $isToday ? 'bg-sky-400 hover:bg-sky-500' : 'bg-blue-600 hover:bg-blue-700' }}">
+                        class="px-3 py-2 md:px-4 text-white rounded-lg transition-colors text-xs md:text-sm font-medium min-w-[60px] md:min-w-[80px] h-11 md:h-10 flex items-center justify-center {{ $isToday ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700' }}">
                     Today
                 </button>
 
