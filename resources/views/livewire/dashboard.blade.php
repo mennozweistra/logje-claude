@@ -32,8 +32,8 @@
         </div>
     </div>
 
-    {{-- Add Measurement Section --}}
-    <div class="bg-white rounded-lg shadow p-4">
+    {{-- Add Measurement Section - Desktop Only --}}
+    <div class="hidden md:block bg-white rounded-lg shadow p-4">
         <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
             @php
                 // Reorder measurement types: Weight, Glucose, Medication, Food, Exercise, Notes
@@ -241,6 +241,35 @@
                 <p class="mt-1 text-sm text-gray-500">Get started by adding your first measurement for this date.</p>
             </div>
         @endif
+    </div>
+
+    {{-- Add Measurement Section - Mobile Only (Bottom) --}}
+    <div class="md:hidden bg-white rounded-lg shadow p-4">
+        <h3 class="text-sm font-medium text-gray-900 mb-3 text-center">Add Measurement</h3>
+        <div class="grid grid-cols-3 gap-3">
+            @php
+                // Reorder measurement types: Weight, Glucose, Medication, Food, Exercise, Notes
+                $measurementTypes = [
+                    ['slug' => 'weight', 'name' => 'Weight', 'icon' => 'weight'],
+                    ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => 'droplet'],
+                    ['slug' => 'medication', 'name' => 'Medication', 'icon' => 'pill'],
+                    ['slug' => 'food', 'name' => 'Food', 'icon' => 'apple'],
+                    ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => 'activity'],
+                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text']
+                ];
+            @endphp
+            @foreach ($measurementTypes as $type)
+                <button 
+                    wire:click="openAddMeasurement('{{ $type['slug'] }}')"
+                    class="flex flex-col items-center justify-center p-3 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[70px] active:bg-blue-100"
+                >
+                    <div class="text-base mb-1">
+                        <x-dynamic-component :component="'lucide-' . $type['icon']" class="w-4 h-4" />
+                    </div>
+                    <span class="text-xs font-medium text-gray-900 text-center leading-tight">{{ $type['name'] }}</span>
+                </button>
+            @endforeach
+        </div>
     </div>
 
     {{-- Unified Measurement Modal --}}
