@@ -6,6 +6,14 @@ This document lists project-specific tools and their command-line instructions. 
 
 ### Docker Development Environment
 
+**Setup Requirements:**
+```bash
+# Export user environment variables (add to .bashrc/.zshrc for persistence)
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g) 
+export USER_NAME=$(whoami)
+```
+
 **Primary Development Setup:**
 ```bash
 # Start all services (app, database, phpmyadmin)
@@ -14,29 +22,57 @@ docker compose up -d
 # Stop all services
 docker compose down
 
+# Rebuild containers (after Dockerfile changes)
+docker compose build --no-cache
+
 # View running containers
 docker compose ps
 
 # View application logs
 docker compose logs app
+docker compose logs app -f  # Follow logs in real-time
 
 # Access application shell
 docker compose exec app bash
 
+# Run Laravel commands
+docker compose exec app php artisan migrate
+docker compose exec app php artisan make:model MyModel
+docker compose exec app php artisan config:clear
+docker compose exec app php artisan about
+
+# Run Composer commands
+docker compose exec app composer install
+docker compose exec app composer update
+docker compose exec app composer require package-name
+
+# Run NPM commands
+docker compose exec app npm install
+docker compose exec app npm run dev
+docker compose exec app npm run build
+
 # Access database
-docker compose exec mysql mysql -u logje -p logje
+docker compose exec mysql mysql -u root -p logje
+# Use password: password
 ```
 
 **Service URLs:**
 - Application: http://localhost:8000
-- phpMyAdmin: http://localhost:8080
-- MySQL: localhost:3306
+- phpMyAdmin: http://localhost:8081
+- MySQL: localhost:3307
 
 **Development Workflow:**
-- Use `docker compose up -d` to start development environment
-- Laravel app runs in container with live code mounting
+- Proper user ID mapping ensures seamless file editing between host and container
+- Laravel app runs in container with live code mounting at /var/www/html
 - Database data persists in Docker volumes
-- No need for local PHP/MySQL installation
+- All files created have correct ownership (host user UID 1000)
+- No permission fixing required with proper Docker setup
+
+**Important Configuration Notes:**
+- `.env` file must use `DB_HOST=mysql` (Docker service name) not `127.0.0.1`
+- `.env` file must use `DB_PORT=3306` (internal container port) not `3307`
+- Port 3307 is only for external host connections to the database
+- Laravel container connects to MySQL container via Docker network using service name
 
 ## Testing Tools
 

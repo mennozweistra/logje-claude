@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class MeasurementModal extends Component
 {
@@ -61,6 +62,7 @@ class MeasurementModal extends Component
     public function mount()
     {
         $this->selectedDate = Carbon::today()->format('Y-m-d');
+            
     }
 
     #[On('open-add-measurement')]
@@ -97,6 +99,9 @@ class MeasurementModal extends Component
     public function setCurrentTime()
     {
         $currentTime = Carbon::now()->format('H:i');
+        Log::info('Current time is: ' . $currentTime);
+        Log::info('Current timezone is: ' . date_default_timezone_get());
+
         $this->glucoseTime = $currentTime;
         $this->weightTime = $currentTime;
         $this->exerciseTime = $currentTime;
