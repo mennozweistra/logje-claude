@@ -168,16 +168,443 @@
     </div>
 
     <script>
-        // Chart variables
-        let glucoseChart, weightChart, exerciseDurationChart, exerciseTypesChart, caloriesChart, carbsChart;
+        // Wrap in IIFE to prevent script re-execution on navigation
+        (function() {
+            if (window.reportsScriptLoaded) {
+                return;
+            }
+            window.reportsScriptLoaded = true;
+        
+        // Chart Manager Singleton
+        const ChartManager = (function() {
+            let instance = null;
+            
+            function ChartManagerInstance() {
+                this.charts = {
+                    glucose: null,
+                    weight: null,
+                    exerciseDuration: null,
+                    exerciseTypes: null,
+                    calories: null,
+                    carbs: null
+                };
+            }
+            
+            ChartManagerInstance.prototype.initializeCharts = function() {
+                // Only initialize if charts don't exist
+                if (!this.charts.glucose) {
+                    this.createGlucoseChart();
+                }
+                if (!this.charts.weight) {
+                    this.createWeightChart();
+                }
+                if (!this.charts.exerciseDuration) {
+                    this.createExerciseDurationChart();
+                }
+                if (!this.charts.exerciseTypes) {
+                    this.createExerciseTypesChart();
+                }
+                if (!this.charts.calories) {
+                    this.createCaloriesChart();
+                }
+                if (!this.charts.carbs) {
+                    this.createCarbsChart();
+                }
+            };
+            
+            ChartManagerInstance.prototype.createGlucoseChart = function() {
+                const ctx = document.getElementById('glucose-chart').getContext('2d');
+                this.charts.glucose = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Daily Average',
+                                data: [],
+                                borderColor: 'rgb(59, 130, 246)',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Fasting',
+                                data: [],
+                                borderColor: 'rgb(239, 68, 68)',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                showLine: false,
+                                pointRadius: 4
+                            },
+                            {
+                                label: 'Non-Fasting',
+                                data: [],
+                                borderColor: 'rgb(34, 197, 94)',
+                                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                                showLine: false,
+                                pointRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'mmol/L'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            ChartManagerInstance.prototype.createWeightChart = function() {
+                const ctx = document.getElementById('weight-chart').getContext('2d');
+                this.charts.weight = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Weight',
+                                data: [],
+                                borderColor: 'rgb(147, 51, 234)',
+                                backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Trend',
+                                data: [],
+                                borderColor: 'rgba(147, 51, 234, 0.5)',
+                                backgroundColor: 'transparent',
+                                borderDash: [5, 5],
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'kg'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            ChartManagerInstance.prototype.createExerciseDurationChart = function() {
+                const ctx = document.getElementById('exercise-duration-chart').getContext('2d');
+                this.charts.exerciseDuration = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        datasets: [{
+                            label: 'Minutes',
+                            data: [],
+                            backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                            borderColor: 'rgb(34, 197, 94)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Minutes'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            ChartManagerInstance.prototype.createExerciseTypesChart = function() {
+                const ctx = document.getElementById('exercise-types-chart').getContext('2d');
+                this.charts.exerciseTypes = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [
+                                'rgba(239, 68, 68, 0.8)',
+                                'rgba(34, 197, 94, 0.8)',
+                                'rgba(59, 130, 246, 0.8)',
+                                'rgba(147, 51, 234, 0.8)',
+                                'rgba(245, 158, 11, 0.8)',
+                                'rgba(236, 72, 153, 0.8)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            };
+
+            ChartManagerInstance.prototype.createCaloriesChart = function() {
+                const ctx = document.getElementById('calories-chart').getContext('2d');
+                this.charts.calories = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        datasets: [{
+                            label: 'Calories',
+                            data: [],
+                            backgroundColor: 'rgba(249, 115, 22, 0.8)',
+                            borderColor: 'rgb(249, 115, 22)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Calories'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            ChartManagerInstance.prototype.createCarbsChart = function() {
+                const ctx = document.getElementById('carbs-chart').getContext('2d');
+                this.charts.carbs = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        datasets: [{
+                            label: 'Carbohydrates',
+                            data: [],
+                            backgroundColor: 'rgba(234, 179, 8, 0.8)',
+                            borderColor: 'rgb(234, 179, 8)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Grams'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            ChartManagerInstance.prototype.updateCharts = async function() {
+                const startDate = document.getElementById('start-date').value;
+                const endDate = document.getElementById('end-date').value;
+                
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates');
+                    return;
+                }
+
+                this.showLoadingStates();
+
+                try {
+                    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
+                    const headers = {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': token,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    };
+
+                    // Update glucose chart
+                    if (this.charts.glucose) {
+                        const glucoseResponse = await fetch(`{{ route('reports.glucose-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                            method: 'GET',
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (glucoseResponse.ok) {
+                            const glucoseData = await glucoseResponse.json();
+                            this.charts.glucose.data.datasets[0].data = glucoseData.dailyAverages;
+                            this.charts.glucose.data.datasets[1].data = glucoseData.fastingReadings;
+                            this.charts.glucose.data.datasets[2].data = glucoseData.nonFastingReadings;
+                            this.charts.glucose.update();
+                        }
+                    }
+
+                    // Update weight chart
+                    if (this.charts.weight) {
+                        const weightResponse = await fetch(`{{ route('reports.weight-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                            method: 'GET',
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (weightResponse.ok) {
+                            const weightData = await weightResponse.json();
+                            this.charts.weight.data.datasets[0].data = weightData.weights;
+                            this.charts.weight.data.datasets[1].data = weightData.trend;
+                            this.charts.weight.update();
+                        }
+                    }
+
+                    // Update exercise charts
+                    if (this.charts.exerciseDuration && this.charts.exerciseTypes) {
+                        const exerciseResponse = await fetch(`{{ route('reports.exercise-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                            method: 'GET',
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (exerciseResponse.ok) {
+                            const exerciseData = await exerciseResponse.json();
+                            this.charts.exerciseDuration.data.datasets[0].data = exerciseData.dailyDuration;
+                            this.charts.exerciseDuration.update();
+
+                            const types = Object.keys(exerciseData.exerciseTypes);
+                            const durations = Object.values(exerciseData.exerciseTypes);
+                            this.charts.exerciseTypes.data.labels = types;
+                            this.charts.exerciseTypes.data.datasets[0].data = durations;
+                            this.charts.exerciseTypes.update();
+                        }
+                    }
+
+                    // Update nutrition charts
+                    if (this.charts.calories && this.charts.carbs) {
+                        const nutritionResponse = await fetch(`{{ route('reports.nutrition-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                            method: 'GET',
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (nutritionResponse.ok) {
+                            const nutritionData = await nutritionResponse.json();
+                            this.charts.calories.data.datasets[0].data = nutritionData.dailyCalories;
+                            this.charts.calories.update();
+                            this.charts.carbs.data.datasets[0].data = nutritionData.dailyCarbs;
+                            this.charts.carbs.update();
+                        }
+                    }
+
+                    this.hideLoadingStates();
+
+                } catch (error) {
+                    console.error('Error updating charts:', error);
+                    this.hideLoadingStates();
+                    alert('Error loading chart data. Please check your connection and try again.');
+                }
+            };
+
+            ChartManagerInstance.prototype.showLoadingStates = function() {
+                const glucoseSkeleton = document.getElementById('glucose-skeleton');
+                const weightSkeleton = document.getElementById('weight-skeleton');
+                const exerciseSkeleton = document.getElementById('exercise-skeleton');
+                const nutritionSkeleton = document.getElementById('nutrition-skeleton');
+                
+                if (glucoseSkeleton) glucoseSkeleton.style.display = 'block';
+                if (weightSkeleton) weightSkeleton.style.display = 'block';
+                if (exerciseSkeleton) exerciseSkeleton.style.display = 'block';
+                if (nutritionSkeleton) nutritionSkeleton.style.display = 'block';
+                
+                document.getElementById('glucose-chart-container').style.display = 'none';
+                document.getElementById('weight-chart-container').style.display = 'none';
+                document.getElementById('exercise-chart-container').style.display = 'none';
+                document.getElementById('nutrition-chart-container').style.display = 'none';
+            };
+
+            ChartManagerInstance.prototype.hideLoadingStates = function() {
+                const glucoseSkeleton = document.getElementById('glucose-skeleton');
+                const weightSkeleton = document.getElementById('weight-skeleton');
+                const exerciseSkeleton = document.getElementById('exercise-skeleton');
+                const nutritionSkeleton = document.getElementById('nutrition-skeleton');
+                
+                if (glucoseSkeleton) glucoseSkeleton.style.display = 'none';
+                if (weightSkeleton) weightSkeleton.style.display = 'none';
+                if (exerciseSkeleton) exerciseSkeleton.style.display = 'none';
+                if (nutritionSkeleton) nutritionSkeleton.style.display = 'none';
+                
+                document.getElementById('glucose-chart-container').style.display = 'block';
+                document.getElementById('weight-chart-container').style.display = 'block';
+                document.getElementById('exercise-chart-container').style.display = 'block';
+                document.getElementById('nutrition-chart-container').style.display = 'block';
+            };
+            
+            return {
+                getInstance: function() {
+                    if (!instance) {
+                        instance = new ChartManagerInstance();
+                    }
+                    return instance;
+                }
+            };
+        })();
+        
+        // Get singleton instance
+        const chartManager = ChartManager.getInstance();
 
         // Initialize charts on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOMContentLoaded - initializing reports');
             initializeDateRange();
-            initializeCharts();
-            // Delay chart update to ensure DOM is fully ready
-            setTimeout(updateCharts, 300);
+            if (typeof Chart !== 'undefined') {
+                chartManager.initializeCharts();
+                setTimeout(() => chartManager.updateCharts(), 300);
+            }
         });
         
         // Also initialize on window load as fallback
@@ -187,26 +614,11 @@
                 console.log('Dates not set, initializing...');
                 initializeDateRange();
             }
-            // Ensure charts are loaded
-            setTimeout(updateCharts, 500);
+            if (typeof Chart !== 'undefined') {
+                chartManager.initializeCharts();
+                setTimeout(() => chartManager.updateCharts(), 500);
+            }
         });
-
-        // Additional initialization for SPA navigation
-        function ensureInitialized() {
-            console.log('Ensuring reports initialization');
-            if (!document.getElementById('start-date').value || !document.getElementById('end-date').value) {
-                initializeDateRange();
-            }
-            if (typeof Chart !== 'undefined' && (!glucoseChart || !weightChart)) {
-                initializeCharts();
-            }
-            setTimeout(updateCharts, 300);
-        }
-
-        // Run initialization multiple times to catch navigation scenarios
-        setTimeout(ensureInitialized, 100);
-        setTimeout(ensureInitialized, 500);
-        setTimeout(ensureInitialized, 1000);
 
         function initializeDateRange() {
             console.log('Initializing date range');
@@ -235,402 +647,9 @@
             document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
             
             // Auto-refresh charts after setting date range
-            updateCharts();
+            chartManager.updateCharts();
         }
 
-        function initializeCharts() {
-            // Glucose Chart
-            const glucoseCtx = document.getElementById('glucose-chart').getContext('2d');
-            glucoseChart = new Chart(glucoseCtx, {
-                type: 'line',
-                data: {
-                    datasets: [
-                        {
-                            label: 'Daily Average',
-                            data: [],
-                            borderColor: 'rgb(59, 130, 246)',
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Fasting',
-                            data: [],
-                            borderColor: 'rgb(239, 68, 68)',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            showLine: false,
-                            pointRadius: 4
-                        },
-                        {
-                            label: 'Non-Fasting',
-                            data: [],
-                            borderColor: 'rgb(34, 197, 94)',
-                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                            showLine: false,
-                            pointRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                parser: 'yyyy-MM-dd',
-                                displayFormats: {
-                                    day: 'dd-MM'
-                                }
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'mmol/L'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Weight Chart
-            const weightCtx = document.getElementById('weight-chart').getContext('2d');
-            weightChart = new Chart(weightCtx, {
-                type: 'line',
-                data: {
-                    datasets: [
-                        {
-                            label: 'Weight',
-                            data: [],
-                            borderColor: 'rgb(147, 51, 234)',
-                            backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                            tension: 0.1
-                        },
-                        {
-                            label: 'Trend',
-                            data: [],
-                            borderColor: 'rgba(147, 51, 234, 0.5)',
-                            backgroundColor: 'transparent',
-                            borderDash: [5, 5],
-                            tension: 0.1
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                parser: 'yyyy-MM-dd',
-                                displayFormats: {
-                                    day: 'dd-MM'
-                                }
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'kg'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Exercise Duration Chart
-            const exerciseDurationCtx = document.getElementById('exercise-duration-chart').getContext('2d');
-            exerciseDurationChart = new Chart(exerciseDurationCtx, {
-                type: 'bar',
-                data: {
-                    datasets: [{
-                        label: 'Minutes',
-                        data: [],
-                        backgroundColor: 'rgba(34, 197, 94, 0.8)',
-                        borderColor: 'rgb(34, 197, 94)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                parser: 'yyyy-MM-dd',
-                                displayFormats: {
-                                    day: 'dd-MM'
-                                }
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Minutes'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Exercise Types Chart
-            const exerciseTypesCtx = document.getElementById('exercise-types-chart').getContext('2d');
-            exerciseTypesChart = new Chart(exerciseTypesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        data: [],
-                        backgroundColor: [
-                            'rgba(239, 68, 68, 0.8)',
-                            'rgba(34, 197, 94, 0.8)',
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(147, 51, 234, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(236, 72, 153, 0.8)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            // Calories Chart
-            const caloriesCtx = document.getElementById('calories-chart').getContext('2d');
-            caloriesChart = new Chart(caloriesCtx, {
-                type: 'bar',
-                data: {
-                    datasets: [{
-                        label: 'Calories',
-                        data: [],
-                        backgroundColor: 'rgba(249, 115, 22, 0.8)',
-                        borderColor: 'rgb(249, 115, 22)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                parser: 'yyyy-MM-dd',
-                                displayFormats: {
-                                    day: 'dd-MM'
-                                }
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Calories'
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Carbs Chart
-            const carbsCtx = document.getElementById('carbs-chart').getContext('2d');
-            carbsChart = new Chart(carbsCtx, {
-                type: 'bar',
-                data: {
-                    datasets: [{
-                        label: 'Carbohydrates',
-                        data: [],
-                        backgroundColor: 'rgba(234, 179, 8, 0.8)',
-                        borderColor: 'rgb(234, 179, 8)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                parser: 'yyyy-MM-dd',
-                                displayFormats: {
-                                    day: 'dd-MM'
-                                }
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Grams'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function showLoadingStates() {
-            // Show skeletons (check if they exist first)
-            const glucoseSkeleton = document.getElementById('glucose-skeleton');
-            const weightSkeleton = document.getElementById('weight-skeleton');
-            const exerciseSkeleton = document.getElementById('exercise-skeleton');
-            const nutritionSkeleton = document.getElementById('nutrition-skeleton');
-            
-            if (glucoseSkeleton) glucoseSkeleton.style.display = 'block';
-            if (weightSkeleton) weightSkeleton.style.display = 'block';
-            if (exerciseSkeleton) exerciseSkeleton.style.display = 'block';
-            if (nutritionSkeleton) nutritionSkeleton.style.display = 'block';
-            
-            // Hide charts
-            document.getElementById('glucose-chart-container').style.display = 'none';
-            document.getElementById('weight-chart-container').style.display = 'none';
-            document.getElementById('exercise-chart-container').style.display = 'none';
-            document.getElementById('nutrition-chart-container').style.display = 'none';
-        }
-
-        function hideLoadingStates() {
-            // Hide skeletons (check if they exist first)
-            const glucoseSkeleton = document.getElementById('glucose-skeleton');
-            const weightSkeleton = document.getElementById('weight-skeleton');
-            const exerciseSkeleton = document.getElementById('exercise-skeleton');
-            const nutritionSkeleton = document.getElementById('nutrition-skeleton');
-            
-            if (glucoseSkeleton) glucoseSkeleton.style.display = 'none';
-            if (weightSkeleton) weightSkeleton.style.display = 'none';
-            if (exerciseSkeleton) exerciseSkeleton.style.display = 'none';
-            if (nutritionSkeleton) nutritionSkeleton.style.display = 'none';
-            
-            // Show charts
-            document.getElementById('glucose-chart-container').style.display = 'block';
-            document.getElementById('weight-chart-container').style.display = 'block';
-            document.getElementById('exercise-chart-container').style.display = 'block';
-            document.getElementById('nutrition-chart-container').style.display = 'block';
-        }
-
-        async function updateCharts() {
-            const startDate = document.getElementById('start-date').value;
-            const endDate = document.getElementById('end-date').value;
-            
-            if (!startDate || !endDate) {
-                alert('Please select both start and end dates');
-                return;
-            }
-
-            showLoadingStates();
-
-            try {
-                // Get CSRF token from meta tag or cookie
-                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
-                
-                const headers = {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': token,
-                    'X-Requested-With': 'XMLHttpRequest'
-                };
-
-                // Update glucose chart
-                const glucoseResponse = await fetch(`{{ route('reports.glucose-data') }}?start_date=${startDate}&end_date=${endDate}`, {
-                    method: 'GET',
-                    headers: headers,
-                    credentials: 'same-origin'
-                });
-                
-                if (!glucoseResponse.ok) {
-                    throw new Error(`HTTP error! status: ${glucoseResponse.status}`);
-                }
-                
-                const glucoseData = await glucoseResponse.json();
-                
-                glucoseChart.data.datasets[0].data = glucoseData.dailyAverages;
-                glucoseChart.data.datasets[1].data = glucoseData.fastingReadings;
-                glucoseChart.data.datasets[2].data = glucoseData.nonFastingReadings;
-                glucoseChart.update();
-
-                // Update weight chart
-                const weightResponse = await fetch(`{{ route('reports.weight-data') }}?start_date=${startDate}&end_date=${endDate}`, {
-                    method: 'GET',
-                    headers: headers,
-                    credentials: 'same-origin'
-                });
-                
-                if (!weightResponse.ok) {
-                    throw new Error(`HTTP error! status: ${weightResponse.status}`);
-                }
-                
-                const weightData = await weightResponse.json();
-                
-                weightChart.data.datasets[0].data = weightData.weights;
-                weightChart.data.datasets[1].data = weightData.trend;
-                weightChart.update();
-
-                // Update exercise charts
-                const exerciseResponse = await fetch(`{{ route('reports.exercise-data') }}?start_date=${startDate}&end_date=${endDate}`, {
-                    method: 'GET',
-                    headers: headers,
-                    credentials: 'same-origin'
-                });
-                
-                if (!exerciseResponse.ok) {
-                    throw new Error(`HTTP error! status: ${exerciseResponse.status}`);
-                }
-                
-                const exerciseData = await exerciseResponse.json();
-                
-                exerciseDurationChart.data.datasets[0].data = exerciseData.dailyDuration;
-                exerciseDurationChart.update();
-
-                const types = Object.keys(exerciseData.exerciseTypes);
-                const durations = Object.values(exerciseData.exerciseTypes);
-                
-                exerciseTypesChart.data.labels = types;
-                exerciseTypesChart.data.datasets[0].data = durations;
-                exerciseTypesChart.update();
-
-                // Update nutrition charts
-                const nutritionResponse = await fetch(`{{ route('reports.nutrition-data') }}?start_date=${startDate}&end_date=${endDate}`, {
-                    method: 'GET',
-                    headers: headers,
-                    credentials: 'same-origin'
-                });
-                
-                if (!nutritionResponse.ok) {
-                    throw new Error(`HTTP error! status: ${nutritionResponse.status}`);
-                }
-                
-                const nutritionData = await nutritionResponse.json();
-                
-                caloriesChart.data.datasets[0].data = nutritionData.dailyCalories;
-                caloriesChart.update();
-
-                carbsChart.data.datasets[0].data = nutritionData.dailyCarbs;
-                carbsChart.update();
-
-                hideLoadingStates();
-
-            } catch (error) {
-                console.error('Error updating charts:', error);
-                hideLoadingStates();
-                
-                // Show more detailed error information
-                let errorMessage = 'Error loading chart data. ';
-                if (error.message.includes('401') || error.message.includes('Unauthenticated')) {
-                    errorMessage += 'Please refresh the page and try again (authentication issue).';
-                } else if (error.message.includes('403')) {
-                    errorMessage += 'You do not have permission to access this data.';
-                } else if (error.message.includes('500')) {
-                    errorMessage += 'Server error occurred. Please try again later.';
-                } else {
-                    errorMessage += 'Please check your internet connection and try again.';
-                }
-                
-                alert(errorMessage);
-                console.log('Full error details:', error);
-            }
-        }
 
         function exportData(format) {
             const startDate = document.getElementById('start-date').value;
@@ -682,5 +701,6 @@
             form.submit();
             document.body.removeChild(form);
         }
+        })(); // Close IIFE
     </script>
 </x-app-layout>
