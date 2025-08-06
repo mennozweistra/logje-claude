@@ -4,7 +4,8 @@
         <div class="flex items-center justify-between">
             {{-- Left: Date Display --}}
             <div class="flex-1">
-                <h1 class="text-lg md:text-2xl font-bold text-gray-900">{{ $selectedDateFormatted }}</h1>
+                <h1 class="text-2xl font-bold text-gray-900">{{ $selectedDayName }}</h1>
+                <p class="text-sm text-gray-600 mt-1">{{ $selectedDateOnly }}</p>
             </div>
 
             {{-- Right: Navigation Buttons --}}
