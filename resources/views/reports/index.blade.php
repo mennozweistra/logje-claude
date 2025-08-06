@@ -168,70 +168,10 @@
     </div>
 
     <script>
-        // Global function for date range buttons
-        function setDateRange(days) {
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - days);
-
-            document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
-            document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
-            
-            // Auto-refresh charts after setting date range - use singleton getInstance
-            if (typeof ChartManager !== 'undefined') {
-                ChartManager.getInstance().updateCharts();
-            }
-        }
-
-        // Global function for chart updates
-        function updateCharts() {
-            if (typeof ChartManager !== 'undefined') {
-                ChartManager.getInstance().updateCharts();
-            }
-        }
-
-        // Global initialization function
-        function initializeDateRange() {
-            console.log('Initializing date range');
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - 7);
-
-            const startElement = document.getElementById('start-date');
-            const endElement = document.getElementById('end-date');
-
-            if (startElement && endElement) {
-                // Only set if empty (preserve existing values during navigation)
-                if (!startElement.value && !endElement.value) {
-                    endElement.value = endDate.toISOString().split('T')[0];
-                    startElement.value = startDate.toISOString().split('T')[0];
-                    console.log('Date range set:', startElement.value, 'to', endElement.value);
-                } else {
-                    console.log('Date range already set, preserving values');
-                }
-            } else {
-                console.error('Date input elements not found');
-            }
-        }
-
-        // Wrap in IIFE to prevent script re-execution on navigation
-        (function() {
-            if (window.reportsScriptLoaded) {
-                // On navigation, only re-initialize date range and charts
-                console.log('Reports script already loaded, reinitializing...');
-                initializeDateRange();
-                if (typeof Chart !== 'undefined' && typeof ChartManager !== 'undefined') {
-                    const manager = ChartManager.getInstance();
-                    setTimeout(() => {
-                        const startDate = document.getElementById('start-date').value;
-                        const endDate = document.getElementById('end-date').value;
-                        if (startDate && endDate) {
-                            manager.updateCharts();
-                        }
-                    }, 300);
-                }
-                return;
-            }
+        // Script execution guard - prevent duplicate execution
+        if (window.reportsScriptLoaded) {
+            console.log('Reports script already loaded');
+        } else {
             window.reportsScriptLoaded = true;
         
         // Chart Manager Singleton (Modern ES2022+ Pattern)
@@ -655,6 +595,48 @@
                 document.getElementById('nutrition-chart-container').style.display = 'block';
             }
         }
+
+        // Global function for date range buttons
+        function setDateRange(days) {
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - days);
+
+            document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
+            document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
+            
+            // Auto-refresh charts after setting date range
+            ChartManager.getInstance().updateCharts();
+        }
+
+        // Global function for chart updates
+        function updateCharts() {
+            ChartManager.getInstance().updateCharts();
+        }
+
+        // Global initialization function
+        function initializeDateRange() {
+            console.log('Initializing date range');
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 7);
+
+            const startElement = document.getElementById('start-date');
+            const endElement = document.getElementById('end-date');
+
+            if (startElement && endElement) {
+                // Only set if empty (preserve existing values during navigation)
+                if (!startElement.value && !endElement.value) {
+                    endElement.value = endDate.toISOString().split('T')[0];
+                    startElement.value = startDate.toISOString().split('T')[0];
+                    console.log('Date range set:', startElement.value, 'to', endElement.value);
+                } else {
+                    console.log('Date range already set, preserving values');
+                }
+            } else {
+                console.error('Date input elements not found');
+            }
+        }
         
         // Initialize charts on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -692,7 +674,7 @@
                 // Small delay to ensure DOM is ready
                 setTimeout(() => {
                     initializeDateRange();
-                    if (typeof Chart !== 'undefined' && typeof ChartManager !== 'undefined') {
+                    if (typeof Chart !== 'undefined') {
                         const manager = ChartManager.getInstance();
                         manager.initializeCharts();
                         const startDate = startDateElement.value;
@@ -704,9 +686,6 @@
                 }, 100);
             }
         });
-
-        // Functions moved to global scope above
-
 
         function exportData(format) {
             const startDate = document.getElementById('start-date').value;
@@ -758,6 +737,7 @@
             form.submit();
             document.body.removeChild(form);
         }
-        })(); // Close IIFE
+
+        } // End script execution guard
     </script>
 </x-app-layout>

@@ -458,3 +458,39 @@ This file tracks all tasks for the project following the workflow defined in `./
 - **Duration**: 14 minutes 18 seconds
 
 ---
+
+### [✅] 101 - Fix Chart Data Not Refreshing on Date Range Changes
+- **Status**: Completed
+- **Description**: Charts on the reports page don't refresh when date ranges are changed, either through manual date input changes or date range buttons (7, 30, 90 days). For example, setting the start date to 2 days ago shows no chart updates. This affects both manual date changes and preset button functionality.
+- **Implementation Plan**: 
+  1. [x] Test current date range change behavior to confirm the issue
+  2. [x] Investigate chart update logic when date inputs change (onchange events)
+  3. [x] Verify date range buttons are calling chart update methods correctly
+  4. [x] Check if chart data fetching API calls are being made with new date ranges
+  5. [x] Ensure chart instances are being updated with new data after successful API responses
+  6. [x] Add proper event listeners for manual date input changes if missing
+  7. [x] Test with longer date ranges and seed additional test data if needed
+- **Test Plan**: 
+  1. [x] Test manual date range changes (e.g., set start date to 2 days ago)
+  2. [x] Test all date range buttons (7, 30, 90 days) trigger chart updates
+  3. [x] Verify API calls are made with correct date parameters
+  4. [x] Confirm chart data is updated and charts re-render with new data
+  5. [x] Test with various date ranges to ensure consistent behavior
+  6. [x] Check browser network tab for API requests during date changes
+  7. [x] Seed additional test data if needed for longer date range testing
+- **Solution**: 
+  - **Root Cause**: IIFE wrapper prevented global `updateCharts()` function from accessing `ChartManager` class
+  - **Fix**: Completely removed IIFE wrapper per user request, moved all code to global scope
+  - **Architecture**: Preserved modern ES2022+ singleton pattern with private static fields
+  - **Testing**: Verified both manual date input changes and date range buttons trigger proper API calls with correct parameters
+  - **Result**: Charts now refresh correctly on all date range changes with clean console output
+- **Issues Found**: 
+  - JavaScript "ChartManager is not defined" error due to IIFE scoping issues
+  - "Illegal return statement" error when removing IIFE (fixed by using if/else structure)
+  - User explicitly requested IIFE removal for cleaner architecture
+- **Started**: 2025-08-06 22:01:52
+- **Review**: 2025-08-06 22:07:34
+- **Completed**: 2025-08-06 22:09:53
+- **Duration**: 8 minutes 1 second
+
+---
