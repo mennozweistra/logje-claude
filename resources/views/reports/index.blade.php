@@ -473,6 +473,9 @@
                 this.showLoadingStates();
 
                 try {
+                    // Generate complete date sequence for consistent x-axis across all charts
+                    const dateSequence = this.generateDateSequence(startDate, endDate);
+                    
                     const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
                     const headers = {
                         'Accept': 'application/json',
@@ -491,9 +494,10 @@
                         
                         if (glucoseResponse.ok) {
                             const glucoseData = await glucoseResponse.json();
-                            this.charts.glucose.data.datasets[0].data = glucoseData.dailyAverages;
-                            this.charts.glucose.data.datasets[1].data = glucoseData.fastingReadings;
-                            this.charts.glucose.data.datasets[2].data = glucoseData.nonFastingReadings;
+                            // Pad data with missing dates for consistent x-axis
+                            this.charts.glucose.data.datasets[0].data = this.padDataWithMissingDates(glucoseData.dailyAverages, dateSequence);
+                            this.charts.glucose.data.datasets[1].data = this.padDataWithMissingDates(glucoseData.fastingReadings, dateSequence);
+                            this.charts.glucose.data.datasets[2].data = this.padDataWithMissingDates(glucoseData.nonFastingReadings, dateSequence);
                             this.charts.glucose.update();
                         }
                     }
@@ -508,8 +512,9 @@
                         
                         if (weightResponse.ok) {
                             const weightData = await weightResponse.json();
-                            this.charts.weight.data.datasets[0].data = weightData.weights;
-                            this.charts.weight.data.datasets[1].data = weightData.trend;
+                            // Pad data with missing dates for consistent x-axis
+                            this.charts.weight.data.datasets[0].data = this.padDataWithMissingDates(weightData.weights, dateSequence);
+                            this.charts.weight.data.datasets[1].data = this.padDataWithMissingDates(weightData.trend, dateSequence);
                             this.charts.weight.update();
                         }
                     }
@@ -524,9 +529,11 @@
                         
                         if (exerciseResponse.ok) {
                             const exerciseData = await exerciseResponse.json();
-                            this.charts.exerciseDuration.data.datasets[0].data = exerciseData.dailyDuration;
+                            // Pad duration data with missing dates for consistent x-axis
+                            this.charts.exerciseDuration.data.datasets[0].data = this.padDataWithMissingDates(exerciseData.dailyDuration, dateSequence);
                             this.charts.exerciseDuration.update();
 
+                            // Exercise types chart (doughnut) doesn't need date padding
                             const types = Object.keys(exerciseData.exerciseTypes);
                             const durations = Object.values(exerciseData.exerciseTypes);
                             this.charts.exerciseTypes.data.labels = types;
@@ -545,9 +552,10 @@
                         
                         if (nutritionResponse.ok) {
                             const nutritionData = await nutritionResponse.json();
-                            this.charts.calories.data.datasets[0].data = nutritionData.dailyCalories;
+                            // Pad data with missing dates for consistent x-axis
+                            this.charts.calories.data.datasets[0].data = this.padDataWithMissingDates(nutritionData.dailyCalories, dateSequence);
                             this.charts.calories.update();
-                            this.charts.carbs.data.datasets[0].data = nutritionData.dailyCarbs;
+                            this.charts.carbs.data.datasets[0].data = this.padDataWithMissingDates(nutritionData.dailyCarbs, dateSequence);
                             this.charts.carbs.update();
                         }
                     }
@@ -593,6 +601,36 @@
                 document.getElementById('weight-chart-container').style.display = 'block';
                 document.getElementById('exercise-chart-container').style.display = 'block';
                 document.getElementById('nutrition-chart-container').style.display = 'block';
+            }
+
+            // Helper method to generate complete date sequence for consistent x-axis
+            generateDateSequence(startDate, endDate) {
+                const dates = [];
+                const current = new Date(startDate);
+                const end = new Date(endDate);
+                
+                while (current <= end) {
+                    dates.push(current.toISOString().split('T')[0]);
+                    current.setDate(current.getDate() + 1);
+                }
+                
+                return dates;
+            }
+
+            // Helper method to pad data with missing dates as null values
+            padDataWithMissingDates(data, dateSequence) {
+                const dataMap = new Map();
+                
+                // Create map of existing data points
+                data.forEach(point => {
+                    dataMap.set(point.x, point.y);
+                });
+                
+                // Generate complete sequence with null for missing dates
+                return dateSequence.map(date => ({
+                    x: date,
+                    y: dataMap.has(date) ? dataMap.get(date) : null
+                }));
             }
         }
 
