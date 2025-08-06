@@ -91,25 +91,7 @@ new class extends Component
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')" wire:navigate>
-                {{ __('Reports') }}
-            </x-responsive-nav-link>
-            <!-- Mobile Data Menu -->
-            <div class="space-y-1">
-                <div class="text-gray-600 font-medium px-4 py-2 text-sm border-l-4 border-transparent">
-                    {{ __('Data') }}
-                </div>
-                <x-responsive-nav-link :href="route('food-management')" :active="request()->routeIs('food-management')" wire:navigate class="pl-8">
-                    {{ __('Food') }}
-                </x-responsive-nav-link>
-            </div>
-        </div>
-
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-gray-100">
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="px-4">
@@ -120,6 +102,14 @@ new class extends Component
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile')" wire:navigate>
                     {{ __('Profile') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('food-management')" wire:navigate>
+                    {{ __('Food') }}
+                </x-responsive-nav-link>
+                
+                <x-responsive-nav-link :href="route('medicines-management')" wire:navigate>
+                    {{ __('Medicines') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
