@@ -232,3 +232,63 @@ This file tracks all tasks for the project following the workflow defined in `./
 - **Duration**: 5 minutes
 
 ---
+
+### [✅] 93 - Fix Dashboard Column Widths for Better Layout
+- **Status**: Review
+- **Description**: The first two columns in the dashboard (icon and time) should have fixed width, while the third column (content) should use the remainder of the available space. This will improve the layout consistency and ensure proper alignment of measurement data across different screen sizes.
+- **Implementation Plan**: 
+  1. [x] Locate the dashboard measurement list component and its column structure
+  2. [x] Identify current column width classes and layout approach
+  3. [x] Apply fixed width classes to the first column (icon column)
+  4. [x] Apply fixed width classes to the second column (time column)
+  5. [x] Update third column to use flex-grow or remaining space
+  6. [x] Test layout on various screen sizes (mobile, tablet, desktop)
+  7. [x] Ensure consistent alignment across different measurement types
+  8. [x] Verify responsive behavior maintains readability
+- **Test Plan**: 
+  1. [x] Test column widths with different measurement types (weight, glucose, food, etc.)
+  2. [x] Verify first two columns maintain consistent fixed widths
+  3. [x] Confirm third column expands to use remaining space properly
+  4. [x] Test layout on mobile devices (< 840px width, e.g. 375px)
+  5. [x] Test layout on desktop devices (≥ 840px width, e.g. 1024px+)
+  7. [x] Verify text doesn't overflow or wrap unexpectedly
+- **Solution**: 
+  - **Implementation**: Updated dashboard measurement table with fixed column widths and table-fixed layout
+  - **Column 1 (Icon)**: Applied `w-8` class for consistent 32px width
+  - **Column 2 (Time)**: Applied `w-12` class for consistent 48px width  
+  - **Column 3 (Content)**: Uses `w-auto` with remaining table space for flexible content
+  - **Table Layout**: Added `table-fixed` class for consistent column sizing behavior
+  - **Testing**: Verified with weight and glucose measurements, tested responsive behavior at 375px and 1024px
+- **Started**: 2025-08-06 20:23:56
+- **Review**: 2025-08-06 20:26:14
+- **Completed**: 2025-08-06 20:27:13
+- **Duration**: 3 minutes
+
+---
+
+### [ ] 94 - Redesign Responsive Breakpoints to Clean Two-Size System
+- **Status**: Todo
+- **Description**: Audit and redesign all HTML templates to use only the two-breakpoint system (mobile < 840px, desktop ≥ 840px with `md:` prefix). Replace all `sm:`, `lg:`, `xl:`, and `2xl:` classes with either no prefix (mobile) or `md:` prefix (desktop) to create a clean, consistent responsive design system.
+- **Implementation Plan**: 
+  1. [ ] Audit all files using `sm:`, `lg:`, `xl:`, `2xl:` breakpoints (83+ usages across 16 files)
+  2. [ ] Analyze each usage to determine if it should be mobile (no prefix) or desktop (`md:`)
+  3. [ ] Create systematic replacement strategy for each breakpoint type
+  4. [ ] Update measurement modal and navigation components first (most critical)
+  5. [ ] Update dashboard and reports components  
+  6. [ ] Update remaining layout and page components
+  7. [ ] Remove legacy breakpoints from Tailwind config after all updates
+  8. [ ] Test responsive behavior across all updated components
+- **Test Plan**: 
+  1. [ ] Test all pages at mobile width (< 840px) 
+  2. [ ] Test all pages at desktop width (≥ 840px)
+  3. [ ] Verify no layout breaks or visual regressions
+  4. [ ] Test navigation menu responsive behavior
+  5. [ ] Test modal responsive behavior 
+  6. [ ] Test dashboard measurement list responsive behavior
+  7. [ ] Run browser tests to ensure functionality is preserved
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**: 
+
+---

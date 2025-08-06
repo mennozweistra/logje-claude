@@ -114,13 +114,13 @@
 
         {{-- Measurements Display --}}
         @if($measurements->count() > 0)
-            <table class="w-full border border-gray-200 rounded-lg overflow-hidden">
+            <table class="w-full border border-gray-200 rounded-lg overflow-hidden table-fixed">
                 <tbody>
                     @foreach($measurements as $measurement)
                         <tr class="border-t border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
                             wire:click="openEditMeasurement({{ $measurement->id }})">
                             {{-- Icon --}}
-                            <td class="py-2 md:py-3 px-1 text-lg leading-none">
+                            <td class="py-2 md:py-3 px-1 text-lg leading-none w-8">
                                 @switch($measurement->measurementType->slug)
                                     @case('glucose')
                                         <x-lucide-droplet class="w-4 h-4" />
@@ -146,12 +146,12 @@
                             </td>
                             
                             {{-- Time --}}
-                            <td class="py-2 md:py-3 px-1 text-xs md:text-sm font-mono text-black leading-none">
+                            <td class="py-2 md:py-3 px-1 text-xs md:text-sm font-mono text-black leading-none w-12">
                                 {{ $measurement->created_at->format('H:i') }}
                             </td>
                             
                             {{-- Combined Text --}}
-                            <td class="py-2 md:py-3 px-2 md:px-3 text-xs md:text-sm font-mono text-black leading-none">
+                            <td class="py-2 md:py-3 px-2 md:px-3 text-xs md:text-sm font-mono text-black leading-none w-auto">
                                 @switch($measurement->measurementType->slug)
                                     @case('weight')
                                         <span>{{ $measurement->value }} kg</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
