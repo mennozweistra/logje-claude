@@ -168,18 +168,82 @@
     </div>
 
     <script>
+        // Global function for date range buttons
+        function setDateRange(days) {
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - days);
+
+            document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
+            document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
+            
+            // Auto-refresh charts after setting date range - use singleton getInstance
+            if (typeof ChartManager !== 'undefined') {
+                ChartManager.getInstance().updateCharts();
+            }
+        }
+
+        // Global function for chart updates
+        function updateCharts() {
+            if (typeof ChartManager !== 'undefined') {
+                ChartManager.getInstance().updateCharts();
+            }
+        }
+
+        // Global initialization function
+        function initializeDateRange() {
+            console.log('Initializing date range');
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setDate(endDate.getDate() - 7);
+
+            const startElement = document.getElementById('start-date');
+            const endElement = document.getElementById('end-date');
+
+            if (startElement && endElement) {
+                // Only set if empty (preserve existing values during navigation)
+                if (!startElement.value && !endElement.value) {
+                    endElement.value = endDate.toISOString().split('T')[0];
+                    startElement.value = startDate.toISOString().split('T')[0];
+                    console.log('Date range set:', startElement.value, 'to', endElement.value);
+                } else {
+                    console.log('Date range already set, preserving values');
+                }
+            } else {
+                console.error('Date input elements not found');
+            }
+        }
+
         // Wrap in IIFE to prevent script re-execution on navigation
         (function() {
             if (window.reportsScriptLoaded) {
+                // On navigation, only re-initialize date range and charts
+                console.log('Reports script already loaded, reinitializing...');
+                initializeDateRange();
+                if (typeof Chart !== 'undefined' && typeof ChartManager !== 'undefined') {
+                    const manager = ChartManager.getInstance();
+                    setTimeout(() => {
+                        const startDate = document.getElementById('start-date').value;
+                        const endDate = document.getElementById('end-date').value;
+                        if (startDate && endDate) {
+                            manager.updateCharts();
+                        }
+                    }, 300);
+                }
                 return;
             }
             window.reportsScriptLoaded = true;
         
-        // Chart Manager Singleton
-        const ChartManager = (function() {
-            let instance = null;
+        // Chart Manager Singleton (Modern ES2022+ Pattern)
+        class ChartManager {
+            static #instance = null;
             
-            function ChartManagerInstance() {
+            constructor() {
+                if (ChartManager.#instance) {
+                    return ChartManager.#instance;
+                }
+                ChartManager.#instance = this;
+                
                 this.charts = {
                     glucose: null,
                     weight: null,
@@ -190,7 +254,14 @@
                 };
             }
             
-            ChartManagerInstance.prototype.initializeCharts = function() {
+            static getInstance() {
+                if (!ChartManager.#instance) {
+                    ChartManager.#instance = new ChartManager();
+                }
+                return ChartManager.#instance;
+            }
+            
+            initializeCharts() {
                 // Only initialize if charts don't exist
                 if (!this.charts.glucose) {
                     this.createGlucoseChart();
@@ -210,9 +281,9 @@
                 if (!this.charts.carbs) {
                     this.createCarbsChart();
                 }
-            };
+            }
             
-            ChartManagerInstance.prototype.createGlucoseChart = function() {
+            createGlucoseChart() {
                 const ctx = document.getElementById('glucose-chart').getContext('2d');
                 this.charts.glucose = new Chart(ctx, {
                     type: 'line',
@@ -265,9 +336,9 @@
                         }
                     }
                 });
-            };
+            }
 
-            ChartManagerInstance.prototype.createWeightChart = function() {
+            createWeightChart() {
                 const ctx = document.getElementById('weight-chart').getContext('2d');
                 this.charts.weight = new Chart(ctx, {
                     type: 'line',
@@ -312,9 +383,9 @@
                         }
                     }
                 });
-            };
+            }
 
-            ChartManagerInstance.prototype.createExerciseDurationChart = function() {
+            createExerciseDurationChart() {
                 const ctx = document.getElementById('exercise-duration-chart').getContext('2d');
                 this.charts.exerciseDuration = new Chart(ctx, {
                     type: 'bar',
@@ -349,9 +420,9 @@
                         }
                     }
                 });
-            };
+            }
 
-            ChartManagerInstance.prototype.createExerciseTypesChart = function() {
+            createExerciseTypesChart() {
                 const ctx = document.getElementById('exercise-types-chart').getContext('2d');
                 this.charts.exerciseTypes = new Chart(ctx, {
                     type: 'doughnut',
@@ -374,9 +445,9 @@
                         maintainAspectRatio: false
                     }
                 });
-            };
+            }
 
-            ChartManagerInstance.prototype.createCaloriesChart = function() {
+            createCaloriesChart() {
                 const ctx = document.getElementById('calories-chart').getContext('2d');
                 this.charts.calories = new Chart(ctx, {
                     type: 'bar',
@@ -411,9 +482,9 @@
                         }
                     }
                 });
-            };
+            }
 
-            ChartManagerInstance.prototype.createCarbsChart = function() {
+            createCarbsChart() {
                 const ctx = document.getElementById('carbs-chart').getContext('2d');
                 this.charts.carbs = new Chart(ctx, {
                     type: 'bar',
@@ -448,9 +519,9 @@
                         }
                     }
                 });
-            };
+            }
 
-            ChartManagerInstance.prototype.updateCharts = async function() {
+            async updateCharts() {
                 const startDate = document.getElementById('start-date').value;
                 const endDate = document.getElementById('end-date').value;
                 
@@ -548,9 +619,9 @@
                     this.hideLoadingStates();
                     alert('Error loading chart data. Please check your connection and try again.');
                 }
-            };
+            }
 
-            ChartManagerInstance.prototype.showLoadingStates = function() {
+            showLoadingStates() {
                 const glucoseSkeleton = document.getElementById('glucose-skeleton');
                 const weightSkeleton = document.getElementById('weight-skeleton');
                 const exerciseSkeleton = document.getElementById('exercise-skeleton');
@@ -565,9 +636,9 @@
                 document.getElementById('weight-chart-container').style.display = 'none';
                 document.getElementById('exercise-chart-container').style.display = 'none';
                 document.getElementById('nutrition-chart-container').style.display = 'none';
-            };
+            }
 
-            ChartManagerInstance.prototype.hideLoadingStates = function() {
+            hideLoadingStates() {
                 const glucoseSkeleton = document.getElementById('glucose-skeleton');
                 const weightSkeleton = document.getElementById('weight-skeleton');
                 const exerciseSkeleton = document.getElementById('exercise-skeleton');
@@ -582,28 +653,17 @@
                 document.getElementById('weight-chart-container').style.display = 'block';
                 document.getElementById('exercise-chart-container').style.display = 'block';
                 document.getElementById('nutrition-chart-container').style.display = 'block';
-            };
-            
-            return {
-                getInstance: function() {
-                    if (!instance) {
-                        instance = new ChartManagerInstance();
-                    }
-                    return instance;
-                }
-            };
-        })();
+            }
+        }
         
-        // Get singleton instance
-        const chartManager = ChartManager.getInstance();
-
         // Initialize charts on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOMContentLoaded - initializing reports');
             initializeDateRange();
             if (typeof Chart !== 'undefined') {
-                chartManager.initializeCharts();
-                setTimeout(() => chartManager.updateCharts(), 300);
+                const manager = ChartManager.getInstance();
+                manager.initializeCharts();
+                setTimeout(() => manager.updateCharts(), 300);
             }
         });
         
@@ -615,40 +675,37 @@
                 initializeDateRange();
             }
             if (typeof Chart !== 'undefined') {
-                chartManager.initializeCharts();
-                setTimeout(() => chartManager.updateCharts(), 500);
+                const manager = ChartManager.getInstance();
+                manager.initializeCharts();
+                setTimeout(() => manager.updateCharts(), 500);
             }
         });
 
-        function initializeDateRange() {
-            console.log('Initializing date range');
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - 7);
-
-            const startElement = document.getElementById('start-date');
-            const endElement = document.getElementById('end-date');
-
-            if (startElement && endElement) {
-                endElement.value = endDate.toISOString().split('T')[0];
-                startElement.value = startDate.toISOString().split('T')[0];
-                console.log('Date range set:', startElement.value, 'to', endElement.value);
-            } else {
-                console.error('Date input elements not found');
-            }
-        }
-
-        function setDateRange(days) {
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - days);
-
-            document.getElementById('end-date').value = endDate.toISOString().split('T')[0];
-            document.getElementById('start-date').value = startDate.toISOString().split('T')[0];
+        // Listen for Livewire navigation events (only on reports page)
+        document.addEventListener('livewire:navigated', function() {
+            // Only reinitialize if we're on the reports page and have date inputs
+            const startDateElement = document.getElementById('start-date');
+            const endDateElement = document.getElementById('end-date');
             
-            // Auto-refresh charts after setting date range
-            chartManager.updateCharts();
-        }
+            if (startDateElement && endDateElement) {
+                console.log('Livewire navigation detected - reinitializing reports');
+                // Small delay to ensure DOM is ready
+                setTimeout(() => {
+                    initializeDateRange();
+                    if (typeof Chart !== 'undefined' && typeof ChartManager !== 'undefined') {
+                        const manager = ChartManager.getInstance();
+                        manager.initializeCharts();
+                        const startDate = startDateElement.value;
+                        const endDate = endDateElement.value;
+                        if (startDate && endDate) {
+                            setTimeout(() => manager.updateCharts(), 200);
+                        }
+                    }
+                }, 100);
+            }
+        });
+
+        // Functions moved to global scope above
 
 
         function exportData(format) {
