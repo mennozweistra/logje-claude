@@ -6,13 +6,13 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="max-w-7xl mx-auto px-6 md:px-8 space-y-6">
             <!-- Date Range Selector -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium mb-4">Select Date Range</h3>
                     <div class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="start-date" class="block text-sm font-medium text-gray-700">Start Date</label>
                                 <input type="date" id="start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" onchange="updateCharts()">
@@ -23,16 +23,16 @@
                             </div>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <button onclick="setDateRange(7)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">7 days</button>
-                            <button onclick="setDateRange(30)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">30 days</button>
-                            <button onclick="setDateRange(90)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 sm:flex-none">90 days</button>
+                            <button onclick="setDateRange(7)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 md:flex-none">7 days</button>
+                            <button onclick="setDateRange(30)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 md:flex-none">30 days</button>
+                            <button onclick="setDateRange(90)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 md:flex-none">90 days</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Charts Container -->
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6" id="charts-container">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="charts-container">
                 <!-- Loading Skeletons -->
                 <div id="glucose-skeleton">
                     <x-chart-skeleton title="Blood Glucose Trends" />
@@ -40,15 +40,15 @@
                 <div id="weight-skeleton">
                     <x-chart-skeleton title="Weight Progress" />
                 </div>
-                <div class="xl:col-span-2" id="exercise-skeleton">
+                <div class="md:col-span-2" id="exercise-skeleton">
                     <x-chart-skeleton title="Exercise Activity" />
                 </div>
-                <div class="xl:col-span-2" id="nutrition-skeleton">
+                <div class="md:col-span-2" id="nutrition-skeleton">
                     <x-chart-skeleton title="Daily Nutrition" />
                 </div>
 
                 <!-- Glucose Chart -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" id="glucose-chart-container" style="display: none;">
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg" id="glucose-chart-container" style="display: none;">
                     <div class="p-6">
                         <h3 class="text-lg font-medium mb-4">Blood Glucose Trends</h3>
                         <div class="relative h-64">
@@ -74,7 +74,7 @@
                 </div>
 
                 <!-- Weight Chart -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg" id="weight-chart-container" style="display: none;">
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg" id="weight-chart-container" style="display: none;">
                     <div class="p-6">
                         <h3 class="text-lg font-medium mb-4">Weight Progress</h3>
                         <div class="relative h-64">
@@ -96,10 +96,10 @@
                 </div>
 
                 <!-- Exercise Chart -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg xl:col-span-2" id="exercise-chart-container" style="display: none;">
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg md:col-span-2" id="exercise-chart-container" style="display: none;">
                     <div class="p-6">
                         <h3 class="text-lg font-medium mb-4">Exercise Activity</h3>
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h4 class="text-sm font-medium text-gray-700 mb-2">Daily Duration (minutes)</h4>
                                 <div class="relative h-48">
@@ -117,10 +117,10 @@
                 </div>
 
                 <!-- Nutrition Chart -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg xl:col-span-2" id="nutrition-chart-container" style="display: none;">
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg md:col-span-2" id="nutrition-chart-container" style="display: none;">
                     <div class="p-6">
                         <h3 class="text-lg font-medium mb-4">Daily Nutrition</h3>
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <h4 class="text-sm font-medium text-gray-700 mb-2">Daily Calories</h4>
                                 <div class="relative h-48">
@@ -151,10 +151,10 @@
             </div>
 
             <!-- Export Section -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h3 class="text-lg font-medium mb-4">Export Data</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <button onclick="exportData('csv')" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 w-full">
                             📊 Export as CSV
                         </button>

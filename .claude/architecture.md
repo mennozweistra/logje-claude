@@ -33,11 +33,12 @@ This document contains architectural instructions and guidance for the Logje hea
 - **Alpine.js**: Minimal JavaScript for enhanced interactions
 
 ### Responsive Design Breakpoints
+- **Two-Breakpoint System**: Clean mobile/desktop system implemented across entire codebase
 - **Primary breakpoint**: `md` at 840px (custom override in tailwind.config.js)
 - **Mobile Layout**: < 840px width (no prefix required)
 - **Desktop Layout**: ≥ 840px width (use `md:` prefix)
-- **Additional breakpoints**: `sm` (640px), `lg` (1024px), `xl` (1280px), `2xl` (1536px) remain available
-- **Design Intent**: Primary mobile/desktop split at 840px, with legacy breakpoints preserved for existing code
+- **Legacy Breakpoints Removed**: All `sm:`, `lg:`, `xl:`, and `2xl:` breakpoints eliminated from codebase and Tailwind config
+- **Implementation Status**: Complete breakpoint migration finished with comprehensive testing verification
 
 ### Database
 - **MySQL**: Relational database for data persistence

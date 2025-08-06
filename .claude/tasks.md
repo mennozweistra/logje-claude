@@ -266,29 +266,132 @@ This file tracks all tasks for the project following the workflow defined in `./
 
 ---
 
-### [ ] 94 - Redesign Responsive Breakpoints to Clean Two-Size System
-- **Status**: Todo
-- **Description**: Audit and redesign all HTML templates to use only the two-breakpoint system (mobile < 840px, desktop ≥ 840px with `md:` prefix). Replace all `sm:`, `lg:`, `xl:`, and `2xl:` classes with either no prefix (mobile) or `md:` prefix (desktop) to create a clean, consistent responsive design system.
+### [✅] 95 - Audit Legacy Responsive Breakpoints Usage
+- **Status**: Completed
+- **Description**: Comprehensive audit of all files using legacy responsive breakpoints (`sm:`, `lg:`, `xl:`, `2xl:`) to understand usage patterns and create a systematic replacement strategy for the two-breakpoint system (mobile < 840px, desktop ≥ 840px).
 - **Implementation Plan**: 
-  1. [ ] Audit all files using `sm:`, `lg:`, `xl:`, `2xl:` breakpoints (83+ usages across 16 files)
-  2. [ ] Analyze each usage to determine if it should be mobile (no prefix) or desktop (`md:`)
-  3. [ ] Create systematic replacement strategy for each breakpoint type
-  4. [ ] Update measurement modal and navigation components first (most critical)
-  5. [ ] Update dashboard and reports components  
-  6. [ ] Update remaining layout and page components
-  7. [ ] Remove legacy breakpoints from Tailwind config after all updates
-  8. [ ] Test responsive behavior across all updated components
+  1. [x] Generate detailed report of all `sm:`, `lg:`, `xl:`, `2xl:` usages with file locations
+  2. [x] Categorize usages by component type (navigation, modal, dashboard, etc.)
+  3. [x] Analyze each usage context to determine mobile vs desktop intent
+  4. [x] Create systematic replacement mapping for each breakpoint type
+  5. [x] Document replacement strategy for subsequent tasks
 - **Test Plan**: 
-  1. [ ] Test all pages at mobile width (< 840px) 
-  2. [ ] Test all pages at desktop width (≥ 840px)
-  3. [ ] Verify no layout breaks or visual regressions
-  4. [ ] Test navigation menu responsive behavior
-  5. [ ] Test modal responsive behavior 
-  6. [ ] Test dashboard measurement list responsive behavior
-  7. [ ] Run browser tests to ensure functionality is preserved
-- **Started**: 
-- **Review**: 
-- **Completed**: 
-- **Duration**: 
+  1. [x] Verify audit captures all legacy breakpoint usages
+  2. [x] Confirm categorization is accurate and comprehensive
+  3. [x] Validate replacement strategy covers all usage scenarios
+- **Audit Results**:
+  - **sm:** 53 usages across 13 files (container padding, modal behavior, component sizing)
+  - **lg:** 27 usages across 14 files (container padding, grid layouts, navigation)
+  - **xl:** 5 usages across 1 file (reports grid col-span only)
+  - **2xl:** 0 actual usages (only in documentation)
+- **Replacement Strategy**:
+  - **Container layouts**: `sm:px-6 lg:px-8` → `px-6 md:px-8`
+  - **Modal components**: Remove most `sm:` (mobile-first), keep desktop `md:` behaviors
+  - **Grid systems**: `sm:grid-cols-2 lg:grid-cols-2` → `md:grid-cols-2`, remove `xl:` spans
+  - **Component sizing**: Mobile-first approach with `md:` for desktop-specific
+- **Started**: 2025-08-06 20:42:35
+- **Review**: 2025-08-06 20:44:09
+- **Completed**: 2025-08-06 22:10:00
+- **Duration**: 1 hour 27 minutes 
+
+---
+
+### [✅] 96 - Replace Breakpoints in Critical Components (Navigation & Modals)
+- **Status**: Completed
+- **Description**: Replace legacy responsive breakpoints in the most critical components (navigation menu and measurement modal) with the two-breakpoint system. These components are user-facing and essential for core functionality.
+- **Implementation Plan**: 
+  1. [x] Update navigation component breakpoints from audit results
+  2. [x] Update measurement modal breakpoints from audit results
+  3. [x] Replace `sm:`, `lg:`, `xl:`, `2xl:` with appropriate mobile/desktop equivalents
+  4. [x] Test navigation responsive behavior at 840px breakpoint
+  5. [x] Test modal responsive behavior at 840px breakpoint
+- **Test Plan**: 
+  1. [x] Test navigation menu at mobile width (< 840px)
+  2. [x] Test navigation menu at desktop width (≥ 840px)
+  3. [x] Test modal behavior at mobile width (< 840px)
+  4. [x] Test modal behavior at desktop width (≥ 840px)
+  5. [x] Verify no layout breaks or visual regressions
+- **Changes Made**:
+  - **Navigation**: Updated `sm:px-6 lg:px-8` → `px-4 md:px-8`, `sm:flex sm:items-center` → `md:flex md:items-center`, `sm:hidden` → `md:hidden`
+  - **Modal**: Updated all `sm:max-w-*` → `md:max-w-*`, `sm:px-0` → `md:px-0`, `sm:w-full sm:mx-auto` → `w-full md:mx-auto`, modal animations `sm:scale-*` → `md:scale-*`
+- **Testing Results**:
+  - ✓ Navigation hamburger menu appears correctly at mobile width (< 840px)
+  - ✓ Desktop navigation visible correctly at desktop width (≥ 840px)
+  - ✓ Modal opens and displays properly at both mobile and desktop widths
+  - ✓ No layout breaks or visual regressions detected
+- **Started**: 2025-08-06 20:46:07
+- **Review**: 2025-08-06 20:47:42
+- **Completed**: 2025-08-06 22:11:00
+- **Duration**: 1 hour 25 minutes 
+
+---
+
+### [✅] 97 - Replace Breakpoints in Dashboard & Reports Components  
+- **Status**: Completed
+- **Description**: Replace legacy responsive breakpoints in dashboard and reports components with the two-breakpoint system, ensuring consistent responsive behavior across data visualization and measurement display.
+- **Implementation Plan**: 
+  1. [x] Update dashboard component breakpoints from audit results
+  2. [x] Update reports component breakpoints from audit results
+  3. [x] Replace `sm:`, `lg:`, `xl:`, `2xl:` with appropriate mobile/desktop equivalents
+  4. [x] Test dashboard responsive behavior at 840px breakpoint
+  5. [x] Test reports responsive behavior at 840px breakpoint
+- **Test Plan**: 
+  1. [x] Test dashboard layout at mobile width (< 840px)
+  2. [x] Test dashboard layout at desktop width (≥ 840px)
+  3. [x] Test reports layout at mobile width (< 840px)
+  4. [x] Test reports layout at desktop width (≥ 840px)
+  5. [x] Verify measurement display maintains proper formatting
+- **Changes Made**:
+  - **Dashboard**: Updated container `sm:px-6 lg:px-8` → `px-6 md:px-8`
+  - **Reports**: Updated 15+ breakpoint classes:
+    - Container padding: `sm:px-6 lg:px-8` → `px-6 md:px-8`
+    - Grid layouts: `sm:grid-cols-2`, `xl:grid-cols-2`, `lg:grid-cols-2` → `md:grid-cols-2`
+    - Column spans: `xl:col-span-2` → `md:col-span-2`
+    - Button layouts: `sm:flex-none` → `md:flex-none`
+    - Rounded corners: `sm:rounded-lg` → `rounded-lg` (mobile-first)
+- **Testing Results**:
+  - ✓ Dashboard: Proper responsive layout at mobile/desktop breakpoints
+  - ✓ Reports: Date form shows single/dual column layout correctly
+  - ✓ Reports: Chart grid adapts properly (stacked vs side-by-side)
+  - ✓ Reports: Chart spanning works correctly (exercise/nutrition charts)
+  - ✓ Measurement display formatting preserved
+- **Started**: 2025-08-06 21:07:12
+- **Review**: 2025-08-06 21:09:20
+- **Completed**: 2025-08-06 22:12:00
+- **Duration**: 1 hour 5 minutes 
+
+---
+
+### [✅] 98 - Complete Breakpoint Migration & Cleanup
+- **Status**: Completed
+- **Description**: Complete the breakpoint migration by updating remaining layout and page components, then remove legacy breakpoints from Tailwind config and run comprehensive testing to ensure the two-breakpoint system works correctly.
+- **Implementation Plan**: 
+  1. [x] Update remaining layout components from audit results
+  2. [x] Update remaining page components from audit results
+  3. [x] Remove legacy breakpoints from Tailwind config (keep only md: 840px)
+  4. [x] Run comprehensive browser tests across all pages
+  5. [x] Update architecture documentation with finalized breakpoint system
+- **Test Plan**: 
+  1. [x] Test all pages at mobile width (< 840px)
+  2. [x] Test all pages at desktop width (≥ 840px)
+  3. [x] Run existing browser test suite to ensure no regressions
+  4. [x] Verify Tailwind config only includes necessary breakpoints
+  5. [x] Confirm responsive behavior is consistent across all components
+- **Changes Made**:
+  - **Layout Components**: Updated app.blade.php, guest.blade.php with `sm:px-6 lg:px-8` → `px-6 md:px-8`
+  - **Page Components**: Updated dashboard.blade.php, profile.blade.php, settings/index.blade.php, food/medicines-management.blade.php
+  - **Tailwind Config**: Removed all legacy breakpoints, now only has `'md': '840px'`
+  - **Architecture**: Updated documentation to reflect completed migration status
+- **Testing Results**:
+  - ✓ Dashboard: Fixed column widths working correctly, responsive layout perfect
+  - ✓ Reports: Date form and chart grids display properly at both widths  
+  - ✓ Profile: Form sections and typography display correctly
+  - ✓ Settings: Preferences form layouts work at both mobile/desktop
+  - ✓ Management Pages: Tables and forms responsive and functional
+  - ✓ Navigation: Hamburger menu (mobile) and full menu (desktop) working correctly
+- **Started**: 2025-08-06 21:10:16
+- **Review**: 2025-08-06 22:13:00
+- **Completed**: 2025-08-06 22:13:00
+- **Duration**: 1 hour 3 minutes 
 
 ---

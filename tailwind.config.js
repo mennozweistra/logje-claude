@@ -16,7 +16,6 @@ export default {
             },
         },
         screens: {
-            ...defaultTheme.screens,
             'md': '840px',
         },
     },
