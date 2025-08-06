@@ -2,7 +2,7 @@
 
 ## Configuration
 - **Target Task Duration**: 15 minutes (tasks should be broken down if expected to exceed this)
-- **Last Task Number**: 89 (strictly updated after task creation, represents total tasks created)
+- **Last Task Number**: 92 (strictly updated after task creation, represents total tasks created)
 
 This workflow defines how tasks are managed throughout the project lifecycle using the task tracking system in `./.claude/tasks.md`.
 
@@ -87,7 +87,7 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
   - **BEFORE COMMIT**: Mark task as completed with timestamp and duration
     - Duration calculated from Started to Completed timestamps
   - **MANDATORY GIT CHECK**: AI must run `git status` after marking as Completed
-  - **COMMIT**: If uncommitted changes exist, AI commit changes
+  - **COMMIT**: If uncommitted changes exist, AI must commit changes
 - **Transition from**: Review (user approval only)
 
 ## Task Structure

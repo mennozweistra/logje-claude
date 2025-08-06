@@ -8,5 +8,6 @@ Commit the current task's changes if needed. Mark the current task (from recent 
 
 - Proper timestamp and duration calculation  
 - Task status updates and checkbox marking
+- Commit all changes and push
 
 Provide a brief completion summary when finished.
