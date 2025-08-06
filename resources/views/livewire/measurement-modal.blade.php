@@ -13,7 +13,8 @@
 
     @if ($showModal && !$showDeleteConfirm)
         <!-- Measurement Form Modal -->
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="measurement-modal">
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="measurement-modal" 
+             x-data="" x-on:keydown.escape.window="$wire.cancel()">
             <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-lg font-medium text-gray-900">
@@ -488,7 +489,8 @@
 
     @if ($showDeleteConfirm && $measurement)
         <!-- Delete Confirmation Modal -->
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="delete-modal">
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" id="delete-modal"
+             x-data="" x-on:keydown.escape.window="$wire.cancel()">
             <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
                 <div class="mt-3 text-center">
                     <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
