@@ -100,6 +100,40 @@ This document contains the requirements for the Logje health tracking web applic
 - **Food Consumption**: User function to log actual food intake with custom portions
 - **No Mixing**: Food database management is separate from daily food consumption tracking
 
+### Healthy Day Indicator
+- **Real-time Health Status**: Visual indicator on the Health screen showing whether the current day meets health compliance rules
+- **Time-based Rule Engine**: Dynamic rule evaluation based on current local time for today, and complete rule evaluation for past dates
+- **Visual Feedback System**: 
+  - Happy smiley (😊) when all applicable rules for the current time are met
+  - Sad smiley (😔) when one or more applicable rules are not met
+  - Indicator positioned next to the day name on the Health screen
+- **Interactive Rule Details**: Clicking the health indicator opens a modal popup showing:
+  - Complete list of health rules for the day
+  - Status of each rule (met/not met) with visual indicators
+  - Time-based applicability for current day rules
+- **Daily Health Rules** (time-sensitive activation for current day, all apply for past dates):
+  - **09:00+**: Rybelsus medication taken (any time after rule activates)
+  - **09:00+**: At least one fasting glucose measurement recorded for the day
+  - **11:00+**: Metformine, Amlodipine, and KaliumLosartan medications each taken at least once (can be separate or combined entries)
+  - **13:00+**: At least two glucose measurements total recorded for the day (ensures second measurement exists)
+  - **14:00+**: Exercise activity logged (any time after rule activates)
+  - **18:00+**: At least three glucose measurements total recorded for the day (ensures third measurement exists)
+  - **20:00+**: Second Metformine occurrence and Atorvastatine taken (Metformine taken twice total, Atorvastatine taken once)
+- **Rule Evaluation Logic**:
+  - **Rule Activation**: Time thresholds indicate when rules become active for evaluation, not deadlines
+  - **Medication Counting**: System tracks medication occurrence counts (first vs second Metformine intake)
+  - **Late Compliance**: Medications/measurements taken after rule activation time still satisfy the rule
+  - **Current Day**: Only rules with activation times that have passed are evaluated
+  - **Past Days**: All seven rules must be met for the day to be considered healthy
+  - **Future Days**: Not applicable (no future date entry allowed)
+  - **Daily Reset**: Rules reset at midnight for new day evaluation
+- **Rule Status Modal Design**:
+  - **Simple Layout**: Clean list of all daily rules with clear visual indicators
+  - **Inactive Rules**: Rules not yet activated (time hasn't passed) shown greyed out
+  - **Met Rules**: Satisfied rules displayed with green checkmark ✓
+  - **Failed Rules**: Active but unmet rules displayed with red cross ✗
+  - **Real-time Updates**: Modal reflects current status when opened
+
 ### Reporting Features
 - **Progress Tracking**: Visual reports showing measurement trends over time with Chart.js
 - **Nutritional Tracking**: Daily calorie and carbohydrate consumption charts with date range selection
@@ -315,6 +349,14 @@ This document contains the requirements for the Logje health tracking web applic
 - I want to see automatic calculations of calories and carbohydrates based on my portion size
 - I want to manage the food database by adding new foods with nutritional information
 - I want to see daily nutrition totals and trends in visual charts
+
+### As a health compliance user:
+- I want to see at a glance whether I'm having a healthy day based on my medication and measurement schedule
+- I want the healthy day indicator to show different status based on the current time (only checking rules that should have been completed by now)
+- I want to click on the health status indicator to see detailed information about which rules I've met and which I haven't
+- I want to see a happy smiley when I'm on track with my health routine and a sad smiley when I'm behind
+- I want to see complete rule compliance status for past dates (all rules must be met for past days to be considered healthy)
+- I want the system to track my specific medication schedule (Rybelsus, Metformine, Amlodipine, KaliumLosartan, Atorvastatine) and glucose measurement timing requirements
 
 ---
 

@@ -36,38 +36,12 @@ docker exec -it logje-mysql mysql -u root -p  # Access MySQL directly
 
 ## Testing Commands
 
-### Unit Tests (PHPUnit)
+### Unit and Feature Tests
 ```bash
 docker exec logje-app php artisan test                    # Run all tests
 docker exec logje-app php artisan test --testsuite=Unit   # Unit tests only
 docker exec logje-app php artisan test --testsuite=Feature # Feature tests only
 docker exec logje-app php artisan test --filter="TestName" # Specific test
-```
-
-### Alternative Test Runner (Pest)
-```bash
-docker exec logje-app ./vendor/bin/pest                   # Run all Pest tests
-docker exec logje-app ./vendor/bin/pest --unit            # Unit tests only
-docker exec logje-app ./vendor/bin/pest --feature         # Feature tests only
-```
-
-### E2E Tests with Laravel Dusk
-
-#### Prerequisites
-```bash
-# Start ChromeDriver (run on host machine, not in Docker)
-./vendor/laravel/dusk/bin/chromedriver-linux --port=9515 &
-
-# Check if ChromeDriver is running
-curl -s http://localhost:9515/status
-```
-
-#### Run Dusk Tests
-```bash
-php artisan dusk                                    # Run all browser tests
-php artisan dusk tests/Browser/WelcomePageTest.php # Run specific test file
-php artisan dusk --filter="test_name"              # Run specific test
-php artisan dusk --browse                          # Keep browser open after tests
 ```
 
 ### E2E Tests with Playwright
@@ -222,19 +196,16 @@ docker exec logje-app npm run build -- --watch     # Development build with watc
 ### Daily Startup
 ```bash
 docker-compose up -d                                # Start containers
-./vendor/laravel/dusk/bin/chromedriver-linux --port=9515 & # Start ChromeDriver for tests
 ```
 
 ### Daily Shutdown
 ```bash
 docker-compose down                                  # Stop containers
-pkill chromedriver                                   # Stop ChromeDriver
 ```
 
 ### Run All Tests
 ```bash
 docker exec logje-app php artisan test              # Unit/Feature tests
-php artisan dusk                                     # E2E tests (requires ChromeDriver)
 ```
 
 ## Troubleshooting
@@ -244,17 +215,15 @@ php artisan dusk                                     # E2E tests (requires Chrom
 # If containers won't start
 docker-compose down -v && docker-compose up -d
 
-# If tests fail with connection errors
+# If database connection fails during tests
 docker exec logje-app php artisan migrate --env=testing
 
 # If frontend assets aren't loading
 docker exec logje-app npm run build
 
-# If ChromeDriver connection fails
-pkill chromedriver && ./vendor/laravel/dusk/bin/chromedriver-linux --port=9515 &
+# If database connection fails during tests
+docker exec logje-app php artisan migrate --env=testing
 ```
 
 ### Log Files
 - Laravel logs: `docker exec logje-app tail -f storage/logs/laravel.log`
-- Test screenshots: `tests/Browser/screenshots/`
-- Dusk console logs: `tests/Browser/console/`

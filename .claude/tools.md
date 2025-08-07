@@ -76,6 +76,31 @@ docker compose exec mysql mysql -u root -p logje
 
 ## Testing Tools
 
+### Unit and Feature Tests
+
+**Docker-based Testing:**
+```bash
+# Run all tests
+docker exec logje-app php artisan test
+
+# Run only unit tests  
+docker exec logje-app php artisan test --testsuite=Unit
+
+# Run only feature tests
+docker exec logje-app php artisan test --testsuite=Feature
+
+# Run specific test file
+docker exec logje-app php artisan test tests/Unit/Services/HealthyDayServiceTest.php
+
+# Run specific test method
+docker exec logje-app php artisan test --filter="test_medication_counting"
+```
+
+**Test Environment Setup:**
+- Tests use separate database configured in `phpunit.xml`
+- No manual test database setup required - Laravel handles automatically
+- All tests run inside Docker container for consistent environment
+
 ### Playwright E2E Testing
 
 **Two Testing Approaches Available:**
