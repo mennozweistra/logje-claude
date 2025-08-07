@@ -11,6 +11,23 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
+    // Todo routes
+    Route::get('todos', function () {
+        return view('todos.index');
+    })->name('todos.index');
+    
+    Route::get('todos/create', function () {
+        return view('todos.create');
+    })->name('todos.create');
+    
+    Route::get('todos/{todo}', function (App\Models\Todo $todo) {
+        // Ensure user can only access their own todos
+        if ($todo->user_id !== auth()->id()) {
+            abort(404);
+        }
+        return view('todos.show', compact('todo'));
+    })->name('todos.show');
+    
     Route::get('reports', [App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
     Route::get('reports/glucose-data', [App\Http\Controllers\ReportsController::class, 'glucoseData'])->name('reports.glucose-data');
     Route::get('reports/weight-data', [App\Http\Controllers\ReportsController::class, 'weightData'])->name('reports.weight-data');
