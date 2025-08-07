@@ -99,6 +99,159 @@ This file tracks all tasks for the project following the workflow defined in `./
 
 ---
 
+### [x] 104 - Create Todo Database Schema and Models
+- **Status**: Completed
+- **Description**: Create the database schema and Eloquent models for the todo list functionality. This includes todos table with user relationship, priority levels, status management, and archive functionality, plus todo_notes table for the notes system.
+- **Implementation Plan**: 
+  1. [x] Create todos migration with fields (user_id, title, description, priority, status, is_archived, timestamps)
+  2. [x] Create todo_notes migration with fields (todo_id, content, timestamps)
+  3. [x] Create Todo Eloquent model with relationships and status/priority enums
+  4. [x] Create TodoNote Eloquent model with todo relationship
+  5. [x] Add foreign key constraints for data integrity
+  6. [x] Create model factories for testing
+- **Test Plan**: 
+  1. [x] Run migrations successfully in Docker environment
+  2. [x] Verify todo model relationships work (user, notes)
+  3. [x] Test priority and status enum values
+  4. [x] Verify archive functionality works
+  5. [x] Test foreign key constraints prevent invalid data
+  6. [x] Verify factories create valid test data
+- **Issues Found**: No issues encountered during implementation and testing
+- **Solution**: 
+  - **Database Schema**: Created todos and todo_notes tables with proper foreign key constraints and indexes
+  - **Models**: Implemented Todo and TodoNote models with relationships, scopes, and enum constants
+  - **User Relationships**: Added todos relationship to User model for seamless integration
+  - **Factories**: Created comprehensive factories with state methods for flexible testing
+  - **Testing**: Verified all relationships, constraints, enums, and archive functionality work correctly
+  - **Data Integrity**: Foreign key constraints prevent invalid data and ensure referential integrity
+- **Started**: 2025-08-07 07:53:04
+- **Review**: 2025-08-07 07:57:43
+- **Completed**: 2025-08-07 08:00:05
+- **Duration**: 7 minutes 1 second
+
+---
+
+### [ ] 105 - Update Navigation Menu Structure
+- **Status**: Todo
+- **Description**: Update the main navigation menu to rename "Dashboard" to "Health" and add the new "Todo" menu item between Health and Reports. Ensure consistent styling and responsive behavior across all breakpoints.
+- **Implementation Plan**: 
+  1. [ ] Update navigation component to rename "Dashboard" to "Health"
+  2. [ ] Add "Todo" menu item between Health and Reports
+  3. [ ] Update route definitions for new menu structure
+  4. [ ] Ensure responsive behavior works on mobile navigation
+  5. [ ] Update any references to dashboard in menu-related code
+  6. [ ] Verify menu highlighting works correctly for new structure
+- **Test Plan**: 
+  1. [ ] Verify "Health" menu item displays correctly and links to health tracking
+  2. [ ] Verify "Todo" menu item appears between Health and Reports
+  3. [ ] Test menu order: Health → Todo → Reports
+  4. [ ] Test responsive navigation on mobile devices
+  5. [ ] Verify active menu highlighting works for all three sections
+  6. [ ] Test menu functionality across different screen sizes
+- **Started**: [Timestamp when work began]
+- **Review**: [Timestamp when ready for user review]
+- **Completed**: [Timestamp when user approved completion]
+- **Duration**: [Calculated time from Started to Completed]
+
+---
+
+### [ ] 106 - Create Todo List View Component
+- **Status**: Todo
+- **Description**: Create the main todo list view with status filtering, priority-based sorting, and responsive layout. Include collapsible filters similar to the health dashboard and display todos with status, priority, and basic information.
+- **Implementation Plan**: 
+  1. [ ] Create TodoList Livewire component for main list view
+  2. [ ] Implement status filtering with collapsible filter UI
+  3. [ ] Implement sorting logic (Status: Ongoing→Paused→Todo→Done, then Priority: High→Medium→Low)
+  4. [ ] Create todo list item component with status, priority, title display
+  5. [ ] Add responsive grid layout for todo items
+  6. [ ] Implement archive functionality (hide archived todos)
+- **Test Plan**: 
+  1. [ ] Verify todos display in correct sort order
+  2. [ ] Test status filtering shows/hides appropriate todos
+  3. [ ] Verify archived todos are hidden from main view
+  4. [ ] Test responsive layout on mobile and desktop
+  5. [ ] Verify filter UI matches health dashboard style
+  6. [ ] Test with various combinations of status and priority
+- **Started**: [Timestamp when work began]
+- **Review**: [Timestamp when ready for user review]
+- **Completed**: [Timestamp when user approved completion]
+- **Duration**: [Calculated time from Started to Completed]
+
+---
+
+### [ ] 107 - Create Todo Detail View and CRUD Operations
+- **Status**: Todo
+- **Description**: Create the todo detail view component with full CRUD operations for todos including create, edit, delete, archive, and status management. Include modal or dedicated page layout with form validation.
+- **Implementation Plan**: 
+  1. [ ] Create TodoDetail Livewire component for todo management
+  2. [ ] Implement create todo form with title, description, priority fields
+  3. [ ] Implement edit todo functionality with validation
+  4. [ ] Add status change functionality (dropdown or buttons)
+  5. [ ] Implement delete todo with confirmation
+  6. [ ] Implement archive/unarchive functionality
+  7. [ ] Add form validation (required title, priority selection)
+- **Test Plan**: 
+  1. [ ] Test creating new todos with all required fields
+  2. [ ] Test editing existing todos (title, description, priority, status)
+  3. [ ] Verify delete functionality works with confirmation
+  4. [ ] Test archive/unarchive removes/restores todos from main view
+  5. [ ] Verify form validation prevents invalid submissions
+  6. [ ] Test all status transitions work correctly
+- **Started**: [Timestamp when work began]
+- **Review**: [Timestamp when ready for user review]
+- **Completed**: [Timestamp when user approved completion]
+- **Duration**: [Calculated time from Started to Completed]
+
+---
+
+### [ ] 108 - Implement Todo Notes System
+- **Status**: Todo
+- **Description**: Create the notes system for todos with full CRUD operations. Notes should be displayed in chronological order (most recent first), have 1000 character limit, and support edit/delete functionality.
+- **Implementation Plan**: 
+  1. [ ] Create TodoNotes Livewire component for notes management
+  2. [ ] Implement add note form with character limit validation
+  3. [ ] Display notes in chronological order (most recent first)
+  4. [ ] Implement edit note functionality with inline editing
+  5. [ ] Implement delete note with confirmation
+  6. [ ] Add character counter display (similar to measurement notes)
+- **Test Plan**: 
+  1. [ ] Test adding notes to todos with character limit enforcement
+  2. [ ] Verify notes display in correct chronological order
+  3. [ ] Test editing existing notes preserves data correctly
+  4. [ ] Test delete note functionality with confirmation
+  5. [ ] Verify character counter shows current/max characters
+  6. [ ] Test notes persist when navigating away and back
+- **Started**: [Timestamp when work began]
+- **Review**: [Timestamp when ready for user review]
+- **Completed**: [Timestamp when user approved completion]
+- **Duration**: [Calculated time from Started to Completed]
+
+---
+
+### [ ] 109 - Create Todo Routes and Integration Testing
+- **Status**: Todo
+- **Description**: Create the necessary routes for todo functionality and implement comprehensive integration tests to ensure the complete todo system works correctly with user isolation and data persistence.
+- **Implementation Plan**: 
+  1. [ ] Create todo routes (list, detail, create, edit) with authentication middleware
+  2. [ ] Implement route model binding for todos with user scope
+  3. [ ] Add todo routes to web.php with proper naming
+  4. [ ] Create integration tests for user data isolation
+  5. [ ] Create feature tests for complete todo workflows
+  6. [ ] Add browser tests for end-to-end todo functionality
+- **Test Plan**: 
+  1. [ ] Test all todo routes work with authentication
+  2. [ ] Verify users can only access their own todos
+  3. [ ] Test complete workflow: create→edit→add notes→archive→delete
+  4. [ ] Verify data persistence across sessions
+  5. [ ] Test todo system works independently from health tracking
+  6. [ ] Run browser tests for full user experience verification
+- **Started**: [Timestamp when work began]
+- **Review**: [Timestamp when ready for user review]
+- **Completed**: [Timestamp when user approved completion]
+- **Duration**: [Calculated time from Started to Completed]
+
+---
+
 ### [✅] 88 - Fix Docker User ID Mapping for Development Environment
 - **Status**: Completed
 - **Description**: Ensure that the development Docker container and local development files/directories share the same user ID to prevent file permission access issues during development. This will allow seamless file editing and prevent "permission denied" errors when working with Laravel files through Docker.

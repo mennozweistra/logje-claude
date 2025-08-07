@@ -87,4 +87,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Medication::class);
     }
+
+    /**
+     * Get all todos for this user
+     */
+    public function todos(): HasMany
+    {
+        return $this->hasMany(Todo::class);
+    }
 }

@@ -26,6 +26,7 @@ This document contains the requirements for the Logje health tracking web applic
 - **User Authentication**: Simple email/password authentication with secure session management
 - **Data Persistence**: Permanent data retention with MySQL database
 - **Cross-Platform Access**: Responsive web application for browsers and mobile devices
+- **Personal Todo List**: Users can manage their own private todo items with status tracking and detailed views
 
 ### Data Entry Interface
 - **Default View**: Today's date as default view with Dutch date format (dd-mm-yyyy)
@@ -187,6 +188,55 @@ This document contains the requirements for the Logje health tracking web applic
   - System prevents deletion of medications that have associated medication measurements
   - Clear error messages when deletion is blocked due to existing references
   - Foreign key constraints maintain data integrity automatically
+
+### Todo List Features
+
+#### Personal Todo Management
+- **Private Todo Lists**: Each user maintains their own personal todo list
+  - Todos are linked to specific users and not shared between accounts
+  - Users can only access and manage their own todo items
+  - No limit on total number of todos per user
+- **Todo Data Structure**: Each todo contains:
+  - **Title**: Required field for todo identification
+  - **Description**: Optional field for additional context
+  - **Priority**: Required field with levels (High, Medium, Low)
+  - **Status**: Current todo status (see Status Management below)
+  - **Archive Flag**: Todos can be archived to hide from UI without deletion
+- **Todo CRUD Operations**: Complete todo management functionality
+  - **Create**: Users can add new todo items with title, optional description, and priority
+  - **Read**: Users can view all their active (non-archived) todos in a list view with status filtering
+  - **Update**: Users can edit todo titles, descriptions, priority, and change status
+  - **Delete**: Users can delete todo items from their personal list
+  - **Archive**: Users can archive todos to remove from active view without permanent deletion
+
+#### Todo Status Management
+- **Four Status Types**: Todos support comprehensive status tracking
+  - **Todo**: Initial status for new todo items (pending/not started)
+  - **Ongoing**: Todo items currently being worked on or in progress
+  - **Paused**: Todo items that are temporarily halted or on hold
+  - **Done**: Completed todo items
+- **Status Transitions**: Users can change todo status at any time with no validation restrictions
+- **Status Filtering**: List view includes collapsible status filters similar to dashboard measurement filters
+- **Default Sorting**: Todos are sorted by status priority: Ongoing → Paused → Todo → Done
+- **Secondary Sorting**: Within each status group, todos are sorted by priority (High → Medium → Low)
+
+#### Todo Detail View
+- **Detailed Todo View**: Each todo can be opened in a dedicated detail view
+- **Notes System**: Todo detail view includes comprehensive notes functionality
+  - Users can add multiple notes to any todo item
+  - Notes are timestamped and listed with most recent first (chronological order)
+  - **Note Content**: Plain text only, maximum 1000 characters per note
+  - **Note Management**: Notes can be edited and deleted after creation
+  - Notes support progress updates, reminders, or additional context
+- **Navigation**: Easy navigation between list view and detail view
+
+#### Navigation Integration
+- **Menu Structure Update**: Main navigation updated to include todo functionality
+  - **Health**: Renamed from "Dashboard" - health measurement tracking (existing functionality)
+  - **Todo**: New menu item for todo list functionality (completely separate from health tracking)
+  - **Reports**: Existing reports functionality (unchanged)
+- **Menu Order**: Health → Todo → Reports in top navigation
+- **Separation of Concerns**: Todo functionality remains completely independent from health tracking features
 
 ## Technical Requirements
 
