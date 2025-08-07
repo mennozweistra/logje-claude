@@ -5,8 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto px-6 md:px-8">
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto px-6 md:px-8 space-y-6">
             <livewire:medicines-management />
         </div>
     </div>
