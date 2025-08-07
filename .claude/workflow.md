@@ -84,10 +84,13 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
 - **When**: User confirms task completion after review
 - **Requirements**: 
   - Only user can set this status
-  - **BEFORE COMMIT**: Mark task as completed with timestamp and duration
+  - **STEP 1 - MARK COMPLETED**: Mark task as completed with timestamp and duration
     - Duration calculated from Started to Completed timestamps
-  - **MANDATORY GIT CHECK**: AI must run `git status` after marking as Completed
-  - **COMMIT**: If uncommitted changes exist, AI must commit changes
+  - **⚠️ STEP 2 - MANDATORY GIT CHECK ⚠️**: AI must run `git status` after marking as Completed
+  - **🚨 STEP 3 - MANDATORY COMMIT 🚨**: If uncommitted changes exist, AI MUST commit changes
+    - **NEVER SKIP**: This step cannot be skipped under any circumstances
+    - Include task number and summary in commit message
+    - Use standard commit format with Claude Code attribution
 - **Transition from**: Review (user approval only)
 
 ## Technical Approach Philosophy
@@ -151,7 +154,11 @@ Tasks and steps can be referenced using the format `<task>.<step>`:
 - Set timestamps using bash commands for local time (no timezone)
 - Only users can mark tasks as Completed
 - If user provides corrections during Review, return to Started status
-- **Before marking task as Completed**: MANDATORY - run `git status` and remind user to commit changes if uncommitted work exists (helps maintain clean task-based commit history)
+- **🚨 CRITICAL COMMIT REQUIREMENT 🚨**: When user requests task approval (approve-task), AI MUST follow the mandatory completion checklist:
+  1. Mark task as Completed with timestamp
+  2. Run `git status` to check for changes
+  3. Commit ALL changes if they exist - NEVER SKIP THIS STEP
+  4. This helps maintain clean task-based commit history and prevents lost work
 - Document all work in the appropriate task entry
 - Document resolved tool issues in `tools.md`
 - When user requests archival, move completed tasks to `tasks-archive/tasks-archive-<yyyy-mm-dd>.md`
