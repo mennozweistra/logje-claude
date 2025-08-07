@@ -43,7 +43,7 @@ class HealthyDayServiceTest extends TestCase
         Medication::create(['name' => 'Rybelsus', 'user_id' => $this->user->id]);
         Medication::create(['name' => 'Metformine', 'user_id' => $this->user->id]);
         Medication::create(['name' => 'Amlodipine', 'user_id' => $this->user->id]);
-        Medication::create(['name' => 'KaliumLosartan', 'user_id' => $this->user->id]);
+        Medication::create(['name' => 'Kaliumlosartan', 'user_id' => $this->user->id]);
         Medication::create(['name' => 'Atorvastatine', 'user_id' => $this->user->id]);
     }
 
@@ -64,7 +64,7 @@ class HealthyDayServiceTest extends TestCase
         $date = Carbon::today();
         
         // Add Metformine twice
-        $this->createMedicationMeasurement($date, ['Metformine', 'Amlodipine', 'KaliumLosartan']);
+        $this->createMedicationMeasurement($date, ['Metformine', 'Amlodipine', 'Kaliumlosartan']);
         $this->createMedicationMeasurement($date->copy()->addHours(8), ['Metformine', 'Atorvastatine']);
         
         $statuses = $this->service->getRuleStatuses($this->user, $date);
@@ -294,7 +294,7 @@ class HealthyDayServiceTest extends TestCase
         $this->createGlucoseMeasurement($date->copy()->setTime(9, 15), 5.2, true);
         
         // 11:00: Morning medications
-        $this->createMedicationMeasurement($date->copy()->setTime(11, 0), ['Metformine', 'Amlodipine', 'KaliumLosartan']);
+        $this->createMedicationMeasurement($date->copy()->setTime(11, 0), ['Metformine', 'Amlodipine', 'Kaliumlosartan']);
         
         // 13:30: Second glucose
         $this->createGlucoseMeasurement($date->copy()->setTime(13, 30), 7.1, false);

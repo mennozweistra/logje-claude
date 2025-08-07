@@ -227,6 +227,27 @@ class HealthIndicatorTest extends TestCase
             ->assertSee('😔');
     }
 
+    public function test_modal_contains_escape_key_handler()
+    {
+        // Mock the HealthyDayService
+        $mockService = Mockery::mock(HealthyDayService::class);
+        $mockService->shouldReceive('isHealthyDay')->andReturn(true);
+        $mockService->shouldReceive('getRuleStatuses')->andReturn([]);
+        
+        $this->app->instance(HealthyDayService::class, $mockService);
+        
+        $component = Livewire::test(HealthIndicator::class);
+        
+        // Open modal
+        $component->call('toggleModal')
+                 ->assertSet('modalVisible', true);
+        
+        // Check that the modal HTML contains escape key handling
+        $html = $component->html();
+        $this->assertStringContainsString('x-on:keydown.escape.window', $html);
+        $this->assertStringContainsString('$wire.closeModal()', $html);
+    }
+
     protected function tearDown(): void
     {
         Mockery::close();

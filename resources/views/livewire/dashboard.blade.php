@@ -2,9 +2,12 @@
     {{-- Date Navigation Header --}}
     <div class="bg-white rounded-lg shadow p-4 md:p-6">
         <div class="flex items-center justify-between">
-            {{-- Left: Date Display --}}
+            {{-- Left: Date Display with Health Indicator --}}
             <div class="flex-1">
-                <h1 class="text-2xl font-bold text-gray-900">{{ $selectedDayName }}</h1>
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">{{ $selectedDayName }}</h1>
+                    @livewire('health-indicator', ['selectedDate' => $selectedDate])
+                </div>
                 <p class="text-sm text-gray-600 mt-1">{{ $selectedDateOnly }}</p>
             </div>
 

@@ -39,7 +39,7 @@ class HealthIndicatorFeatureTest extends TestCase
         Medication::create(['name' => 'Rybelsus', 'user_id' => $this->user->id]);
         Medication::create(['name' => 'Metformine', 'user_id' => $this->user->id]);
         Medication::create(['name' => 'Amlodipine', 'user_id' => $this->user->id]);
-        Medication::create(['name' => 'KaliumLosartan', 'user_id' => $this->user->id]);
+        Medication::create(['name' => 'Kaliumlosartan', 'user_id' => $this->user->id]);
         Medication::create(['name' => 'Atorvastatine', 'user_id' => $this->user->id]);
     }
 
@@ -258,7 +258,7 @@ class HealthIndicatorFeatureTest extends TestCase
         
         $metformine = Medication::where('name', 'Metformine')->first();
         $amlodipine = Medication::where('name', 'Amlodipine')->first();
-        $kaliumLosartan = Medication::where('name', 'KaliumLosartan')->first();
+        $kaliumLosartan = Medication::where('name', 'Kaliumlosartan')->first();
         
         $morningMedicationMeasurement->medications()->attach([
             $metformine->id, 

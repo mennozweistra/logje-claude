@@ -24,8 +24,8 @@ class HealthyDayService
         ],
         'medications_morning' => [
             'time' => '11:00',
-            'description' => 'Metformine, Amlodipine, and KaliumLosartan taken',
-            'medications' => ['Metformine', 'Amlodipine', 'KaliumLosartan']
+            'description' => 'Metformine, Amlodipine, and Kaliumlosartan taken',
+            'medications' => ['Metformine', 'Amlodipine', 'Kaliumlosartan']
         ],
         'glucose_second' => [
             'time' => '13:00',

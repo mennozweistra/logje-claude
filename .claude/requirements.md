@@ -114,7 +114,7 @@ This document contains the requirements for the Logje health tracking web applic
 - **Daily Health Rules** (time-sensitive activation for current day, all apply for past dates):
   - **09:00+**: Rybelsus medication taken (any time after rule activates)
   - **09:00+**: At least one fasting glucose measurement recorded for the day
-  - **11:00+**: Metformine, Amlodipine, and KaliumLosartan medications each taken at least once (can be separate or combined entries)
+  - **11:00+**: Metformine, Amlodipine, and Kaliumlosartan medications each taken at least once (can be separate or combined entries)
   - **13:00+**: At least two glucose measurements total recorded for the day (ensures second measurement exists)
   - **14:00+**: Exercise activity logged (any time after rule activates)
   - **18:00+**: At least three glucose measurements total recorded for the day (ensures third measurement exists)
@@ -356,7 +356,7 @@ This document contains the requirements for the Logje health tracking web applic
 - I want to click on the health status indicator to see detailed information about which rules I've met and which I haven't
 - I want to see a happy smiley when I'm on track with my health routine and a sad smiley when I'm behind
 - I want to see complete rule compliance status for past dates (all rules must be met for past days to be considered healthy)
-- I want the system to track my specific medication schedule (Rybelsus, Metformine, Amlodipine, KaliumLosartan, Atorvastatine) and glucose measurement timing requirements
+- I want the system to track my specific medication schedule (Rybelsus, Metformine, Amlodipine, Kaliumlosartan, Atorvastatine) and glucose measurement timing requirements
 
 ---
 

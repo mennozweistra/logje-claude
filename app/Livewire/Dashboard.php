@@ -21,6 +21,7 @@ class Dashboard extends Component
     public function previousDay()
     {
         $this->selectedDate = Carbon::parse($this->selectedDate)->subDay()->format('Y-m-d');
+        $this->dispatch('dashboard-date-changed', $this->selectedDate);
     }
 
     public function nextDay()
@@ -28,12 +29,14 @@ class Dashboard extends Component
         $currentDate = Carbon::parse($this->selectedDate);
         if (!$currentDate->isToday()) {
             $this->selectedDate = $currentDate->addDay()->format('Y-m-d');
+            $this->dispatch('dashboard-date-changed', $this->selectedDate);
         }
     }
 
     public function goToToday()
     {
         $this->selectedDate = Carbon::today()->format('Y-m-d');
+        $this->dispatch('dashboard-date-changed', $this->selectedDate);
     }
 
 
@@ -44,6 +47,9 @@ class Dashboard extends Component
         if ($selected->isFuture()) {
             $this->selectedDate = Carbon::today()->format('Y-m-d');
         }
+        
+        // Notify health indicator of date change
+        $this->dispatch('dashboard-date-changed', $this->selectedDate);
     }
 
 
