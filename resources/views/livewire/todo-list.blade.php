@@ -13,6 +13,17 @@ new class extends Component
     public bool $showArchived = false;
     public bool $filtersVisible = false;
     
+    // Modal properties
+    public bool $showModal = false;
+    public string $mode = 'create';
+    public ?int $todoId = null;
+    
+    // Form properties
+    public string $title = '';
+    public string $description = '';
+    public string $priority = 'medium';
+    public string $status = 'todo';
+    
     /**
      * Get filtered and sorted todos
      */
@@ -131,11 +142,88 @@ new class extends Component
     }
     
     /**
-     * Navigate to create todo
+     * Open create todo modal
      */
     public function createTodo(): void
     {
-        $this->redirect(route('todos.create'), navigate: true);
+        $this->resetForm();
+        $this->mode = 'create';
+        $this->showModal = true;
+    }
+    
+    /**
+     * Reset form fields
+     */
+    public function resetForm(): void
+    {
+        $this->title = '';
+        $this->description = '';
+        $this->priority = 'medium';
+        $this->status = 'todo';
+        $this->todoId = null;
+        $this->resetErrorBag();
+    }
+    
+    /**
+     * Cancel modal and close
+     */
+    public function cancel(): void
+    {
+        $this->showModal = false;
+        $this->resetForm();
+    }
+    
+    /**
+     * Save todo
+     */
+    public function save(): void
+    {
+        $this->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'priority' => 'required|in:low,medium,high',
+            'status' => 'required|in:todo,ongoing,paused,done',
+        ]);
+
+        if ($this->mode === 'create') {
+            Todo::create([
+                'title' => $this->title,
+                'description' => $this->description,
+                'priority' => $this->priority,
+                'status' => $this->status,
+                'user_id' => auth()->id(),
+            ]);
+
+            session()->flash('success', 'Todo created successfully.');
+        }
+
+        $this->showModal = false;
+        $this->resetForm();
+    }
+    
+    /**
+     * Get priority options
+     */
+    public function getPriorityOptionsProperty(): array
+    {
+        return [
+            'low' => 'Low',
+            'medium' => 'Medium',
+            'high' => 'High',
+        ];
+    }
+    
+    /**
+     * Get status options
+     */
+    public function getStatusOptionsProperty(): array
+    {
+        return [
+            'todo' => 'Todo',
+            'ongoing' => 'Ongoing',
+            'paused' => 'Paused',
+            'done' => 'Done',
+        ];
     }
     
     /**
@@ -354,4 +442,123 @@ new class extends Component
             </div>
         @endif
     </div>
+
+    {{-- Flash Messages --}}
+    @if (session()->has('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    {{-- Add/Edit Todo Modal --}}
+    @if($showModal)
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-medium text-gray-900">
+                        {{ $mode === 'edit' ? 'Edit Todo' : 'Add New Todo' }}
+                    </h3>
+                    <button 
+                        wire:click="cancel"
+                        class="text-gray-400 hover:text-gray-600"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <form wire:submit="save" class="space-y-4">
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700">Todo Title</label>
+                        <input 
+                            type="text" 
+                            id="title"
+                            wire:model.live.debounce.500ms="title"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('title') border-red-500 @enderror"
+                            placeholder="Enter todo title..."
+                            required
+                        >
+                        @error('title') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description (optional)</label>
+                        <textarea 
+                            id="description"
+                            wire:model.live.debounce.500ms="description"
+                            rows="3"
+                            maxlength="1000"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('description') border-red-500 @enderror"
+                            placeholder="Enter todo description (optional)..."
+                        ></textarea>
+                        @error('description') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        @if($description)
+                            <span class="text-gray-500 text-xs mt-1 block">{{ strlen($description) }}/1000 characters</span>
+                        @endif
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="priority" class="block text-sm font-medium text-gray-700">Priority</label>
+                            <select 
+                                id="priority"
+                                wire:model.live="priority"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('priority') border-red-500 @enderror"
+                                required
+                            >
+                                @foreach($this->priorityOptions as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('priority') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
+                            <select 
+                                id="status"
+                                wire:model.live="status"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('status') border-red-500 @enderror"
+                                required
+                            >
+                                @foreach($this->statusOptions as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('status') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4 border-t">
+                        <button 
+                            type="button"
+                            wire:click="cancel"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        >
+                            Cancel
+                        </button>
+                        <button 
+                            type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                            wire:loading.attr="disabled"
+                        >
+                            <span wire:loading.remove>
+                                {{ $mode === 'edit' ? 'Update Todo' : 'Add Todo' }}
+                            </span>
+                            <span wire:loading>
+                                Processing...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
 </div>

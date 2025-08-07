@@ -168,13 +168,7 @@
     </div>
 
     <script>
-        // Script execution guard - prevent duplicate execution
-        if (window.reportsScriptLoaded) {
-            console.log('Reports script already loaded');
-        } else {
-            window.reportsScriptLoaded = true;
-        
-        // Chart Manager Singleton (Modern ES2022+ Pattern)
+        // Chart Manager Singleton (Modern ES2022+ Pattern) - Define globally first
         class ChartManager {
             static #instance = null;
             
@@ -676,31 +670,6 @@
             }
         }
         
-        // Initialize charts on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOMContentLoaded - initializing reports');
-            initializeDateRange();
-            if (typeof Chart !== 'undefined') {
-                const manager = ChartManager.getInstance();
-                manager.initializeCharts();
-                setTimeout(() => manager.updateCharts(), 300);
-            }
-        });
-        
-        // Also initialize on window load as fallback
-        window.addEventListener('load', function() {
-            console.log('Window load - checking reports initialization');
-            if (!document.getElementById('start-date').value || !document.getElementById('end-date').value) {
-                console.log('Dates not set, initializing...');
-                initializeDateRange();
-            }
-            if (typeof Chart !== 'undefined') {
-                const manager = ChartManager.getInstance();
-                manager.initializeCharts();
-                setTimeout(() => manager.updateCharts(), 500);
-            }
-        });
-
         // Listen for Livewire navigation events (only on reports page)
         document.addEventListener('livewire:navigated', function() {
             // Only reinitialize if we're on the reports page and have date inputs
@@ -714,6 +683,13 @@
                     initializeDateRange();
                     if (typeof Chart !== 'undefined') {
                         const manager = ChartManager.getInstance();
+                        // Destroy existing charts before reinitializing to prevent conflicts
+                        Object.keys(manager.charts).forEach(key => {
+                            if (manager.charts[key]) {
+                                manager.charts[key].destroy();
+                                manager.charts[key] = null;
+                            }
+                        });
                         manager.initializeCharts();
                         const startDate = startDateElement.value;
                         const endDate = endDateElement.value;
@@ -776,6 +752,47 @@
             document.body.removeChild(form);
         }
 
-        } // End script execution guard
+        // Script execution guard - prevent duplicate execution
+        if (window.reportsScriptLoaded) {
+            console.log('Reports script already loaded');
+            // Still allow chart reinitialization if needed
+            const startDateElement = document.getElementById('start-date');
+            const endDateElement = document.getElementById('end-date');
+            if (startDateElement && endDateElement && typeof Chart !== 'undefined') {
+                const manager = ChartManager.getInstance();
+                if (!manager.charts.glucose) {
+                    console.log('Charts not initialized, reinitializing...');
+                    manager.initializeCharts();
+                    setTimeout(() => manager.updateCharts(), 300);
+                }
+            }
+        } else {
+            window.reportsScriptLoaded = true;
+            
+            // Initialize charts on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOMContentLoaded - initializing reports');
+                initializeDateRange();
+                if (typeof Chart !== 'undefined') {
+                    const manager = ChartManager.getInstance();
+                    manager.initializeCharts();
+                    setTimeout(() => manager.updateCharts(), 300);
+                }
+            });
+            
+            // Also initialize on window load as fallback
+            window.addEventListener('load', function() {
+                console.log('Window load - checking reports initialization');
+                if (!document.getElementById('start-date').value || !document.getElementById('end-date').value) {
+                    console.log('Dates not set, initializing...');
+                    initializeDateRange();
+                }
+                if (typeof Chart !== 'undefined') {
+                    const manager = ChartManager.getInstance();
+                    manager.initializeCharts();
+                    setTimeout(() => manager.updateCharts(), 500);
+                }
+            });
+        }
     </script>
 </x-app-layout>
