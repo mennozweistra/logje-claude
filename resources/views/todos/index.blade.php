@@ -6,12 +6,8 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto px-6 md:px-8">
-            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
-                <div class="p-6">
-                    <livewire:todo-list />
-                </div>
-            </div>
+        <div class="max-w-7xl mx-auto px-6 md:px-8 space-y-6">
+            <livewire:todo-list />
         </div>
     </div>
 </x-app-layout>

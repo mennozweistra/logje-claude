@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 
 new class extends Component
 {
+    public string $search = '';
     public string $statusFilter = 'all';
     public string $priorityFilter = 'all';
     public string $sortBy = 'priority_created';
@@ -35,6 +36,11 @@ new class extends Component
         // Apply priority filter
         if ($this->priorityFilter !== 'all') {
             $query->byPriority($this->priorityFilter);
+        }
+        
+        // Apply search filter
+        if (!empty($this->search)) {
+            $query->where('title', 'like', '%' . $this->search . '%');
         }
         
         // Apply sorting
@@ -90,6 +96,7 @@ new class extends Component
      */
     public function resetFilters(): void
     {
+        $this->search = '';
         $this->statusFilter = 'all';
         $this->priorityFilter = 'all';
         $this->sortBy = 'priority_created';
@@ -140,132 +147,163 @@ new class extends Component
     }
 }; ?>
 
-{{-- Todo List --}}
-    <div class="bg-white rounded-lg shadow p-4 md:p-6">
-        <div class="mb-4 md:mb-6">
-            <div class="flex items-center justify-between mb-3 md:mb-4">
-                <h2 class="text-base md:text-lg font-semibold text-gray-900">
-                    {{ $showArchived ? 'Archived Todos' : 'Your Todos' }}
-                    <span class="text-sm font-normal text-gray-500 ml-2">
-                        ({{ $this->todos->count() }} {{ $this->todos->count() === 1 ? 'item' : 'items' }})
-                    </span>
-                </h2>
-                <div class="flex items-center space-x-2">
-                    @if(!$showArchived)
-                    <button wire:click="createTodo" class="inline-flex items-center px-3 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Add Todo
-                    </button>
-                    @endif
-                    @if($showArchived)
-                    <button wire:click="toggleArchived" class="px-3 py-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
-                        Show Active
-                    </button>
-                    @endif
-                    <button 
-                        wire:click="toggleFilters"
-                        class="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                    >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
-                        </svg>
-                        <span>{{ $filtersVisible ? 'Hide Filters' : 'Show Filters' }}</span>
-                    </button>
-                </div>
+<div class="space-y-6">
+    {{-- Page Header --}}
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {{ $showArchived ? 'Archived Todos' : 'Todo Management' }}
+                </h1>
+                <p class="text-gray-600">
+                    {{ $showArchived ? 'View your completed and archived todos' : 'Manage your personal todo list' }}
+                </p>
             </div>
-            
-            {{-- Collapsible Filters --}}
-            @if($filtersVisible)
-                <div class="transition-all duration-300 ease-in-out opacity-100 mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        {{-- Status Filter --}}
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
-                            <select wire:model.live="statusFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                                <option value="all">All Status</option>
-                                <option value="todo">Todo</option>
-                                <option value="ongoing">Ongoing</option>
-                                <option value="paused">Paused</option>
-                                <option value="done">Done</option>
-                            </select>
-                        </div>
-
-                        {{-- Priority Filter --}}
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Priority</label>
-                            <select wire:model.live="priorityFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                                <option value="all">All Priorities</option>
-                                <option value="high">High</option>
-                                <option value="medium">Medium</option>
-                                <option value="low">Low</option>
-                            </select>
-                        </div>
-
-                        {{-- Sort By --}}
-                        <div>
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Sort By</label>
-                            <select wire:model.live="sortBy" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
-                                <option value="priority_created">Priority + Date</option>
-                                <option value="created_desc">Newest First</option>
-                                <option value="created_asc">Oldest First</option>
-                                <option value="status">Status</option>
-                            </select>
-                        </div>
-
-                        {{-- Action Buttons --}}
-                        <div class="flex items-end space-x-2">
-                            @if(!$showArchived)
-                            <button wire:click="toggleArchived" class="px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                Show Archived
-                            </button>
-                            @endif
-                            
-                            @if($statusFilter !== 'all' || $priorityFilter !== 'all' || $sortBy !== 'priority_created' || $showArchived)
-                            <button wire:click="resetFilters" class="px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                                Clear All
-                            </button>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+            @if(!$showArchived)
+            <button 
+                wire:click="createTodo"
+                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+                Add New Todo
+            </button>
             @endif
         </div>
+    </div>
 
-        {{-- Todo Table --}}
+    {{-- Search and Filters --}}
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center space-x-4">
+            <div class="flex-1">
+                <input 
+                    type="text" 
+                    wire:model.live.debounce.300ms="search"
+                    placeholder="Search todos by title..."
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+            </div>
+            <div class="text-sm text-gray-500">
+                Total: {{ $this->todos->count() }} {{ $this->todos->count() === 1 ? 'todo' : 'todos' }}
+            </div>
+            <button 
+                wire:click="toggleFilters"
+                class="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+                </svg>
+                <span>{{ $filtersVisible ? 'Hide Filters' : 'Filters' }}</span>
+            </button>
+        </div>
+        
+        {{-- Collapsible Filters --}}
+        @if($filtersVisible)
+            <div class="transition-all duration-300 ease-in-out opacity-100 border-t pt-4 mt-4">
+                <div class="grid gap-4" style="grid-template-columns: repeat(4, 1fr);">
+                    {{-- Status Filter --}}
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                        <select wire:model.live="statusFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                            <option value="all">All Status</option>
+                            <option value="todo">Todo</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="paused">Paused</option>
+                            <option value="done">Done</option>
+                        </select>
+                    </div>
+
+                    {{-- Priority Filter --}}
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Priority</label>
+                        <select wire:model.live="priorityFilter" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                            <option value="all">All Priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+
+                    {{-- Sort By --}}
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Sort By</label>
+                        <select wire:model.live="sortBy" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                            <option value="priority_created">Priority + Date</option>
+                            <option value="created_desc">Newest First</option>
+                            <option value="created_asc">Oldest First</option>
+                            <option value="status">Status</option>
+                        </select>
+                    </div>
+
+                    {{-- Action Buttons --}}
+                    <div class="flex items-end space-x-2">
+                        @if(!$showArchived)
+                        <button wire:click="toggleArchived" class="px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Show Archived
+                        </button>
+                        @else
+                        <button wire:click="toggleArchived" class="px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Show Active
+                        </button>
+                        @endif
+                        
+                        @if(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'all' || $sortBy !== 'priority_created' || $showArchived)
+                        <button wire:click="resetFilters" class="px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Clear All
+                        </button>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
+
+    {{-- Todos List --}}
+    <div class="bg-white rounded-lg shadow overflow-hidden">
         @if($this->todos->count() > 0)
-            <table class="w-full border border-gray-200 rounded-lg overflow-hidden table-fixed">
-                <tbody>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                                Status
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Todo
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                                Priority
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
                     @foreach($this->todos as $todo)
-                        <tr class="border-t border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+                        <tr class="hover:bg-gray-50 cursor-pointer transition-colors"
                             wire:click="openTodo({{ $todo->id }})">
                             {{-- Status Symbol --}}
-                            <td class="py-2 md:py-3 px-2 font-mono text-sm leading-none w-12 {{ $this->getPriorityColorClass($todo->priority) }}">
-                                {{ $this->getStatusSymbol($todo->status) }}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="font-mono text-sm {{ $this->getPriorityColorClass($todo->priority) }}">
+                                    {{ $this->getStatusSymbol($todo->status) }}
+                                </div>
                             </td>
                             
                             {{-- Title --}}
-                            <td class="py-2 md:py-3 px-2 text-sm text-gray-900 leading-none">
-                                <div class="truncate">{{ $todo->title }}</div>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900">{{ $todo->title }}</div>
                                 @if($todo->notes->isNotEmpty())
                                 <div class="text-xs text-gray-500 mt-1">{{ $todo->notes->count() }} {{ $todo->notes->count() === 1 ? 'note' : 'notes' }}</div>
                                 @endif
                             </td>
                             
-                            {{-- Priority (Mobile Only) --}}
-                            <td class="py-2 md:py-3 px-2 text-xs font-medium leading-none w-16 md:hidden {{ $this->getPriorityColorClass($todo->priority) }}">
-                                {{ strtoupper(substr($todo->priority, 0, 1)) }}
-                            </td>
-                            
-                            {{-- Priority (Desktop Only) --}}
-                            <td class="hidden md:table-cell py-2 md:py-3 px-2 text-xs font-medium leading-none w-20 {{ $this->getPriorityColorClass($todo->priority) }}">
-                                {{ ucfirst($todo->priority) }}
+                            {{-- Priority --}}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium {{ $this->getPriorityColorClass($todo->priority) }}">
+                                    {{ ucfirst($todo->priority) }}
+                                </div>
                             </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+            </div>
         @else
             {{-- Empty State --}}
             <div class="text-center py-12">
@@ -284,8 +322,8 @@ new class extends Component
                 <h3 class="text-sm font-medium text-gray-900 mb-2">
                     @if($showArchived)
                         No archived todos
-                    @elseif($statusFilter !== 'all' || $priorityFilter !== 'all')
-                        No todos match your filters
+                    @elseif(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'all')
+                        No todos match your search or filters
                     @else
                         No todos yet
                     @endif
@@ -294,21 +332,21 @@ new class extends Component
                 <p class="text-sm text-gray-500 mb-4">
                     @if($showArchived)
                         You don't have any archived todos.
-                    @elseif($statusFilter !== 'all' || $priorityFilter !== 'all')
-                        Try adjusting your filters to see more todos.
+                    @elseif(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'all')
+                        Try adjusting your search or filters to see more todos.
                     @else
                         Get started by creating your first todo.
                     @endif
                 </p>
                 
-                @if(!$showArchived && ($statusFilter === 'all' && $priorityFilter === 'all'))
+                @if(!$showArchived && (empty($search) && $statusFilter === 'all' && $priorityFilter === 'all'))
                 <button wire:click="createTodo" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                     Create Your First Todo
                 </button>
-                @elseif(($statusFilter !== 'all' || $priorityFilter !== 'all'))
+                @elseif((!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'all'))
                 <button wire:click="resetFilters" class="px-4 py-2 bg-gray-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     Clear All Filters
                 </button>
@@ -316,3 +354,4 @@ new class extends Component
             </div>
         @endif
     </div>
+</div>
