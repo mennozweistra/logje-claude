@@ -2,7 +2,7 @@
 
 ## Configuration
 - **Target Task Duration**: 15 minutes (tasks should be broken down if expected to exceed this)
-- **Last Task Number**: 102 (strictly updated after task creation, represents total tasks created)
+- **Last Task Number**: 103 (strictly updated after task creation, represents total tasks created)
 
 This workflow defines how tasks are managed throughout the project lifecycle using the task tracking system in `./.claude/tasks.md`.
 
@@ -89,6 +89,23 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
   - **MANDATORY GIT CHECK**: AI must run `git status` after marking as Completed
   - **COMMIT**: If uncommitted changes exist, AI must commit changes
 - **Transition from**: Review (user approval only)
+
+## Technical Approach Philosophy
+
+When implementing tasks, always prioritize:
+
+1. **Clear Technical Architecture**: Choose solutions that are easy to understand and maintain
+2. **Simple, Elegant Approach**: Favor straightforward implementations over complex ones
+3. **Minimal Code Changes**: Achieve the goal with the least amount of code modification
+4. **Existing Patterns**: Use established patterns and conventions already present in the codebase
+5. **Future Maintainability**: Ensure changes don't create technical debt or complicate future modifications
+
+Before starting implementation, think through:
+- What is the root cause of the issue?
+- What is the simplest way to address it?
+- How can we solve this with minimal disruption to existing code?
+- Does this approach align with existing architectural patterns?
+- Will this solution be clear to future developers?
 
 ## Task Structure
 

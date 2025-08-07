@@ -69,6 +69,36 @@ This file tracks all tasks for the project following the workflow defined in `./
 
 ## Current Tasks
 
+### [x] 103 - Fix Modal Save Button Animation and Layout Shift Issues
+- **Status**: Completed
+- **Description**: Fix the measurement modal save button that animates on every keystroke due to wire:loading states triggering on live validation requests. Additionally, the loading state button has different dimensions (taller, less wide) causing UI layout shifts. The cancel button also changes shape when clicked, causing additional UI adjustments. Both buttons should only show loading states during appropriate actions and maintain consistent dimensions to prevent layout readjustment.
+- **Implementation Plan**: 
+  1. [x] Target wire:loading states to only trigger on form submission using wire:target="save"
+  2. [x] Fix save button dimension changes by ensuring consistent sizing between normal and loading states
+  3. [x] Fix cancel button shape changes when clicked to prevent UI adjustments
+  4. [x] Test that buttons no longer animate/change during field typing/validation
+  5. [x] Verify loading animation still works correctly during actual form submission
+  6. [x] Test across different measurement types (glucose, weight, exercise, etc.)
+- **Test Plan**: 
+  1. [x] Type in various form fields and confirm buttons remain stable (no animation/size changes)
+  2. [x] Click cancel button and verify it doesn't change shape or cause UI adjustments
+  3. [x] Submit form and verify loading animation appears correctly during actual save
+  4. [x] Test button dimensions remain consistent in both normal and loading states  
+  5. [x] Test with different measurement types to ensure consistent behavior
+  6. [x] Verify no layout shifts occur during typing, button clicks, or form submission
+- **Issues Found**: No issues encountered during implementation and testing
+- **Solution**: 
+  - **Implementation**: Added `wire:target="save"` to all wire:loading directives to scope loading states only to form submission
+  - **Button Sizing**: Added `min-w-[140px]` to save button and `min-w-[80px]` to cancel button for consistent dimensions
+  - **Testing**: Verified across glucose and weight measurement types, confirmed no animation during field typing/validation
+  - **Result**: Buttons now remain stable during field validation and only animate during actual form submission
+- **Started**: 2025-08-07 07:26:21
+- **Review**: 2025-08-07 07:28:48
+- **Completed**: 2025-08-07 07:30:48
+- **Duration**: 4 minutes 27 seconds
+
+---
+
 ### [✅] 88 - Fix Docker User ID Mapping for Development Environment
 - **Status**: Completed
 - **Description**: Ensure that the development Docker container and local development files/directories share the same user ID to prevent file permission access issues during development. This will allow seamless file editing and prevent "permission denied" errors when working with Laravel files through Docker.
