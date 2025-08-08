@@ -19,7 +19,7 @@
              x-data=""
              x-on:keydown.escape.window="$wire.closeModal()">
             <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 max-w-4xl shadow-lg rounded-md bg-white" 
-                 wire:click.stop>
+                 @click.stop>
                 
                 {{-- Modal Header --}}
                 <div class="pb-4 border-b border-gray-200">
