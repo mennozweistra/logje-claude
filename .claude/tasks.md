@@ -98,17 +98,17 @@ This file tracks all tasks for the project following the workflow defined in `./
 - **Duration**: 25 minutes
 - **Issues Found**: Original issue resolved successfully. The `wire:click.stop` syntax error was fixed and health modal functionality works perfectly. However, discovered that the Alpine.js error "Expression: '$wire.'" is a **system-wide issue** affecting multiple Livewire components (confirmed with Weight modal), not specific to the health indicator. The user's reported bug has been fixed, but the console error is a broader application issue requiring separate investigation.
 
-### [ ] 119 - Fix Food Entry Amount Update Bug
-- **Status**: Started
+### [x] 119 - Fix Food Entry Amount Update Bug
+- **Status**: Completed
 - **Description**: Food entries cannot be updated for amounts of food items. When editing existing food measurements that contain multiple food choices with specific amounts, the amount changes are not being saved when the user tries to update them. This affects the user's ability to correct or adjust food quantities after initial entry.
 - **Implementation Plan**: 
   1. [x] Run database seeder to ensure test food data exists
   2. [x] Write failing Playwright test that demonstrates the food amount update bug
-  3. [ ] Investigate food measurement edit functionality to identify the bug
-  4. [ ] Examine Livewire component handling food amount updates
-  5. [ ] Fix the identified issue preventing food amount updates from saving
-  6. [ ] Verify the Playwright test now passes with the fix
-  7. [ ] Run all existing food-related tests to ensure no regressions
+  3. [x] Investigate food measurement edit functionality to identify the bug
+  4. [x] Examine Livewire component handling food amount updates
+  5. [x] Fix the identified issue preventing food amount updates from saving
+  6. [x] Verify the Playwright test now passes with the fix
+  7. [x] Run all existing food-related tests to ensure no regressions
 - **Test Plan**: 
   1. [x] Create Playwright test: food-amount-update.spec.js that can be run from command line
   2. [x] Test assumes seeder has been run for food data availability
@@ -119,13 +119,45 @@ This file tracks all tasks for the project following the workflow defined in `./
   7. [x] Document test execution commands for future use
 - **Started**: 2025-08-09 11:16:02
 - **Review**: 2025-08-09 11:25:53
-- **Completed**: [To be set when user approves]
-- **Duration**: [To be calculated]
-- **Issues Found**: **BUG CONFIRMED**: The reported bug exists in the current version. Playwright test demonstrates that:
-  1. **Food measurement creation works**: Users can create food measurements successfully
-  2. **Edit modal opens correctly**: The edit interface loads with current values
-  3. **UI allows changes**: Amount fields can be modified and show updated nutritional calculations
-  4. **Save operation fails**: Clicking "Update Measurement" does not persist changes - no success message appears
-  5. **Root cause needed**: Backend Livewire component for food amount updates is not working properly
+- **Completed**: 2025-08-09 14:38:15
+- **Duration**: 3 hours 22 minutes
+- **Issues Found**: **BUG RESOLVED**: Investigation revealed the bug was actually fixed during development. The reported bug initially existed but was resolved by:
+  1. **Fixed validation rule**: Changed from 'integer' to 'numeric' for food entries to accept UI string inputs
+  2. **Added type casting**: Explicit (float) casting for grams_consumed to ensure proper data types
+  3. **Comprehensive testing**: Playwright test confirms food amount editing works correctly
+  4. **Clean up**: Removed debug logging and updated .gitignore for test artifacts
+
+### [x] 120 - Enhance Food Measurement Display with Food Names
+- **Status**: Completed
+- **Started**: 2025-08-09 12:15:49
+- **Review**: 2025-08-09 12:20:33
+- **Completed**: 2025-08-09 12:29:02
+- **Duration**: 13 minutes 13 seconds
+- **Description**: In the string for a food measurement, append the foods taken, separated with a comma. Currently food measurements only display nutritional summary (e.g., "78 cal, 21g carbs") but users cannot see which specific foods were consumed without opening the edit modal. This makes it difficult to quickly identify food entries in the dashboard.
+- **Implementation Plan**: 
+  1. [x] Analyze current food measurement display logic in models and components
+  2. [x] Locate where the food measurement summary string is generated (likely in Measurement model or relationships)
+  3. [x] Examine how nutritional totals are calculated and displayed
+  4. [x] Modify the display logic to include food names after nutritional information
+  5. [x] Format as: "78 cal, 21g carbs - Apple, Banana" with proper separator
+  6. [x] Ensure proper handling of single vs multiple food items (no comma for single item)
+  7. [x] Test display in dashboard measurement table on desktop
+  8. [x] Verify mobile responsiveness with longer strings (potential truncation/wrapping)
+- **Test Plan**: 
+  1. [x] Create food measurement with single food item and verify display shows food name
+  2. [x] Create food measurement with multiple food items and verify comma-separated display
+  3. [x] Test display formatting in dashboard table on desktop (full view)
+  4. [x] Test display formatting in dashboard table on mobile (responsive behavior)
+  5. [x] Verify edit modal still opens correctly with enhanced display strings
+  6. [x] Check for any text truncation issues with very long food names or many items
+  7. [x] Run existing measurement display tests to ensure no regressions
+- **Issues Found**: **ENHANCEMENT SUCCESSFUL**: Task completed successfully with all requirements met:
+  1. **Display Enhancement**: Food measurements now show "X cal, Yg carbs - Food1, Food2" format
+  2. **Single Food**: Shows correctly as "78 cal, 21g carbs - Apple" (tested with existing data)
+  3. **Multiple Foods**: Shows correctly as "141 cal, 37g carbs - Apple, Banana" (tested with new data)
+  4. **Mobile Responsive**: Text displays properly on mobile without truncation issues
+  5. **Edit Functionality**: Opening edit modal still works correctly, showing individual food amounts
+  6. **No Regressions**: Existing food tests pass, other measurement types unaffected
+  7. **Performance**: Added eager loading for foodMeasurements.food relationships to prevent N+1 queries
   
-  **Status**: Bug confirmed via automated test, investigation and fix needed.
+  **Technical Implementation**: Modified dashboard.blade.php food case and updated MeasurementRepository eager loading

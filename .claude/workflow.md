@@ -2,7 +2,7 @@
 
 ## Configuration
 - **Target Task Duration**: 15 minutes (tasks should be broken down if expected to exceed this)
-- **Last Task Number**: 119 (strictly updated after task creation, represents total tasks created)
+- **Last Task Number**: 120 (strictly updated after task creation, represents total tasks created)
 
 This workflow defines how tasks are managed throughout the project lifecycle using the task tracking system in `./.claude/tasks.md`.
 
@@ -22,6 +22,8 @@ This workflow defines how tasks are managed throughout the project lifecycle usi
 - Lists available tools and their command-line instructions
 - When AI resolves tool call issues, solutions are documented here
 - Prevents repeated struggles with the same tools
+- **MANDATORY**: Must be consulted before using ANY commands (Docker, PHP, npm, testing, etc.)
+- Contains the exact commands and patterns that must be used for this project
 
 ### Task Archive
 - Completed tasks can be archived to `tasks-archive/tasks-archive-<yyyy-mm-dd>.md` files
@@ -148,7 +150,13 @@ Tasks and steps can be referenced using the format `<task>.<step>`:
   * Update implementation and test steps if needed
 - Review requirements in `./.claude/requirements.md` during implementation
 - Follow architectural guidance in `./.claude/architecture.md`  
-- Consult `./.claude/tools.md` for tool usage patterns
+- **🚨 MANDATORY TOOL USAGE 🚨**: ALWAYS consult `./.claude/tools.md` FIRST before using ANY commands
+  * NEVER run Docker commands without checking tools.md first
+  * NEVER run PHP/Laravel commands without checking tools.md first  
+  * NEVER run npm/node commands without checking tools.md first
+  * NEVER run test commands without checking tools.md first
+  * Use the EXACT commands documented in tools.md
+  * This prevents wasting time and tokens on incorrect approaches
 - Follow the status progression strictly
 - Break down tasks that exceed 15-minute target duration
 - Set timestamps using bash commands for local time (no timezone)

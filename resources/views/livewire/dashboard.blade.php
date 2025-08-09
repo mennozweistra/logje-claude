@@ -172,8 +172,10 @@
                                         @php
                                             $totalCalories = $measurement->foodMeasurements->sum('calculated_calories');
                                             $totalCarbs = $measurement->foodMeasurements->sum('calculated_carbs');
+                                            $foodNames = $measurement->foodMeasurements->pluck('food.name')->toArray();
+                                            $foodNamesString = implode(', ', $foodNames);
                                         @endphp
-                                        <span>{{ round($totalCalories) }} cal, {{ round($totalCarbs, 1) }}g carbs</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
+                                        <span>{{ round($totalCalories) }} cal, {{ round($totalCarbs, 1) }}g carbs, {{ $foodNamesString }}</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
                                         @break
                                     @case('notes')
                                         <span>{{ $measurement->notes }}</span>

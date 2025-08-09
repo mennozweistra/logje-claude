@@ -30,7 +30,11 @@
 4. Use "Last Task Number" from workflow.md for new task numbering
 5. Review `./.claude/requirements.md` for project requirements
 6. Follow architectural guidance in `./.claude/architecture.md`
-7. Consult `./.claude/tools.md` for tool usage patterns
+7. **🚨 MANDATORY: Always consult `./.claude/tools.md` FIRST for ALL command usage 🚨**
+   - NEVER run commands without checking tools.md first
+   - Use the exact commands documented there
+   - This prevents wasting time and tokens on incorrect approaches
+   - Applies to Docker, PHP, Laravel, npm, testing, and all other commands
 8. Follow the defined status progression: Todo → Planned → Started → Testing → Review → Completed
 9. Break down tasks that exceed 15-minute target duration
 10. Set appropriate timestamps when changing statuses
