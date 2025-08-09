@@ -8,8 +8,8 @@ new class extends Component
 {
     public string $search = '';
     public string $statusFilter = 'all';
-    public string $priorityFilter = 'all';
-    public string $sortBy = 'priority_created';
+    public string $priorityFilter = 'high';
+    public string $sortBy = 'status';
     public bool $showArchived = false;
     public bool $filtersVisible = false;
     
@@ -23,6 +23,45 @@ new class extends Component
     public string $description = '';
     public string $priority = 'medium';
     public string $status = 'todo';
+    
+    /**
+     * Component mount - Load preferences from localStorage
+     */
+    public function mount(): void
+    {
+        // Initialize with defaults - JavaScript will load stored preferences
+    }
+    
+    /**
+     * Load preferences from JavaScript localStorage
+     */
+    #[Renderless]
+    public function loadStoredPreferences($preferences): void
+    {
+        if (!empty($preferences)) {
+            $this->search = $preferences['search'] ?? '';
+            $this->statusFilter = $preferences['statusFilter'] ?? 'all';
+            $this->priorityFilter = $preferences['priorityFilter'] ?? 'high';
+            $this->sortBy = $preferences['sortBy'] ?? 'status';
+            $this->showArchived = $preferences['showArchived'] ?? false;
+            $this->filtersVisible = $preferences['filtersVisible'] ?? false;
+        }
+    }
+    
+    /**
+     * Get current preferences for saving
+     */
+    public function getCurrentPreferences(): array
+    {
+        return [
+            'search' => $this->search,
+            'statusFilter' => $this->statusFilter,
+            'priorityFilter' => $this->priorityFilter,
+            'sortBy' => $this->sortBy,
+            'showArchived' => $this->showArchived,
+            'filtersVisible' => $this->filtersVisible
+        ];
+    }
     
     /**
      * Get filtered and sorted todos
@@ -109,8 +148,8 @@ new class extends Component
     {
         $this->search = '';
         $this->statusFilter = 'all';
-        $this->priorityFilter = 'all';
-        $this->sortBy = 'priority_created';
+        $this->priorityFilter = 'high';
+        $this->sortBy = 'status';
         $this->showArchived = false;
     }
     
@@ -333,7 +372,7 @@ new class extends Component
                         </button>
                         @endif
                         
-                        @if(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'all' || $sortBy !== 'priority_created' || $showArchived)
+                        @if(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'high' || $sortBy !== 'status' || $showArchived)
                         <button wire:click="resetFilters" class="px-3 py-2 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             Clear All
                         </button>
@@ -410,7 +449,7 @@ new class extends Component
                 <h3 class="text-sm font-medium text-gray-900 mb-2">
                     @if($showArchived)
                         No archived todos
-                    @elseif(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'all')
+                    @elseif(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'high')
                         No todos match your search or filters
                     @else
                         No todos yet
@@ -420,21 +459,21 @@ new class extends Component
                 <p class="text-sm text-gray-500 mb-4">
                     @if($showArchived)
                         You don't have any archived todos.
-                    @elseif(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'all')
+                    @elseif(!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'high')
                         Try adjusting your search or filters to see more todos.
                     @else
                         Get started by creating your first todo.
                     @endif
                 </p>
                 
-                @if(!$showArchived && (empty($search) && $statusFilter === 'all' && $priorityFilter === 'all'))
+                @if(!$showArchived && (empty($search) && $statusFilter === 'all' && $priorityFilter === 'high'))
                 <button wire:click="createTodo" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                     Create Your First Todo
                 </button>
-                @elseif((!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'all'))
+                @elseif((!empty($search) || $statusFilter !== 'all' || $priorityFilter !== 'high'))
                 <button wire:click="resetFilters" class="px-4 py-2 bg-gray-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     Clear All Filters
                 </button>
@@ -561,4 +600,50 @@ new class extends Component
             </div>
         </div>
     @endif
+    
+    {{-- JavaScript for localStorage handling --}}
+    <script>
+        // Save preferences to localStorage
+        function savePreferences() {
+            @this.call('getCurrentPreferences').then(preferences => {
+                localStorage.setItem('todo-preferences', JSON.stringify(preferences));
+                console.log('Saved preferences:', preferences);
+            });
+        }
+
+        // Load preferences from localStorage
+        function loadPreferences() {
+            const stored = localStorage.getItem('todo-preferences');
+            if (stored) {
+                try {
+                    const preferences = JSON.parse(stored);
+                    @this.call('loadStoredPreferences', preferences);
+                    console.log('Loaded preferences:', preferences);
+                } catch (e) {
+                    console.error('Error loading preferences:', e);
+                }
+            }
+        }
+
+        document.addEventListener('livewire:initialized', () => {
+            // Load preferences immediately
+            setTimeout(loadPreferences, 100);
+        });
+
+        document.addEventListener('livewire:navigated', () => {
+            // Load preferences after navigation
+            setTimeout(loadPreferences, 100);
+        });
+
+        // Save preferences when any Livewire update completes
+        document.addEventListener('livewire:updated', (event) => {
+            const component = event.detail.component;
+            const componentName = component.name;
+            
+            // Only save for todo-list component updates
+            if (componentName && componentName.includes('todo-list')) {
+                setTimeout(savePreferences, 100);
+            }
+        });
+    </script>
 </div>
