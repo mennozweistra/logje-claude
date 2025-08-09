@@ -19,7 +19,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   
   /* Retry failed tests */
-  retries: process.env.CI ? 2 : 1, // Retry once locally, twice on CI
+  retries: 0, // Disable automatic retries
   
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : process.env.PLAYWRIGHT_WORKERS ? parseInt(process.env.PLAYWRIGHT_WORKERS) : undefined,

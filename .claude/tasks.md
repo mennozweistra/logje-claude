@@ -72,8 +72,8 @@ This file tracks all tasks for the project following the workflow defined in `./
 
 ## Active Tasks
 
-### [ ] 118 - Fix System-Wide Alpine.js Expression Error
-- **Status**: Review
+### [x] 118 - Fix System-Wide Alpine.js Expression Error
+- **Status**: Completed
 - **Description**: Fix Alpine.js console error "Expression: '$wire.'" with "Unexpected token '}'" that occurs across multiple Livewire components. Originally reported for health modal, but investigation revealed it's a system-wide Alpine.js/Livewire integration issue affecting Weight modal and other components.
 - **Implementation Plan**:
   1. [x] Identify the problematic `wire:click.stop` directive in health-indicator.blade.php
@@ -94,4 +94,38 @@ This file tracks all tasks for the project following the workflow defined in `./
   6. [x] Unit test: Verify Livewire component methods work correctly
 - **Started**: 2025-08-08 08:46:25
 - **Review**: 2025-08-08 08:49:50
+- **Completed**: 2025-08-08 09:11:35
+- **Duration**: 25 minutes
 - **Issues Found**: Original issue resolved successfully. The `wire:click.stop` syntax error was fixed and health modal functionality works perfectly. However, discovered that the Alpine.js error "Expression: '$wire.'" is a **system-wide issue** affecting multiple Livewire components (confirmed with Weight modal), not specific to the health indicator. The user's reported bug has been fixed, but the console error is a broader application issue requiring separate investigation.
+
+### [ ] 119 - Fix Food Entry Amount Update Bug
+- **Status**: Started
+- **Description**: Food entries cannot be updated for amounts of food items. When editing existing food measurements that contain multiple food choices with specific amounts, the amount changes are not being saved when the user tries to update them. This affects the user's ability to correct or adjust food quantities after initial entry.
+- **Implementation Plan**: 
+  1. [x] Run database seeder to ensure test food data exists
+  2. [x] Write failing Playwright test that demonstrates the food amount update bug
+  3. [ ] Investigate food measurement edit functionality to identify the bug
+  4. [ ] Examine Livewire component handling food amount updates
+  5. [ ] Fix the identified issue preventing food amount updates from saving
+  6. [ ] Verify the Playwright test now passes with the fix
+  7. [ ] Run all existing food-related tests to ensure no regressions
+- **Test Plan**: 
+  1. [x] Create Playwright test: food-amount-update.spec.js that can be run from command line
+  2. [x] Test assumes seeder has been run for food data availability
+  3. [x] Test creates a food measurement and verifies editing functionality works correctly
+  4. [x] Test verifies amounts can be modified and saved successfully
+  5. [x] Test verifies the updated amounts persist after page refresh
+  6. [x] Run existing food measurement CRUD tests to ensure no regressions
+  7. [x] Document test execution commands for future use
+- **Started**: 2025-08-09 11:16:02
+- **Review**: 2025-08-09 11:25:53
+- **Completed**: [To be set when user approves]
+- **Duration**: [To be calculated]
+- **Issues Found**: **BUG CONFIRMED**: The reported bug exists in the current version. Playwright test demonstrates that:
+  1. **Food measurement creation works**: Users can create food measurements successfully
+  2. **Edit modal opens correctly**: The edit interface loads with current values
+  3. **UI allows changes**: Amount fields can be modified and show updated nutritional calculations
+  4. **Save operation fails**: Clicking "Update Measurement" does not persist changes - no success message appears
+  5. **Root cause needed**: Backend Livewire component for food amount updates is not working properly
+  
+  **Status**: Bug confirmed via automated test, investigation and fix needed.

@@ -257,7 +257,7 @@ class MeasurementModal extends Component
                     FoodMeasurement::create([
                         'measurement_id' => $this->measurement->id,
                         'food_id' => $foodId,
-                        'grams_consumed' => $grams,
+                        'grams_consumed' => (float) $grams,
                         'calculated_calories' => $food->calculateCalories((float) $grams),
                         'calculated_carbs' => $food->calculateCarbs((float) $grams),
                     ]);
@@ -437,7 +437,7 @@ class MeasurementModal extends Component
                     ],
                     'foodEntries.*' => [
                         'required',
-                        'integer',
+                        'numeric',
                         'min:1',
                         'max:10000',
                     ],
@@ -448,7 +448,7 @@ class MeasurementModal extends Component
                     'foodEntries.array' => 'Food entries must be an array.',
                     'foodEntries.min' => 'At least one food item must be selected.',
                     'foodEntries.*.required' => 'Food amount is required.',
-                    'foodEntries.*.integer' => 'Food amount must be a whole number.',
+                    'foodEntries.*.numeric' => 'Food amount must be a number.',
                     'foodEntries.*.min' => 'Food amount must be at least 1 gram.',
                     'foodEntries.*.max' => 'Food amount cannot exceed 10000 grams.',
                     'foodTime.required' => 'Time is required.',

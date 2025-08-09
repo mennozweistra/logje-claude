@@ -23,3 +23,5 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 screenshots/
+test-results/
+.last-run.json
