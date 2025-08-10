@@ -39,7 +39,7 @@ This document contains the requirements for the Logje health tracking web applic
   - Default times must be based on user's local browser timezone, not UTC
   - No AM/PM format - strictly 24-hour military time format
 - **Multiple Entries**: Support multiple measurements per type per day
-- **Data Validation**: Prevent future date entries with realistic glucose ranges (0-12 mmol/L)
+- **Data Validation**: Prevent future date entries with realistic glucose ranges (0-15 mmol/L)
 - **CRUD Operations**: Create, read, update, delete measurements for any past date
 - **Responsive Design**: 8-column grid layout for measurement type buttons (8 wide desktop, 4 wide mobile), mobile-optimized
 - **Filtering System**: Collapsible measurement type filters for dashboard view
@@ -191,7 +191,7 @@ This document contains the requirements for the Logje health tracking web applic
 - Intuitive interface for daily data entry with visual icons and clear layout
 - Mobile-friendly responsive design with 8 wide grid on desktop, 4 wide grid on mobile
 - 24-hour time format with user-editable timestamps
-- Metric units only (kg for weight, mmol/L for glucose with realistic ranges)
+- Metric units only (kg for weight, mmol/L for glucose in 0-15 mmol/L range)
 - Dutch date format (dd-mm-yyyy) throughout the application
 - Consistent color scheme with health-themed icons (green apple for food, etc.)
 - Collapsible filters to reduce visual clutter
@@ -352,7 +352,7 @@ This document contains the requirements for the Logje health tracking web applic
 - I want to login securely to access only my personal health data (registration temporarily disabled)
 - I want my sessions to remain active for reasonable periods without frequent re-login
 - I want the system to prevent me from entering future dates to maintain data integrity
-- I want to use metric units consistently (kg for weight, mmol/L for glucose in realistic ranges)
+- I want to use metric units consistently (kg for weight, mmol/L for glucose in 0-15 mmol/L range)
 - I want the system to preserve my custom time entries when creating or editing measurements
 - I want the application to work reliably across different browsers (Chrome, Safari, Brave)
 - I want the PWA to install correctly on my mobile device for offline-like access
