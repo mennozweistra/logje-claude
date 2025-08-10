@@ -44,6 +44,10 @@ class HealthyDayService
             'description' => 'Second Metformine and Atorvastatine taken',
             'medications' => ['Metformine', 'Atorvastatine'],
             'metformine_second' => true
+        ],
+        'low_carb_diet' => [
+            'time' => '22:00',
+            'description' => 'Low carb diet adherence recorded and followed'
         ]
     ];
 
@@ -96,7 +100,7 @@ class HealthyDayService
     {
         return Measurement::where('user_id', $user->id)
             ->whereDate('date', $date->format('Y-m-d'))
-            ->with(['measurementType', 'medications'])
+            ->with(['measurementType', 'medications', 'lowCarbDietMeasurement'])
             ->orderBy('created_at', 'asc')
             ->get();
     }
@@ -128,6 +132,9 @@ class HealthyDayService
             case 'medications_evening':
                 return $this->hasSecondMetformine($measurements) && 
                        $this->hasMedication($measurements, 'Atorvastatine');
+
+            case 'low_carb_diet':
+                return $this->hasLowCarbDietAdherence($measurements);
                        
             default:
                 return false;
@@ -208,5 +215,19 @@ class HealthyDayService
             ->count();
             
         return $metformineTaken >= 2;
+    }
+
+    /**
+     * Check if low carb diet adherence has been recorded and checkbox is set to true
+     */
+    private function hasLowCarbDietAdherence(Collection $measurements): bool
+    {
+        $lowCarbMeasurement = $measurements
+            ->where('measurementType.slug', 'low-carb-diet')
+            ->first();
+
+        return $lowCarbMeasurement && 
+               $lowCarbMeasurement->lowCarbDietMeasurement && 
+               $lowCarbMeasurement->lowCarbDietMeasurement->adherence === true;
     }
 }

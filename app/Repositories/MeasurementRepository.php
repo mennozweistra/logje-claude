@@ -10,7 +10,7 @@ class MeasurementRepository
     public function getByUser(int $userId): Collection
     {
         return Measurement::where('user_id', $userId)
-            ->with('measurementType', 'medications', 'foodMeasurements.food')
+            ->with('measurementType', 'medications', 'foodMeasurements.food', 'lowCarbDietMeasurement')
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -20,7 +20,7 @@ class MeasurementRepository
     {
         return Measurement::where('user_id', $userId)
             ->whereDate('date', $date)
-            ->with('measurementType', 'medications', 'foodMeasurements.food')
+            ->with('measurementType', 'medications', 'foodMeasurements.food', 'lowCarbDietMeasurement')
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -29,7 +29,7 @@ class MeasurementRepository
     {
         return Measurement::where('user_id', $userId)
             ->ofType($type)
-            ->with('measurementType', 'medications', 'foodMeasurements.food')
+            ->with('measurementType', 'medications', 'foodMeasurements.food', 'lowCarbDietMeasurement')
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -89,7 +89,7 @@ class MeasurementRepository
     public function searchAndFilter(int $userId, string $search = '', array $filterTypes = [], $startDate = null, $endDate = null, string $sortBy = 'newest'): Collection
     {
         $query = Measurement::where('user_id', $userId)
-            ->with('measurementType', 'medications', 'foodMeasurements.food');
+            ->with('measurementType', 'medications', 'foodMeasurements.food', 'lowCarbDietMeasurement');
 
         // Apply search filter
         if (!empty($search)) {

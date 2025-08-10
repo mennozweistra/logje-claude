@@ -436,6 +436,48 @@
                                 <span class="text-gray-500 text-xs mt-1 block">{{ strlen($foodNotes) }}/1000 characters</span>
                             @endif
                         </div>
+
+                    @elseif ($selectedType === 'low-carb-diet')
+                        <!-- Low Carb Diet Form -->
+                        <div>
+                            <label for="lowCarbDietTime" class="block text-sm font-medium text-gray-700">Time</label>
+                            <input 
+                                type="time" 
+                                id="lowCarbDietTime"
+                                wire:model.live.debounce.500ms="lowCarbDietTime"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('lowCarbDietTime') border-red-500 @enderror"
+                                required
+                            >
+                            @error('lowCarbDietTime') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label class="flex items-center space-x-3">
+                                <input 
+                                    type="checkbox" 
+                                    wire:model.live="lowCarbDietAdherence"
+                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0"
+                                >
+                                <span class="text-sm font-medium text-gray-700">I kept to my low carb diet today</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1 ml-6">Check this box if you successfully followed your low carbohydrate diet today</p>
+                        </div>
+
+                        <div>
+                            <label for="lowCarbDietNotes" class="block text-sm font-medium text-gray-700">Notes (optional)</label>
+                            <textarea 
+                                id="lowCarbDietNotes"
+                                wire:model.live.debounce.500ms="lowCarbDietNotes"
+                                rows="3"
+                                maxlength="1000"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('lowCarbDietNotes') border-red-500 @enderror"
+                                placeholder="Any notes about your diet adherence... (max 1000 characters)"
+                            ></textarea>
+                            @error('lowCarbDietNotes') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                            @if($lowCarbDietNotes)
+                                <span class="text-gray-500 text-xs mt-1 block">{{ strlen($lowCarbDietNotes) }}/1000 characters</span>
+                            @endif
+                        </div>
                     @endif
 
                     <!-- Form Actions -->

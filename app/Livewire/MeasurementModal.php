@@ -56,6 +56,11 @@ class MeasurementModal extends Component
     public string $foodSearch = '';
     public array $searchResults = [];
 
+    // Low Carb Diet fields
+    public string $lowCarbDietTime = '';
+    public bool $lowCarbDietAdherence = false;
+    public string $lowCarbDietNotes = '';
+
     // Delete confirmation
     public bool $showDeleteConfirm = false;
 
@@ -108,6 +113,7 @@ class MeasurementModal extends Component
         $this->notesTime = $currentTime;
         $this->medicationTime = $currentTime;
         $this->foodTime = $currentTime;
+        $this->lowCarbDietTime = $currentTime;
     }
 
     public function loadMeasurementData()
@@ -156,6 +162,12 @@ class MeasurementModal extends Component
                 foreach ($this->measurement->foodMeasurements as $foodMeasurement) {
                     $this->foodEntries[$foodMeasurement->food_id] = $foodMeasurement->grams_consumed;
                 }
+                break;
+
+            case 'low-carb-diet':
+                $this->lowCarbDietTime = $time;
+                $this->lowCarbDietNotes = $this->measurement->notes ?? '';
+                $this->lowCarbDietAdherence = $this->measurement->lowCarbDietMeasurement->adherence ?? false;
                 break;
         }
     }
@@ -220,6 +232,14 @@ class MeasurementModal extends Component
             }
         }
         
+        // Handle low carb diet measurement
+        if ($this->selectedType === 'low-carb-diet') {
+            \App\Models\LowCarbDietMeasurement::create([
+                'measurement_id' => $measurement->id,
+                'adherence' => $this->lowCarbDietAdherence,
+            ]);
+        }
+        
         session()->flash('success', 'Measurement added successfully!');
         $this->cancel();
         $this->dispatch('measurement-saved');
@@ -265,6 +285,15 @@ class MeasurementModal extends Component
             }
         }
         
+        // Handle low carb diet measurement
+        if ($this->selectedType === 'low-carb-diet') {
+            // Update existing low carb diet measurement
+            $this->measurement->lowCarbDietMeasurement()->updateOrCreate(
+                ['measurement_id' => $this->measurement->id],
+                ['adherence' => $this->lowCarbDietAdherence]
+            );
+        }
+        
         session()->flash('success', 'Measurement updated successfully!');
         $this->cancel();
         $this->dispatch('measurement-saved');
@@ -308,6 +337,11 @@ class MeasurementModal extends Component
             case 'food':
                 $data['notes'] = $this->foodNotes;
                 $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->foodTime);
+                break;
+
+            case 'low-carb-diet':
+                $data['notes'] = $this->lowCarbDietNotes;
+                $data['created_at'] = Carbon::createFromFormat('Y-m-d H:i', $this->selectedDate . ' ' . $this->lowCarbDietTime);
                 break;
         }
 
@@ -455,6 +489,16 @@ class MeasurementModal extends Component
                     'foodTime.date_format' => 'Please enter a valid time in HH:MM format.',
                     'foodNotes.max' => 'Notes cannot exceed 1000 characters.',
                 ]);
+
+            case 'low-carb-diet':
+                return $this->validate([
+                    'lowCarbDietTime' => 'required|date_format:H:i',
+                    'lowCarbDietNotes' => 'nullable|string|max:1000',
+                ], [
+                    'lowCarbDietTime.required' => 'Time is required.',
+                    'lowCarbDietTime.date_format' => 'Please enter a valid time in HH:MM format.',
+                    'lowCarbDietNotes.max' => 'Notes cannot exceed 1000 characters.',
+                ]);
                 
             default:
                 throw new \InvalidArgumentException('Invalid measurement type: ' . $this->selectedType);
@@ -536,7 +580,8 @@ class MeasurementModal extends Component
                      'weightValue', 'weightNotes', 
                      'exerciseDescription', 'exerciseDuration', 'exerciseNotes',
                      'notesContent', 'selectedMedications', 'medicationNotes',
-                     'foodEntries', 'foodNotes', 'foodSearch', 'searchResults']);
+                     'foodEntries', 'foodNotes', 'foodSearch', 'searchResults',
+                     'lowCarbDietAdherence', 'lowCarbDietNotes']);
     }
 
     // Food-specific methods

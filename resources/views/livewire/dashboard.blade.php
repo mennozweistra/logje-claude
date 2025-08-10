@@ -38,27 +38,33 @@
 
     {{-- Add Measurement Section - Desktop Only --}}
     <div class="hidden md:block bg-white rounded-lg shadow p-5">
-        <div class="grid grid-cols-6 gap-3">
+        <div class="grid grid-cols-8 gap-3">
             @php
-                // Reorder measurement types: Weight, Glucose, Medication, Food, Exercise, Notes
+                // Expanded to 8 measurement types in single row: Weight, Glucose, Medication, Food, Exercise, Notes, Low Carb Diet, Reserved
                 $measurementTypes = [
                     ['slug' => 'weight', 'name' => 'Weight', 'icon' => 'weight'],
                     ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => 'droplet'],
                     ['slug' => 'medication', 'name' => 'Medication', 'icon' => 'pill'],
                     ['slug' => 'food', 'name' => 'Food', 'icon' => 'apple'],
                     ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => 'activity'],
-                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text']
+                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text'],
+                    ['slug' => 'low-carb-diet', 'name' => 'Low Carb Diet', 'icon' => 'carrot'],
+                    ['slug' => 'reserved', 'name' => 'Reserved', 'icon' => 'plus', 'disabled' => true]
                 ];
             @endphp
             @foreach ($measurementTypes as $type)
                 <button 
-                    wire:click="openAddMeasurement('{{ $type['slug'] }}')"
-                    class="flex flex-col items-center justify-center p-2 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[70px]"
+                    @if(!isset($type['disabled']) || !$type['disabled'])
+                        wire:click="openAddMeasurement('{{ $type['slug'] }}')"
+                    @else
+                        disabled
+                    @endif
+                    class="flex flex-col items-center justify-center p-2 border-2 rounded-lg transition-colors min-h-[70px] @if(isset($type['disabled']) && $type['disabled']) border-gray-100 text-gray-400 cursor-not-allowed @else border-gray-200 hover:border-blue-500 hover:bg-blue-50 @endif"
                 >
                     <div class="mb-1">
                         <x-dynamic-component :component="'lucide-' . $type['icon']" class="w-5 h-5" />
                     </div>
-                    <span class="text-sm font-medium text-gray-900 text-center">{{ $type['name'] }}</span>
+                    <span class="text-sm font-medium text-center @if(isset($type['disabled']) && $type['disabled']) text-gray-400 @else text-gray-900 @endif">{{ $type['name'] }}</span>
                 </button>
             @endforeach
         </div>
@@ -84,16 +90,17 @@
             {{-- Simple Measurement Type Filters - Collapsible --}}
             @if($filtersVisible)
                 <div class="transition-all duration-300 ease-in-out opacity-100 mb-6">
-                <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
+                <div class="grid grid-cols-4 md:grid-cols-8 gap-4">
                 @php
-                    // Reorder filters to match buttons: Weight, Glucose, Medication, Food, Exercise, Notes
+                    // Filters to match expanded buttons: Weight, Glucose, Medication, Food, Exercise, Notes, Low Carb Diet (excluding reserved) - 4 wide mobile, 8 wide desktop
                     $types = [
                         ['slug' => 'weight', 'name' => 'Weight', 'icon' => 'weight'],
                         ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => 'droplet'],
                         ['slug' => 'medication', 'name' => 'Medication', 'icon' => 'pill'],
                         ['slug' => 'food', 'name' => 'Food', 'icon' => 'apple'],
                         ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => 'activity'],
-                        ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text']
+                        ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text'],
+                        ['slug' => 'low-carb-diet', 'name' => 'Low Carb Diet', 'icon' => 'carrot']
                     ];
                 @endphp
                 @foreach($types as $type)
@@ -143,6 +150,9 @@
                                     @case('food')
                                         <x-lucide-apple class="w-4 h-4" />
                                         @break
+                                    @case('low-carb-diet')
+                                        <x-lucide-carrot class="w-4 h-4" />
+                                        @break
                                     @default
                                         <x-lucide-bar-chart class="w-4 h-4" />
                                 @endswitch
@@ -177,6 +187,15 @@
                                         @endphp
                                         <span>{{ round($totalCalories) }} cal, {{ round($totalCarbs, 1) }}g carbs, {{ $foodNamesString }}</span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
                                         @break
+                                    @case('low-carb-diet')
+                                        <span>
+                                            @if($measurement->lowCarbDietMeasurement && $measurement->lowCarbDietMeasurement->adherence)
+                                                ✓ Kept to low carb diet
+                                            @else
+                                                ✗ Did not keep to low carb diet
+                                            @endif
+                                        </span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
+                                        @break
                                     @case('notes')
                                         <span>{{ $measurement->notes }}</span>
                                         @break
@@ -199,27 +218,33 @@
 
     {{-- Add Measurement Section - Mobile Only (Bottom) --}}
     <div class="md:hidden bg-white rounded-lg shadow p-4">
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-4 gap-3">
             @php
-                // Reorder measurement types: Weight, Glucose, Medication, Food, Exercise, Notes
+                // Expanded to 8 measurement types in 4-wide grid: Weight, Glucose, Medication, Food, Exercise, Notes, Low Carb Diet, Reserved
                 $measurementTypes = [
                     ['slug' => 'weight', 'name' => 'Weight', 'icon' => 'weight'],
                     ['slug' => 'glucose', 'name' => 'Glucose', 'icon' => 'droplet'],
                     ['slug' => 'medication', 'name' => 'Medication', 'icon' => 'pill'],
                     ['slug' => 'food', 'name' => 'Food', 'icon' => 'apple'],
                     ['slug' => 'exercise', 'name' => 'Exercise', 'icon' => 'activity'],
-                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text']
+                    ['slug' => 'notes', 'name' => 'Notes', 'icon' => 'notebook-text'],
+                    ['slug' => 'low-carb-diet', 'name' => 'Low Carb Diet', 'icon' => 'carrot'],
+                    ['slug' => 'reserved', 'name' => 'Reserved', 'icon' => 'plus', 'disabled' => true]
                 ];
             @endphp
             @foreach ($measurementTypes as $type)
                 <button 
-                    wire:click="openAddMeasurement('{{ $type['slug'] }}')"
-                    class="flex flex-col items-center justify-center p-3 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors min-h-[70px] active:bg-blue-100"
+                    @if(!isset($type['disabled']) || !$type['disabled'])
+                        wire:click="openAddMeasurement('{{ $type['slug'] }}')"
+                    @else
+                        disabled
+                    @endif
+                    class="flex flex-col items-center justify-center p-3 border-2 rounded-lg transition-colors min-h-[70px] @if(isset($type['disabled']) && $type['disabled']) border-gray-100 text-gray-400 cursor-not-allowed @else border-gray-200 hover:border-blue-500 hover:bg-blue-50 active:bg-blue-100 @endif"
                 >
                     <div class="text-base mb-1">
                         <x-dynamic-component :component="'lucide-' . $type['icon']" class="w-4 h-4" />
                     </div>
-                    <span class="text-xs font-medium text-gray-900 text-center leading-tight">{{ $type['name'] }}</span>
+                    <span class="text-xs font-medium text-center leading-tight @if(isset($type['disabled']) && $type['disabled']) text-gray-400 @else text-gray-900 @endif">{{ $type['name'] }}</span>
                 </button>
             @endforeach
         </div>

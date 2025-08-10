@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Measurement extends Model
@@ -90,5 +91,13 @@ class Measurement extends Model
         return $this->belongsToMany(Food::class, 'food_measurements')
             ->withPivot('grams_consumed', 'calculated_calories', 'calculated_carbs')
             ->withTimestamps();
+    }
+
+    /**
+     * Get the low carb diet measurement associated with this measurement
+     */
+    public function lowCarbDietMeasurement(): HasOne
+    {
+        return $this->hasOne(LowCarbDietMeasurement::class);
     }
 }

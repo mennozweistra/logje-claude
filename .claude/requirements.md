@@ -41,7 +41,7 @@ This document contains the requirements for the Logje health tracking web applic
 - **Multiple Entries**: Support multiple measurements per type per day
 - **Data Validation**: Prevent future date entries with realistic glucose ranges (0-12 mmol/L)
 - **CRUD Operations**: Create, read, update, delete measurements for any past date
-- **Responsive Design**: 8-column grid layout for measurement type buttons (4x2 grid), mobile-optimized
+- **Responsive Design**: 8-column grid layout for measurement type buttons (8 wide desktop, 4 wide mobile), mobile-optimized
 - **Filtering System**: Collapsible measurement type filters for dashboard view
 - **Time Preservation**: User-entered times are preserved during measurement creation and editing
 - **UI Layout Consistency Requirements**: All page layouts must maintain consistent width alignment
@@ -189,7 +189,7 @@ This document contains the requirements for the Logje health tracking web applic
 
 ### Usability
 - Intuitive interface for daily data entry with visual icons and clear layout
-- Mobile-friendly responsive design with 4x2 grid (8 buttons) on desktop, 2x4 grid on mobile
+- Mobile-friendly responsive design with 8 wide grid on desktop, 4 wide grid on mobile
 - 24-hour time format with user-editable timestamps
 - Metric units only (kg for weight, mmol/L for glucose with realistic ranges)
 - Dutch date format (dd-mm-yyyy) throughout the application
