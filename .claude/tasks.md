@@ -195,3 +195,38 @@ This file tracks all tasks for the project following the workflow defined in `./
   6. **✅ No Regressions**: Existing todo functionality (create, display, navigation) works correctly without issues
   7. **✅ Cross-Session Persistence**: localStorage implementation works across browser sessions as required
   8. **Technical Implementation**: Livewire component properties, JavaScript localStorage API, event-driven save/load mechanism
+
+### [ ] 122 - Implement Low Carb Diet Tracking with Expanded Button Layout
+- **Status**: Todo
+- **Description**: Implement low carb diet adherence tracking as a new measurement type with checkbox interface. Expand the dashboard measurement buttons from 6 to 8 total (4x2 grid), with Low Carb Diet as the 7th measurement type and one button reserved for future use. Integrate with healthy day indicator system with 22:00+ rule requiring both measurement existence and checkbox=true for rule satisfaction.
+- **Implementation Plan**: 
+  1. [ ] Create database migration for low_carb_diet_measurements table
+  2. [ ] Create LowCarbDietMeasurement model with relationships and validation
+  3. [ ] Update dashboard layout from 6 to 8 measurement buttons (4x2 grid on desktop, 2x4 on mobile)
+  4. [ ] Create low carb diet measurement modal with checkbox interface and optional notes
+  5. [ ] Add low carb diet case to dashboard measurement display logic
+  6. [ ] Create Livewire component for low carb diet measurement CRUD operations
+  7. [ ] Update measurement filtering system to include low carb diet option
+  8. [ ] Integrate low carb diet measurement into healthy day indicator rule engine
+  9. [ ] Add 22:00+ rule: check measurement exists AND checkbox is true
+  10. [ ] Update health rule modal to display low carb diet rule status
+  11. [ ] Add appropriate icon for low carb diet measurement button
+  12. [ ] Style reserved 8th button as disabled/placeholder for future use
+- **Test Plan**: 
+  1. [ ] Test database migration creates low_carb_diet_measurements table correctly
+  2. [ ] Test LowCarbDietMeasurement model relationships and validation
+  3. [ ] Test dashboard displays 8 measurement buttons in 4x2 grid (desktop)
+  4. [ ] Test mobile layout displays 8 buttons in 2x4 grid correctly
+  5. [ ] Test low carb diet modal opens with checkbox and notes fields
+  6. [ ] Test checkbox true/false states save correctly with timestamps
+  7. [ ] Test optional notes functionality for low carb diet measurements
+  8. [ ] Test measurement filtering includes low carb diet option
+  9. [ ] Test healthy day indicator at 22:00+ checks both measurement existence and checkbox=true
+  10. [ ] Test health rule modal shows low carb diet rule status correctly
+  11. [ ] Test past date evaluation includes low carb diet rule in full day assessment
+  12. [ ] Test reserved 8th button displays as disabled placeholder
+  13. [ ] Run all existing measurement tests to ensure no regressions
+- **Started**: 
+- **Review**: 
+- **Completed**: 
+- **Duration**:

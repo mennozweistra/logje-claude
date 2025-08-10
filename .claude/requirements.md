@@ -12,7 +12,8 @@ This document contains the requirements for the Logje health tracking web applic
   - Daily notes (text entries with timestamps)
   - Medication intake tracking (multiple medications per entry from predefined list)
   - Food consumption tracking with nutritional information (calories and carbohydrates)
-- **Six Measurement Types**: Complete measurement system with Weight, Glucose, Medication, Food, Exercise, Notes
+  - Low carb diet adherence tracking (checkbox indicating whether user kept to low carb diet for the day)
+- **Eight Measurement Types**: Complete measurement system with Weight, Glucose, Medication, Food, Exercise, Notes, Low Carb Diet, and one reserved for future use
 - **User-Specific Medication Database**: Each user maintains their own personal medication list
   - Medications are linked to specific users and not shared between accounts
   - Users can add, edit, and delete their own medications
@@ -40,7 +41,7 @@ This document contains the requirements for the Logje health tracking web applic
 - **Multiple Entries**: Support multiple measurements per type per day
 - **Data Validation**: Prevent future date entries with realistic glucose ranges (0-12 mmol/L)
 - **CRUD Operations**: Create, read, update, delete measurements for any past date
-- **Responsive Design**: 6-column grid layout for measurement type buttons, mobile-optimized
+- **Responsive Design**: 8-column grid layout for measurement type buttons (4x2 grid), mobile-optimized
 - **Filtering System**: Collapsible measurement type filters for dashboard view
 - **Time Preservation**: User-entered times are preserved during measurement creation and editing
 - **UI Layout Consistency Requirements**: All page layouts must maintain consistent width alignment
@@ -100,6 +101,18 @@ This document contains the requirements for the Logje health tracking web applic
 - **Food Consumption**: User function to log actual food intake with custom portions
 - **No Mixing**: Food database management is separate from daily food consumption tracking
 
+### Low Carb Diet Tracking
+- **Diet Adherence Measurement**: New measurement type for tracking low carb diet compliance
+  - **Simple Checkbox Interface**: Single checkbox input indicating whether user kept to low carb diet for the day
+  - **Boolean Data Storage**: Stores true/false value for diet adherence status
+  - **Daily Tracking**: One measurement per day recommended (multiple allowed but only latest checkbox value matters for health rules)
+  - **Time Recording**: Includes timestamp like all other measurements
+  - **Optional Notes**: Supports optional notes for additional context (e.g., reasons for non-adherence, specific challenges)
+- **Health Rule Integration**: Low carb diet measurement integrated into daily health compliance system
+  - **22:00+ Rule**: At 22:00, system checks if low carb diet measurement exists for the day AND checkbox is set to true
+  - **Rule Compliance**: Both measurement existence and checkbox=true required for rule satisfaction
+  - **Past Day Evaluation**: For past dates, rule applies to full day evaluation (must be met for healthy day status)
+
 ### Healthy Day Indicator
 - **Real-time Health Status**: Visual indicator on the Health screen showing whether the current day meets health compliance rules
 - **Time-based Rule Engine**: Dynamic rule evaluation based on current local time for today, and complete rule evaluation for past dates
@@ -119,6 +132,7 @@ This document contains the requirements for the Logje health tracking web applic
   - **14:00+**: Exercise activity logged (any time after rule activates)
   - **18:00+**: At least three glucose measurements total recorded for the day (ensures third measurement exists)
   - **20:00+**: Second Metformine occurrence and Atorvastatine taken (Metformine taken twice total, Atorvastatine taken once)
+  - **22:00+**: Low carb diet adherence measurement recorded and checkbox is set (indicates user kept to low carb diet for the day)
 - **Rule Evaluation Logic**:
   - **Rule Activation**: Time thresholds indicate when rules become active for evaluation, not deadlines
   - **Medication Counting**: System tracks medication occurrence counts (first vs second Metformine intake)
@@ -175,7 +189,7 @@ This document contains the requirements for the Logje health tracking web applic
 
 ### Usability
 - Intuitive interface for daily data entry with visual icons and clear layout
-- Mobile-friendly responsive design with 6-column grid on desktop, 3-column on mobile
+- Mobile-friendly responsive design with 4x2 grid (8 buttons) on desktop, 2x4 grid on mobile
 - 24-hour time format with user-editable timestamps
 - Metric units only (kg for weight, mmol/L for glucose with realistic ranges)
 - Dutch date format (dd-mm-yyyy) throughout the application
