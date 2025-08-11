@@ -452,15 +452,44 @@
                         </div>
 
                         <div>
-                            <label class="flex items-center space-x-3">
-                                <input 
-                                    type="checkbox" 
-                                    wire:model.live="lowCarbDietAdherence"
-                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-offset-0"
-                                >
-                                <span class="text-sm font-medium text-gray-700">I kept to my low carb diet today</span>
-                            </label>
-                            <p class="text-xs text-gray-500 mt-1 ml-6">Check this box if you successfully followed your low carbohydrate diet today</p>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">How well did you follow your carb goals today?</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center space-x-3 p-3 rounded-lg border @if($lowCarbDietCarbLevel === 'low') border-green-300 bg-green-50 @else border-gray-200 hover:border-gray-300 @endif cursor-pointer">
+                                    <input 
+                                        type="radio" 
+                                        wire:model.live="lowCarbDietCarbLevel"
+                                        value="low"
+                                        class="text-green-600 focus:ring-green-500"
+                                    >
+                                    <span class="text-2xl">😊</span>
+                                    <span class="text-sm font-medium text-gray-700">Low Carb</span>
+                                    <span class="text-xs text-gray-500 ml-auto">Stayed within carb limits</span>
+                                </label>
+                                
+                                <label class="flex items-center space-x-3 p-3 rounded-lg border @if($lowCarbDietCarbLevel === 'medium') border-yellow-300 bg-yellow-50 @else border-gray-200 hover:border-gray-300 @endif cursor-pointer">
+                                    <input 
+                                        type="radio" 
+                                        wire:model.live="lowCarbDietCarbLevel"
+                                        value="medium"
+                                        class="text-yellow-600 focus:ring-yellow-500"
+                                    >
+                                    <span class="text-2xl">😐</span>
+                                    <span class="text-sm font-medium text-gray-700">Medium Carb</span>
+                                    <span class="text-xs text-gray-500 ml-auto">Moderate carb intake</span>
+                                </label>
+                                
+                                <label class="flex items-center space-x-3 p-3 rounded-lg border @if($lowCarbDietCarbLevel === 'high') border-red-300 bg-red-50 @else border-gray-200 hover:border-gray-300 @endif cursor-pointer">
+                                    <input 
+                                        type="radio" 
+                                        wire:model.live="lowCarbDietCarbLevel"
+                                        value="high"
+                                        class="text-red-600 focus:ring-red-500"
+                                    >
+                                    <span class="text-2xl">😔</span>
+                                    <span class="text-sm font-medium text-gray-700">High Carb</span>
+                                    <span class="text-xs text-gray-500 ml-auto">Exceeded carb goals</span>
+                                </label>
+                            </div>
                         </div>
 
                         <div>

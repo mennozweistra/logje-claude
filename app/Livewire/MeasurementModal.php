@@ -58,7 +58,7 @@ class MeasurementModal extends Component
 
     // Low Carb Diet fields
     public string $lowCarbDietTime = '';
-    public bool $lowCarbDietAdherence = false;
+    public string $lowCarbDietCarbLevel = 'medium';
     public string $lowCarbDietNotes = '';
 
     // Delete confirmation
@@ -167,7 +167,7 @@ class MeasurementModal extends Component
             case 'low-carb-diet':
                 $this->lowCarbDietTime = $time;
                 $this->lowCarbDietNotes = $this->measurement->notes ?? '';
-                $this->lowCarbDietAdherence = $this->measurement->lowCarbDietMeasurement->adherence ?? false;
+                $this->lowCarbDietCarbLevel = $this->measurement->lowCarbDietMeasurement->carb_level ?? 'medium';
                 break;
         }
     }
@@ -236,7 +236,7 @@ class MeasurementModal extends Component
         if ($this->selectedType === 'low-carb-diet') {
             \App\Models\LowCarbDietMeasurement::create([
                 'measurement_id' => $measurement->id,
-                'adherence' => $this->lowCarbDietAdherence,
+                'carb_level' => $this->lowCarbDietCarbLevel,
             ]);
         }
         
@@ -290,7 +290,7 @@ class MeasurementModal extends Component
             // Update existing low carb diet measurement
             $this->measurement->lowCarbDietMeasurement()->updateOrCreate(
                 ['measurement_id' => $this->measurement->id],
-                ['adherence' => $this->lowCarbDietAdherence]
+                ['carb_level' => $this->lowCarbDietCarbLevel]
             );
         }
         
@@ -581,7 +581,7 @@ class MeasurementModal extends Component
                      'exerciseDescription', 'exerciseDuration', 'exerciseNotes',
                      'notesContent', 'selectedMedications', 'medicationNotes',
                      'foodEntries', 'foodNotes', 'foodSearch', 'searchResults',
-                     'lowCarbDietAdherence', 'lowCarbDietNotes']);
+                     'lowCarbDietCarbLevel', 'lowCarbDietNotes']);
     }
 
     // Food-specific methods

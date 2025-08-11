@@ -7,6 +7,31 @@
                 <div class="flex items-center">
                     <h1 class="text-2xl font-bold text-gray-900">{{ $selectedDayName }}</h1>
                     @livewire('health-indicator', ['selectedDate' => $selectedDate])
+                    
+                    {{-- Carb Level Indicator --}}
+                    @php
+                        $todaysLowCarbMeasurement = $measurements->where('measurementType.slug', 'low-carb-diet')->first();
+                        $carbLevel = $todaysLowCarbMeasurement?->lowCarbDietMeasurement?->carb_level ?? null;
+                        $carbEmoji = match($carbLevel) {
+                            'low' => '😊',
+                            'medium' => '😐', 
+                            'high' => '😔',
+                            default => '😐'
+                        };
+                        $carbLabel = match($carbLevel) {
+                            'low' => 'Low Carb',
+                            'medium' => 'Medium Carb',
+                            'high' => 'High Carb', 
+                            default => 'No carb data'
+                        };
+                    @endphp
+                    
+                    @if($todaysLowCarbMeasurement)
+                        <button class="ml-1 text-2xl hover:scale-110 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-1"
+                                title="Carb intake level for today">
+                            {{ $carbEmoji }}
+                        </button>
+                    @endif
                 </div>
                 <p class="text-sm text-gray-600 mt-1">{{ $selectedDateOnly }}</p>
             </div>
@@ -189,10 +214,10 @@
                                         @break
                                     @case('low-carb-diet')
                                         <span>
-                                            @if($measurement->lowCarbDietMeasurement && $measurement->lowCarbDietMeasurement->adherence)
-                                                ✓ Kept to low carb diet
+                                            @if($measurement->lowCarbDietMeasurement)
+                                                {{ $measurement->lowCarbDietMeasurement->carb_level_emoji }} {{ $measurement->lowCarbDietMeasurement->carb_level_label }}
                                             @else
-                                                ✗ Did not keep to low carb diet
+                                                😐 Medium Carb
                                             @endif
                                         </span>@if($measurement->notes)<span>, {{ lcfirst($measurement->notes) }}</span>@endif
                                         @break
