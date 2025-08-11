@@ -461,7 +461,7 @@
                                         value="low"
                                         class="text-green-600 focus:ring-green-500"
                                     >
-                                    <span class="text-2xl">😊</span>
+                                    <span class="text-2xl">🤗</span>
                                     <span class="text-sm font-medium text-gray-700">Low Carb</span>
                                     <span class="text-xs text-gray-500 ml-auto">Stayed within carb limits</span>
                                 </label>
@@ -473,7 +473,7 @@
                                         value="medium"
                                         class="text-yellow-600 focus:ring-yellow-500"
                                     >
-                                    <span class="text-2xl">😐</span>
+                                    <span class="text-2xl">😟</span>
                                     <span class="text-sm font-medium text-gray-700">Medium Carb</span>
                                     <span class="text-xs text-gray-500 ml-auto">Moderate carb intake</span>
                                 </label>
@@ -485,7 +485,7 @@
                                         value="high"
                                         class="text-red-600 focus:ring-red-500"
                                     >
-                                    <span class="text-2xl">😔</span>
+                                    <span class="text-2xl">😞</span>
                                     <span class="text-sm font-medium text-gray-700">High Carb</span>
                                     <span class="text-xs text-gray-500 ml-auto">Exceeded carb goals</span>
                                 </label>

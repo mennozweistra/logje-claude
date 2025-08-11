@@ -13,10 +13,10 @@
                         $todaysLowCarbMeasurement = $measurements->where('measurementType.slug', 'low-carb-diet')->first();
                         $carbLevel = $todaysLowCarbMeasurement?->lowCarbDietMeasurement?->carb_level ?? null;
                         $carbEmoji = match($carbLevel) {
-                            'low' => '😊',
-                            'medium' => '😐', 
-                            'high' => '😔',
-                            default => '😐'
+                            'low' => '🤗',
+                            'medium' => '😟', 
+                            'high' => '😞',
+                            default => '😟'
                         };
                         $carbLabel = match($carbLevel) {
                             'low' => 'Low Carb',

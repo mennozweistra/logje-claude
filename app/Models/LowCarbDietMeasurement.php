@@ -42,10 +42,10 @@ class LowCarbDietMeasurement extends Model
     public function getCarbLevelEmojiAttribute(): string
     {
         return match($this->carb_level) {
-            'low' => '😊',    // Happy smiley - good carb control
-            'medium' => '😐',  // Plain smiley - moderate carb intake
-            'high' => '😔',   // Sad smiley - high carb intake
-            default => '😐',
+            'low' => '🤗',    // Hugging face - good carb control
+            'medium' => '😟', // Worried face - moderate carb intake
+            'high' => '😞',   // Disappointed face - high carb intake
+            default => '😟',
         };
     }
 
