@@ -37,6 +37,12 @@
                 <div id="glucose-skeleton">
                     <x-chart-skeleton title="Blood Glucose Trends" />
                 </div>
+                <div id="fasting-glucose-skeleton">
+                    <x-chart-skeleton title="Fasting Glucose Trends" />
+                </div>
+                <div id="daily-max-glucose-skeleton">
+                    <x-chart-skeleton title="Daily Maximum Glucose" />
+                </div>
                 <div id="weight-skeleton">
                     <x-chart-skeleton title="Weight Progress" />
                 </div>
@@ -67,6 +73,50 @@
                                 <div class="flex items-center">
                                     <div class="w-3 h-3 bg-green-500 rounded mr-2"></div>
                                     Non-Fasting
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fasting Glucose Chart -->
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg" id="fasting-glucose-chart-container" style="display: none;">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium mb-4">Fasting Glucose Trends</h3>
+                        <div class="relative h-64">
+                            <canvas id="fasting-glucose-chart"></canvas>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600">
+                            <div class="flex flex-wrap gap-4">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-red-500 rounded mr-2"></div>
+                                    Fasting Readings
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-red-300 rounded mr-2"></div>
+                                    Trend Line
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Maximum Glucose Chart -->
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg" id="daily-max-glucose-chart-container" style="display: none;">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium mb-4">Daily Maximum Glucose</h3>
+                        <div class="relative h-64">
+                            <canvas id="daily-max-glucose-chart"></canvas>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600">
+                            <div class="flex flex-wrap gap-4">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-orange-500 rounded mr-2"></div>
+                                    Daily Maximum
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-orange-300 rounded mr-2"></div>
+                                    Trend Line
                                 </div>
                             </div>
                         </div>
@@ -180,6 +230,8 @@
                 
                 this.charts = {
                     glucose: null,
+                    fastingGlucose: null,
+                    dailyMaxGlucose: null,
                     weight: null,
                     exerciseDuration: null,
                     exerciseTypes: null,
@@ -199,6 +251,12 @@
                 // Only initialize if charts don't exist
                 if (!this.charts.glucose) {
                     this.createGlucoseChart();
+                }
+                if (!this.charts.fastingGlucose) {
+                    this.createFastingGlucoseChart();
+                }
+                if (!this.charts.dailyMaxGlucose) {
+                    this.createDailyMaxGlucoseChart();
                 }
                 if (!this.charts.weight) {
                     this.createWeightChart();
@@ -245,6 +303,102 @@
                                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
                                 showLine: false,
                                 pointRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'mmol/L'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createFastingGlucoseChart() {
+                const ctx = document.getElementById('fasting-glucose-chart').getContext('2d');
+                this.charts.fastingGlucose = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Fasting Glucose',
+                                data: [],
+                                borderColor: 'rgb(239, 68, 68)',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                tension: 0.1,
+                                pointRadius: 4
+                            },
+                            {
+                                label: 'Trend Line',
+                                data: [],
+                                borderColor: 'rgba(239, 68, 68, 0.5)',
+                                backgroundColor: 'transparent',
+                                borderDash: [5, 5],
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'mmol/L'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createDailyMaxGlucoseChart() {
+                const ctx = document.getElementById('daily-max-glucose-chart').getContext('2d');
+                this.charts.dailyMaxGlucose = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Daily Maximum',
+                                data: [],
+                                borderColor: 'rgb(249, 115, 22)',
+                                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                                tension: 0.1,
+                                pointRadius: 4
+                            },
+                            {
+                                label: 'Trend Line',
+                                data: [],
+                                borderColor: 'rgba(249, 115, 22, 0.5)',
+                                backgroundColor: 'transparent',
+                                borderDash: [5, 5],
+                                tension: 0.1
                             }
                         ]
                     },
@@ -496,6 +650,40 @@
                         }
                     }
 
+                    // Update fasting glucose chart
+                    if (this.charts.fastingGlucose) {
+                        const fastingGlucoseResponse = await fetch(`{{ route('reports.fasting-glucose-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                            method: 'GET',
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (fastingGlucoseResponse.ok) {
+                            const fastingGlucoseData = await fastingGlucoseResponse.json();
+                            // Pad data with missing dates for consistent x-axis
+                            this.charts.fastingGlucose.data.datasets[0].data = this.padDataWithMissingDates(fastingGlucoseData.fastingReadings, dateSequence);
+                            this.charts.fastingGlucose.data.datasets[1].data = this.padDataWithMissingDates(fastingGlucoseData.trendLine, dateSequence);
+                            this.charts.fastingGlucose.update();
+                        }
+                    }
+
+                    // Update daily max glucose chart
+                    if (this.charts.dailyMaxGlucose) {
+                        const dailyMaxGlucoseResponse = await fetch(`{{ route('reports.daily-max-glucose-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                            method: 'GET',
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (dailyMaxGlucoseResponse.ok) {
+                            const dailyMaxGlucoseData = await dailyMaxGlucoseResponse.json();
+                            // Pad data with missing dates for consistent x-axis
+                            this.charts.dailyMaxGlucose.data.datasets[0].data = this.padDataWithMissingDates(dailyMaxGlucoseData.dailyMaximums, dateSequence);
+                            this.charts.dailyMaxGlucose.data.datasets[1].data = this.padDataWithMissingDates(dailyMaxGlucoseData.trendLine, dateSequence);
+                            this.charts.dailyMaxGlucose.update();
+                        }
+                    }
+
                     // Update weight chart
                     if (this.charts.weight) {
                         const weightResponse = await fetch(`{{ route('reports.weight-data') }}?start_date=${startDate}&end_date=${endDate}`, {
@@ -565,16 +753,22 @@
 
             showLoadingStates() {
                 const glucoseSkeleton = document.getElementById('glucose-skeleton');
+                const fastingGlucoseSkeleton = document.getElementById('fasting-glucose-skeleton');
+                const dailyMaxGlucoseSkeleton = document.getElementById('daily-max-glucose-skeleton');
                 const weightSkeleton = document.getElementById('weight-skeleton');
                 const exerciseSkeleton = document.getElementById('exercise-skeleton');
                 const nutritionSkeleton = document.getElementById('nutrition-skeleton');
                 
                 if (glucoseSkeleton) glucoseSkeleton.style.display = 'block';
+                if (fastingGlucoseSkeleton) fastingGlucoseSkeleton.style.display = 'block';
+                if (dailyMaxGlucoseSkeleton) dailyMaxGlucoseSkeleton.style.display = 'block';
                 if (weightSkeleton) weightSkeleton.style.display = 'block';
                 if (exerciseSkeleton) exerciseSkeleton.style.display = 'block';
                 if (nutritionSkeleton) nutritionSkeleton.style.display = 'block';
                 
                 document.getElementById('glucose-chart-container').style.display = 'none';
+                document.getElementById('fasting-glucose-chart-container').style.display = 'none';
+                document.getElementById('daily-max-glucose-chart-container').style.display = 'none';
                 document.getElementById('weight-chart-container').style.display = 'none';
                 document.getElementById('exercise-chart-container').style.display = 'none';
                 document.getElementById('nutrition-chart-container').style.display = 'none';
@@ -582,16 +776,22 @@
 
             hideLoadingStates() {
                 const glucoseSkeleton = document.getElementById('glucose-skeleton');
+                const fastingGlucoseSkeleton = document.getElementById('fasting-glucose-skeleton');
+                const dailyMaxGlucoseSkeleton = document.getElementById('daily-max-glucose-skeleton');
                 const weightSkeleton = document.getElementById('weight-skeleton');
                 const exerciseSkeleton = document.getElementById('exercise-skeleton');
                 const nutritionSkeleton = document.getElementById('nutrition-skeleton');
                 
                 if (glucoseSkeleton) glucoseSkeleton.style.display = 'none';
+                if (fastingGlucoseSkeleton) fastingGlucoseSkeleton.style.display = 'none';
+                if (dailyMaxGlucoseSkeleton) dailyMaxGlucoseSkeleton.style.display = 'none';
                 if (weightSkeleton) weightSkeleton.style.display = 'none';
                 if (exerciseSkeleton) exerciseSkeleton.style.display = 'none';
                 if (nutritionSkeleton) nutritionSkeleton.style.display = 'none';
                 
                 document.getElementById('glucose-chart-container').style.display = 'block';
+                document.getElementById('fasting-glucose-chart-container').style.display = 'block';
+                document.getElementById('daily-max-glucose-chart-container').style.display = 'block';
                 document.getElementById('weight-chart-container').style.display = 'block';
                 document.getElementById('exercise-chart-container').style.display = 'block';
                 document.getElementById('nutrition-chart-container').style.display = 'block';
@@ -760,7 +960,7 @@
             const endDateElement = document.getElementById('end-date');
             if (startDateElement && endDateElement && typeof Chart !== 'undefined') {
                 const manager = ChartManager.getInstance();
-                if (!manager.charts.glucose) {
+                if (!manager.charts.glucose || !manager.charts.fastingGlucose || !manager.charts.dailyMaxGlucose) {
                     console.log('Charts not initialized, reinitializing...');
                     manager.initializeCharts();
                     setTimeout(() => manager.updateCharts(), 300);

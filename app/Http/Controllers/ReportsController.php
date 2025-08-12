@@ -170,6 +170,74 @@ class ReportsController extends Controller
     }
 
     /**
+     * Get fasting glucose trend data for charts
+     */
+    public function fastingGlucoseData(Request $request): JsonResponse
+    {
+        $request->validate([
+            'days' => 'integer|min:7|max:365',
+            'start_date' => 'date',
+            'end_date' => 'date|after_or_equal:start_date',
+        ]);
+
+        $userId = auth()->id();
+        $days = $request->input('days', 30);
+        
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'));
+            $endDate = Carbon::parse($request->input('end_date'));
+        } else {
+            $endDate = Carbon::today();
+            $startDate = $endDate->copy()->subDays($days - 1);
+        }
+
+        $measurements = $this->measurementRepository->getUserMeasurementsByTypeAndDateRange(
+            $userId, 
+            'glucose', 
+            $startDate, 
+            $endDate
+        );
+
+        $chartData = $this->processFastingGlucoseData($measurements);
+
+        return response()->json($chartData);
+    }
+
+    /**
+     * Get daily maximum glucose data for charts
+     */
+    public function dailyMaxGlucoseData(Request $request): JsonResponse
+    {
+        $request->validate([
+            'days' => 'integer|min:7|max:365',
+            'start_date' => 'date',
+            'end_date' => 'date|after_or_equal:start_date',
+        ]);
+
+        $userId = auth()->id();
+        $days = $request->input('days', 30);
+        
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'));
+            $endDate = Carbon::parse($request->input('end_date'));
+        } else {
+            $endDate = Carbon::today();
+            $startDate = $endDate->copy()->subDays($days - 1);
+        }
+
+        $measurements = $this->measurementRepository->getUserMeasurementsByTypeAndDateRange(
+            $userId, 
+            'glucose', 
+            $startDate, 
+            $endDate
+        );
+
+        $chartData = $this->processDailyMaxGlucoseData($measurements);
+
+        return response()->json($chartData);
+    }
+
+    /**
      * Process glucose measurements for chart display
      */
     private function processGlucoseData($measurements): array
@@ -325,6 +393,67 @@ class ReportsController extends Controller
         return [
             'dailyCalories' => $calorieData,
             'dailyCarbs' => $carbData,
+        ];
+    }
+
+    /**
+     * Process fasting glucose measurements for chart display
+     */
+    private function processFastingGlucoseData($measurements): array
+    {
+        $fastingReadings = [];
+
+        foreach ($measurements as $measurement) {
+            if ($measurement->is_fasting) {
+                $fastingReadings[] = [
+                    'x' => $measurement->date->format('Y-m-d'),
+                    'y' => (float) $measurement->value
+                ];
+            }
+        }
+
+        // Calculate trend line for fasting readings
+        $trendData = [];
+        if (count($fastingReadings) > 1) {
+            $trendData = $this->calculateTrendLine($fastingReadings);
+        }
+
+        return [
+            'fastingReadings' => $fastingReadings,
+            'trendLine' => $trendData,
+        ];
+    }
+
+    /**
+     * Process daily maximum glucose measurements for chart display
+     */
+    private function processDailyMaxGlucoseData($measurements): array
+    {
+        $dailyMaximums = [];
+
+        foreach ($measurements as $measurement) {
+            $date = $measurement->date->format('Y-m-d');
+            $value = (float) $measurement->value;
+
+            if (!isset($dailyMaximums[$date]) || $value > $dailyMaximums[$date]['y']) {
+                $dailyMaximums[$date] = [
+                    'x' => $date,
+                    'y' => $value
+                ];
+            }
+        }
+
+        $maximumData = array_values($dailyMaximums);
+
+        // Calculate trend line for daily maximums
+        $trendData = [];
+        if (count($maximumData) > 1) {
+            $trendData = $this->calculateTrendLine($maximumData);
+        }
+
+        return [
+            'dailyMaximums' => $maximumData,
+            'trendLine' => $trendData,
         ];
     }
 

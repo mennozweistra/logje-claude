@@ -30,6 +30,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     
     Route::get('reports', [App\Http\Controllers\ReportsController::class, 'index'])->name('reports.index');
     Route::get('reports/glucose-data', [App\Http\Controllers\ReportsController::class, 'glucoseData'])->name('reports.glucose-data');
+    Route::get('reports/fasting-glucose-data', [App\Http\Controllers\ReportsController::class, 'fastingGlucoseData'])->name('reports.fasting-glucose-data');
+    Route::get('reports/daily-max-glucose-data', [App\Http\Controllers\ReportsController::class, 'dailyMaxGlucoseData'])->name('reports.daily-max-glucose-data');
     Route::get('reports/weight-data', [App\Http\Controllers\ReportsController::class, 'weightData'])->name('reports.weight-data');
     Route::get('reports/exercise-data', [App\Http\Controllers\ReportsController::class, 'exerciseData'])->name('reports.exercise-data');
     Route::get('reports/nutrition-data', [App\Http\Controllers\ReportsController::class, 'nutritionData'])->name('reports.nutrition-data');
