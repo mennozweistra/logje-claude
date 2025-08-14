@@ -160,6 +160,7 @@ This document contains the requirements for the Logje health tracking web applic
   - Low carb diet trend charts displaying carb level patterns with emoji indicators
 - **Data Export**: CSV and PDF export functionality for all measurement data
 - **Interactive Charts**: Responsive charts with date range selection and filtering
+- **Quick Date Range Selection**: Pre-configured date range buttons for common time periods including 7 days, 14 days (2 weeks), 21 days (3 weeks), 30 days, and 90 days to allow users to quickly select standard reporting periods without manual date entry
 
 ### User Management
 - Single user accounts (no family/shared accounts)
@@ -344,6 +345,7 @@ This document contains the requirements for the Logje health tracking web applic
 - I want to navigate to any past date to review or modify my measurements and notes
 - I want my measurement times pre-filled with current time but editable if needed
 - I want to see visual reports of my progress over time with interactive charts
+- I want to quickly select common date ranges (7 days, 2 weeks, 3 weeks, 30 days, 90 days) for reports without manually entering dates
 - I want to export my data in CSV and PDF formats for sharing with healthcare providers
 - I want to filter my dashboard view to focus on specific measurement types
 - I want my health data to be secure and permanently stored

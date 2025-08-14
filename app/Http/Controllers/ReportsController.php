@@ -292,7 +292,7 @@ class ReportsController extends Controller
 
         $measurements = $this->measurementRepository->getUserMeasurementsByTypeAndDateRange(
             $userId, 
-            'low_carb_diet', 
+            'low-carb-diet', 
             $startDate, 
             $endDate
         );

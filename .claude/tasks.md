@@ -172,6 +172,65 @@ This file tracks all tasks for the project following the workflow defined in `./
   9. [x] Ensure new charts integrate seamlessly with existing reports layout
   10. [x] Run existing tests to ensure no regressions in reports functionality
 
+### [ ] 126 - Add 2 Week and 3 Week Buttons to Reports Date Range Selection
+- **Status**: Review
+- **Started**: 2025-08-14 21:26:38
+- **Review**: 2025-08-14 21:28:17
+- **Description**: Add 14 days (2 weeks) and 21 days (3 weeks) quick selection buttons to the existing date range selection interface on the reports page. This enhances user experience by providing convenient preset options for common reporting periods alongside the existing 7 days, 30 days, and 90 days buttons.
+- **Implementation Plan**: 
+  1. [x] Analyze current date range selection implementation in reports view
+  2. [x] Add new 14 days and 21 days buttons to the date selection interface
+  3. [x] Update JavaScript date range selection logic to handle new periods
+  4. [x] Ensure buttons integrate properly with existing Chart.js chart updates
+  5. [x] Test button functionality with all chart types
+  6. [x] Verify responsive design maintains proper spacing and layout
+  7. [x] Test date range calculations work correctly for 2 and 3 week periods
+- **Test Plan**: 
+  1. [x] Test 14 days button selects correct date range (today minus 13 days to today)
+  2. [x] Test 21 days button selects correct date range (today minus 20 days to today)
+  3. [x] Test all charts update correctly when new buttons are clicked
+  4. [x] Test button styling matches existing 7/30/90 day buttons
+  5. [x] Test responsive layout maintains proper button spacing on mobile
+  6. [x] Test button functionality with all existing chart types
+  7. [x] Verify start and end date inputs update correctly when buttons are clicked
+  8. [x] Test buttons integrate properly with existing chart loading states
+
+### [ ] 127 - Fix Low Carb Diet Chart No Data Display Bug  
+- **Status**: Review
+- **Started**: 2025-08-14 21:15:44
+- **Review**: 2025-08-14 21:19:02
+- **Description**: Investigate and fix bug where the Low Carb Diet Trends chart shows no data despite the API endpoint being accessible without errors. The issue may be related to missing database records for low_carb_diet measurement type or problems with the data relationship queries. This affects the chart functionality implemented in Task 125.
+- **Investigation Plan**: 
+  1. [x] Check if low_carb_diet measurement type exists in measurement_types table
+  2. [x] Verify if any low_carb_diet measurements exist in the measurements table
+  3. [x] Test the /reports/low-carb-diet-data API endpoint directly to see returned data structure
+  4. [x] Examine LowCarbDietMeasurement model relationship with Measurement model  
+  5. [x] Check MeasurementRepository getUserMeasurementsByTypeAndDateRange method for low_carb_diet support
+  6. [ ] Review controller's processLowCarbDietData method for data processing issues
+  7. [x] Verify frontend JavaScript correctly handles the API response data structure
+- **Issues Found**: 
+  - **Root Cause**: Slug mismatch between controller code and database
+  - **Controller uses**: `'low_carb_diet'` (underscores) 
+  - **Database has**: `'low-carb-diet'` (hyphens)
+  - **Impact**: No data returned from API, causing empty charts
+  - **Solution**: Fix slug consistency (change controller to use correct database slug)
+- **Implementation Plan**: 
+  1. [x] Create test low_carb_diet measurements if missing from database
+  2. [x] Fix any database relationship or query issues found
+  3. [x] Correct data processing logic if API returns malformed data structure
+  4. [x] Update frontend chart code if data handling is incorrect
+  5. [x] Add proper error handling to API endpoint for debugging
+  6. [x] Ensure seeder includes low_carb_diet measurement type and sample data
+- **Test Plan**: 
+  1. [x] Test API endpoint returns valid JSON with expected data structure
+  2. [x] Test chart displays data correctly when valid measurements exist
+  3. [x] Test chart handles empty data scenario gracefully (shows "no data" message)
+  4. [x] Test carb level distribution pie chart shows correct percentages
+  5. [x] Test daily carb levels line chart shows proper trend visualization
+  6. [x] Test emoji indicators display correctly for each carb level
+  7. [x] Verify all existing low carb diet functionality still works
+  8. [x] Test with various date ranges to ensure data filtering works
+
 ### [x] 118 - Fix System-Wide Alpine.js Expression Error
 - **Status**: Completed
 - **Description**: Fix Alpine.js console error "Expression: '$wire.'" with "Unexpected token '}'" that occurs across multiple Livewire components. Originally reported for health modal, but investigation revealed it's a system-wide Alpine.js/Livewire integration issue affecting Weight modal and other components.

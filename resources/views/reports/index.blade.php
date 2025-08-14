@@ -24,6 +24,8 @@
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <button onclick="setDateRange(7)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 md:flex-none">7 days</button>
+                            <button onclick="setDateRange(14)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 md:flex-none">2 weeks</button>
+                            <button onclick="setDateRange(21)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 md:flex-none">3 weeks</button>
                             <button onclick="setDateRange(30)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 md:flex-none">30 days</button>
                             <button onclick="setDateRange(90)" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm flex-1 md:flex-none">90 days</button>
                         </div>
