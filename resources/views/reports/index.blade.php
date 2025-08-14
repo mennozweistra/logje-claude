@@ -52,6 +52,12 @@
                 <div class="md:col-span-2" id="nutrition-skeleton">
                     <x-chart-skeleton title="Daily Nutrition" />
                 </div>
+                <div id="healthy-days-skeleton">
+                    <x-chart-skeleton title="Healthy Days Compliance" />
+                </div>
+                <div id="low-carb-diet-skeleton">
+                    <x-chart-skeleton title="Low Carb Diet Trends" />
+                </div>
 
                 <!-- Glucose Chart -->
                 <div class="bg-white overflow-hidden shadow-sm rounded-lg" id="glucose-chart-container" style="display: none;">
@@ -198,6 +204,80 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Healthy Days Chart -->
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg" id="healthy-days-chart-container" style="display: none;">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium mb-4">Healthy Days Compliance</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Daily Compliance</h4>
+                                <div class="relative h-48">
+                                    <canvas id="healthy-days-chart"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Weekly Compliance Rate</h4>
+                                <div class="relative h-48">
+                                    <canvas id="weekly-compliance-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600">
+                            <div class="flex flex-wrap gap-4">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-green-500 rounded mr-2"></div>
+                                    Healthy Day
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-red-500 rounded mr-2"></div>
+                                    Non-Healthy Day
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-blue-500 rounded mr-2"></div>
+                                    Weekly Rate
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Carb Diet Chart -->
+                <div class="bg-white overflow-hidden shadow-sm rounded-lg" id="low-carb-diet-chart-container" style="display: none;">
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium mb-4">Low Carb Diet Trends</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Daily Carb Levels</h4>
+                                <div class="relative h-48">
+                                    <canvas id="carb-levels-chart"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Carb Level Distribution</h4>
+                                <div class="relative h-48">
+                                    <canvas id="carb-distribution-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-600">
+                            <div class="flex flex-wrap gap-4">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-green-500 rounded mr-2"></div>
+                                    Low Carb 🤗
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded mr-2"></div>
+                                    Medium Carb 😟
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-red-500 rounded mr-2"></div>
+                                    High Carb 😞
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Export Section -->
@@ -236,7 +316,11 @@
                     exerciseDuration: null,
                     exerciseTypes: null,
                     calories: null,
-                    carbs: null
+                    carbs: null,
+                    healthyDays: null,
+                    weeklyCompliance: null,
+                    carbLevels: null,
+                    carbDistribution: null
                 };
             }
             
@@ -272,6 +356,18 @@
                 }
                 if (!this.charts.carbs) {
                     this.createCarbsChart();
+                }
+                if (!this.charts.healthyDays) {
+                    this.createHealthyDaysChart();
+                }
+                if (!this.charts.weeklyCompliance) {
+                    this.createWeeklyComplianceChart();
+                }
+                if (!this.charts.carbLevels) {
+                    this.createCarbLevelsChart();
+                }
+                if (!this.charts.carbDistribution) {
+                    this.createCarbDistributionChart();
                 }
             }
             
@@ -609,6 +705,221 @@
                 });
             }
 
+            createHealthyDaysChart() {
+                const ctx = document.getElementById('healthy-days-chart').getContext('2d');
+                this.charts.healthyDays = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [{
+                            label: 'Healthy Days',
+                            data: [],
+                            backgroundColor: function(context) {
+                                if (!context.parsed || context.parsed.y === undefined) return 'rgba(34, 197, 94, 0.8)';
+                                const value = context.parsed.y;
+                                return value === 1 ? 'rgba(34, 197, 94, 0.8)' : 'rgba(239, 68, 68, 0.8)';
+                            },
+                            borderColor: function(context) {
+                                if (!context.parsed || context.parsed.y === undefined) return 'rgb(34, 197, 94)';
+                                const value = context.parsed.y;
+                                return value === 1 ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)';
+                            },
+                            pointBackgroundColor: function(context) {
+                                if (!context.parsed || context.parsed.y === undefined) return 'rgb(34, 197, 94)';
+                                const value = context.parsed.y;
+                                return value === 1 ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)';
+                            },
+                            pointRadius: 6,
+                            showLine: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 1,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value === 1 ? 'Healthy' : 'Not Healthy';
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.parsed.y === 1 ? 'Healthy Day 😊' : 'Not Healthy Day 😔';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createWeeklyComplianceChart() {
+                const ctx = document.getElementById('weekly-compliance-chart').getContext('2d');
+                this.charts.weeklyCompliance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        datasets: [{
+                            label: 'Compliance Rate (%)',
+                            data: [],
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        week: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Compliance Rate (%)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createCarbLevelsChart() {
+                const ctx = document.getElementById('carb-levels-chart').getContext('2d');
+                this.charts.carbLevels = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Carb Level',
+                                data: [],
+                                backgroundColor: function(context) {
+                                    if (!context.parsed || context.parsed.y === undefined) return 'rgba(34, 197, 94, 0.8)';
+                                    const value = context.parsed.y;
+                                    if (value <= 1.5) return 'rgba(34, 197, 94, 0.8)'; // Low - green
+                                    if (value <= 2.5) return 'rgba(234, 179, 8, 0.8)'; // Medium - yellow  
+                                    return 'rgba(239, 68, 68, 0.8)'; // High - red
+                                },
+                                borderColor: function(context) {
+                                    if (!context.parsed || context.parsed.y === undefined) return 'rgb(34, 197, 94)';
+                                    const value = context.parsed.y;
+                                    if (value <= 1.5) return 'rgb(34, 197, 94)'; // Low - green
+                                    if (value <= 2.5) return 'rgb(234, 179, 8)'; // Medium - yellow
+                                    return 'rgb(239, 68, 68)'; // High - red
+                                },
+                                pointBackgroundColor: function(context) {
+                                    if (!context.parsed || context.parsed.y === undefined) return 'rgb(34, 197, 94)';
+                                    const value = context.parsed.y;
+                                    if (value <= 1.5) return 'rgb(34, 197, 94)'; // Low - green
+                                    if (value <= 2.5) return 'rgb(234, 179, 8)'; // Medium - yellow
+                                    return 'rgb(239, 68, 68)'; // High - red
+                                },
+                                pointRadius: 6,
+                                showLine: true,
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'yyyy-MM-dd',
+                                    displayFormats: {
+                                        day: 'dd-MM'
+                                    }
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 3,
+                                ticks: {
+                                    callback: function(value) {
+                                        if (value === 1) return 'Low 🤗';
+                                        if (value === 2) return 'Medium 😟';
+                                        if (value === 3) return 'High 😞';
+                                        return '';
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.parsed.y;
+                                        if (value === 1) return 'Low Carb 🤗';
+                                        if (value === 2) return 'Medium Carb 😟';
+                                        if (value === 3) return 'High Carb 😞';
+                                        return '';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createCarbDistributionChart() {
+                const ctx = document.getElementById('carb-distribution-chart').getContext('2d');
+                this.charts.carbDistribution = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Low Carb 🤗', 'Medium Carb 😟', 'High Carb 😞'],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [
+                                'rgba(34, 197, 94, 0.8)',   // Low - green
+                                'rgba(234, 179, 8, 0.8)',   // Medium - yellow
+                                'rgba(239, 68, 68, 0.8)'    // High - red
+                            ],
+                            borderColor: [
+                                'rgb(34, 197, 94)',
+                                'rgb(234, 179, 8)', 
+                                'rgb(239, 68, 68)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
             async updateCharts() {
                 const startDate = document.getElementById('start-date').value;
                 const endDate = document.getElementById('end-date').value;
@@ -742,6 +1053,51 @@
                         }
                     }
 
+                    // Update healthy days chart
+                    if (this.charts.healthyDays && this.charts.weeklyCompliance) {
+                        const healthyDaysResponse = await fetch(`{{ route('reports.healthy-days-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                            method: 'GET',
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (healthyDaysResponse.ok) {
+                            const healthyDaysData = await healthyDaysResponse.json();
+                            // Pad data with missing dates for consistent x-axis
+                            this.charts.healthyDays.data.datasets[0].data = this.padDataWithMissingDates(healthyDaysData.dailyCompliance, dateSequence);
+                            this.charts.healthyDays.update();
+                            
+                            // Update weekly compliance chart (no need to pad weekly data)
+                            this.charts.weeklyCompliance.data.datasets[0].data = healthyDaysData.weeklyCompliance;
+                            this.charts.weeklyCompliance.update();
+                        }
+                    }
+
+                    // Update low carb diet charts
+                    if (this.charts.carbLevels && this.charts.carbDistribution) {
+                        const lowCarbDietResponse = await fetch(`{{ route('reports.low-carb-diet-data') }}?start_date=${startDate}&end_date=${endDate}`, {
+                            method: 'GET',
+                            headers: headers,
+                            credentials: 'same-origin'
+                        });
+                        
+                        if (lowCarbDietResponse.ok) {
+                            const lowCarbDietData = await lowCarbDietResponse.json();
+                            // Pad data with missing dates for consistent x-axis
+                            this.charts.carbLevels.data.datasets[0].data = this.padDataWithMissingDates(lowCarbDietData.carbLevelData, dateSequence);
+                            this.charts.carbLevels.update();
+                            
+                            // Update carb distribution chart (pie chart doesn't need date padding)
+                            const distributionData = [
+                                lowCarbDietData.carbLevelCounts.low || 0,
+                                lowCarbDietData.carbLevelCounts.medium || 0,
+                                lowCarbDietData.carbLevelCounts.high || 0
+                            ];
+                            this.charts.carbDistribution.data.datasets[0].data = distributionData;
+                            this.charts.carbDistribution.update();
+                        }
+                    }
+
                     this.hideLoadingStates();
 
                 } catch (error) {
@@ -758,6 +1114,8 @@
                 const weightSkeleton = document.getElementById('weight-skeleton');
                 const exerciseSkeleton = document.getElementById('exercise-skeleton');
                 const nutritionSkeleton = document.getElementById('nutrition-skeleton');
+                const healthyDaysSkeleton = document.getElementById('healthy-days-skeleton');
+                const lowCarbDietSkeleton = document.getElementById('low-carb-diet-skeleton');
                 
                 if (glucoseSkeleton) glucoseSkeleton.style.display = 'block';
                 if (fastingGlucoseSkeleton) fastingGlucoseSkeleton.style.display = 'block';
@@ -765,6 +1123,8 @@
                 if (weightSkeleton) weightSkeleton.style.display = 'block';
                 if (exerciseSkeleton) exerciseSkeleton.style.display = 'block';
                 if (nutritionSkeleton) nutritionSkeleton.style.display = 'block';
+                if (healthyDaysSkeleton) healthyDaysSkeleton.style.display = 'block';
+                if (lowCarbDietSkeleton) lowCarbDietSkeleton.style.display = 'block';
                 
                 document.getElementById('glucose-chart-container').style.display = 'none';
                 document.getElementById('fasting-glucose-chart-container').style.display = 'none';
@@ -772,6 +1132,8 @@
                 document.getElementById('weight-chart-container').style.display = 'none';
                 document.getElementById('exercise-chart-container').style.display = 'none';
                 document.getElementById('nutrition-chart-container').style.display = 'none';
+                document.getElementById('healthy-days-chart-container').style.display = 'none';
+                document.getElementById('low-carb-diet-chart-container').style.display = 'none';
             }
 
             hideLoadingStates() {
@@ -781,6 +1143,8 @@
                 const weightSkeleton = document.getElementById('weight-skeleton');
                 const exerciseSkeleton = document.getElementById('exercise-skeleton');
                 const nutritionSkeleton = document.getElementById('nutrition-skeleton');
+                const healthyDaysSkeleton = document.getElementById('healthy-days-skeleton');
+                const lowCarbDietSkeleton = document.getElementById('low-carb-diet-skeleton');
                 
                 if (glucoseSkeleton) glucoseSkeleton.style.display = 'none';
                 if (fastingGlucoseSkeleton) fastingGlucoseSkeleton.style.display = 'none';
@@ -788,6 +1152,8 @@
                 if (weightSkeleton) weightSkeleton.style.display = 'none';
                 if (exerciseSkeleton) exerciseSkeleton.style.display = 'none';
                 if (nutritionSkeleton) nutritionSkeleton.style.display = 'none';
+                if (healthyDaysSkeleton) healthyDaysSkeleton.style.display = 'none';
+                if (lowCarbDietSkeleton) lowCarbDietSkeleton.style.display = 'none';
                 
                 document.getElementById('glucose-chart-container').style.display = 'block';
                 document.getElementById('fasting-glucose-chart-container').style.display = 'block';
@@ -795,6 +1161,8 @@
                 document.getElementById('weight-chart-container').style.display = 'block';
                 document.getElementById('exercise-chart-container').style.display = 'block';
                 document.getElementById('nutrition-chart-container').style.display = 'block';
+                document.getElementById('healthy-days-chart-container').style.display = 'block';
+                document.getElementById('low-carb-diet-chart-container').style.display = 'block';
             }
 
             // Helper method to generate complete date sequence for consistent x-axis
@@ -960,7 +1328,8 @@
             const endDateElement = document.getElementById('end-date');
             if (startDateElement && endDateElement && typeof Chart !== 'undefined') {
                 const manager = ChartManager.getInstance();
-                if (!manager.charts.glucose || !manager.charts.fastingGlucose || !manager.charts.dailyMaxGlucose) {
+                if (!manager.charts.glucose || !manager.charts.fastingGlucose || !manager.charts.dailyMaxGlucose || 
+                    !manager.charts.healthyDays || !manager.charts.carbLevels) {
                     console.log('Charts not initialized, reinitializing...');
                     manager.initializeCharts();
                     setTimeout(() => manager.updateCharts(), 300);

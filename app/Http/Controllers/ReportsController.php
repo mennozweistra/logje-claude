@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LowCarbDietMeasurement;
+use App\Models\Measurement;
 use App\Repositories\MeasurementRepository;
+use App\Services\HealthyDayService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -14,7 +17,8 @@ use League\Csv\Writer;
 class ReportsController extends Controller
 {
     public function __construct(
-        private MeasurementRepository $measurementRepository
+        private MeasurementRepository $measurementRepository,
+        private HealthyDayService $healthyDayService
     ) {}
 
     /**
@@ -233,6 +237,67 @@ class ReportsController extends Controller
         );
 
         $chartData = $this->processDailyMaxGlucoseData($measurements);
+
+        return response()->json($chartData);
+    }
+
+    /**
+     * Get healthy days data for charts
+     */
+    public function healthyDaysData(Request $request): JsonResponse
+    {
+        $request->validate([
+            'days' => 'integer|min:7|max:365',
+            'start_date' => 'date',
+            'end_date' => 'date|after_or_equal:start_date',
+        ]);
+
+        $user = auth()->user();
+        $days = $request->input('days', 30);
+        
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'));
+            $endDate = Carbon::parse($request->input('end_date'));
+        } else {
+            $endDate = Carbon::today();
+            $startDate = $endDate->copy()->subDays($days - 1);
+        }
+
+        $chartData = $this->processHealthyDaysData($user, $startDate, $endDate);
+
+        return response()->json($chartData);
+    }
+
+    /**
+     * Get low carb diet data for charts
+     */
+    public function lowCarbDietData(Request $request): JsonResponse
+    {
+        $request->validate([
+            'days' => 'integer|min:7|max:365',
+            'start_date' => 'date',
+            'end_date' => 'date|after_or_equal:start_date',
+        ]);
+
+        $userId = auth()->id();
+        $days = $request->input('days', 30);
+        
+        if ($request->has('start_date') && $request->has('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'));
+            $endDate = Carbon::parse($request->input('end_date'));
+        } else {
+            $endDate = Carbon::today();
+            $startDate = $endDate->copy()->subDays($days - 1);
+        }
+
+        $measurements = $this->measurementRepository->getUserMeasurementsByTypeAndDateRange(
+            $userId, 
+            'low_carb_diet', 
+            $startDate, 
+            $endDate
+        );
+
+        $chartData = $this->processLowCarbDietData($measurements);
 
         return response()->json($chartData);
     }
@@ -495,6 +560,135 @@ class ReportsController extends Controller
         }
 
         return $trendData;
+    }
+
+    /**
+     * Process healthy days data for chart display
+     */
+    private function processHealthyDaysData($user, Carbon $startDate, Carbon $endDate): array
+    {
+        $healthyDaysData = [];
+        $complianceRates = [];
+        
+        // Generate daily compliance status for the date range
+        $current = $startDate->copy();
+        while ($current <= $endDate) {
+            $isHealthy = $this->healthyDayService->isHealthyDay($user, $current->copy());
+            $healthyDaysData[] = [
+                'x' => $current->format('Y-m-d'),
+                'y' => $isHealthy ? 1 : 0  // 1 for healthy, 0 for not healthy
+            ];
+            $current->addDay();
+        }
+        
+        // Calculate weekly compliance rates
+        $weeklyData = [];
+        $currentWeekStart = $startDate->copy()->startOfWeek();
+        while ($currentWeekStart <= $endDate) {
+            $weekEnd = $currentWeekStart->copy()->endOfWeek();
+            if ($weekEnd > $endDate) {
+                $weekEnd = $endDate->copy();
+            }
+            
+            $weeklyHealthyDays = 0;
+            $weeklyTotalDays = 0;
+            $weekCurrent = $currentWeekStart->copy();
+            
+            while ($weekCurrent <= $weekEnd && $weekCurrent >= $startDate) {
+                if ($weekCurrent <= $endDate) {
+                    $weeklyTotalDays++;
+                    if ($this->healthyDayService->isHealthyDay($user, $weekCurrent->copy())) {
+                        $weeklyHealthyDays++;
+                    }
+                }
+                $weekCurrent->addDay();
+            }
+            
+            $complianceRate = $weeklyTotalDays > 0 ? round(($weeklyHealthyDays / $weeklyTotalDays) * 100, 1) : 0;
+            $weeklyData[] = [
+                'x' => $currentWeekStart->format('Y-m-d'),
+                'y' => $complianceRate
+            ];
+            
+            $currentWeekStart->addWeek();
+        }
+
+        return [
+            'dailyCompliance' => $healthyDaysData,
+            'weeklyCompliance' => $weeklyData,
+            'summary' => [
+                'totalDays' => count($healthyDaysData),
+                'healthyDays' => count(array_filter($healthyDaysData, fn($day) => $day['y'] === 1)),
+                'complianceRate' => count($healthyDaysData) > 0 ? 
+                    round((count(array_filter($healthyDaysData, fn($day) => $day['y'] === 1)) / count($healthyDaysData)) * 100, 1) : 0
+            ]
+        ];
+    }
+
+    /**
+     * Process low carb diet data for chart display
+     */
+    private function processLowCarbDietData($measurements): array
+    {
+        $carbLevelData = [];
+        $carbLevelCounts = ['low' => 0, 'medium' => 0, 'high' => 0];
+        
+        foreach ($measurements as $measurement) {
+            if ($measurement->lowCarbDietMeasurement) {
+                $carbLevel = $measurement->lowCarbDietMeasurement->carb_level;
+                $date = $measurement->date->format('Y-m-d');
+                
+                // Convert carb levels to numeric values for charting
+                $numericValue = match($carbLevel) {
+                    'low' => 1,
+                    'medium' => 2,
+                    'high' => 3,
+                    default => 2
+                };
+                
+                $carbLevelData[] = [
+                    'x' => $date,
+                    'y' => $numericValue,
+                    'carbLevel' => $carbLevel,
+                    'emoji' => $measurement->lowCarbDietMeasurement->carb_level_emoji
+                ];
+                
+                $carbLevelCounts[$carbLevel]++;
+            }
+        }
+
+        // Generate trend data (simplified moving average)
+        $trendData = [];
+        if (count($carbLevelData) > 2) {
+            $windowSize = min(3, count($carbLevelData));
+            for ($i = 0; $i < count($carbLevelData); $i++) {
+                $start = max(0, $i - floor($windowSize / 2));
+                $end = min(count($carbLevelData) - 1, $start + $windowSize - 1);
+                
+                $sum = 0;
+                $count = 0;
+                for ($j = $start; $j <= $end; $j++) {
+                    $sum += $carbLevelData[$j]['y'];
+                    $count++;
+                }
+                
+                $trendData[] = [
+                    'x' => $carbLevelData[$i]['x'],
+                    'y' => round($sum / $count, 1)
+                ];
+            }
+        }
+
+        return [
+            'carbLevelData' => $carbLevelData,
+            'trendData' => $trendData,
+            'carbLevelCounts' => $carbLevelCounts,
+            'summary' => [
+                'totalEntries' => count($carbLevelData),
+                'averageCarbLevel' => count($carbLevelData) > 0 ? 
+                    round(array_sum(array_column($carbLevelData, 'y')) / count($carbLevelData), 1) : 0
+            ]
+        ];
     }
 
     /**

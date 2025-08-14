@@ -141,6 +141,37 @@ This file tracks all tasks for the project following the workflow defined in `./
 - **Completed**: 2025-08-11 19:01:14
 - **Duration**: 18 minutes 59 seconds
 
+### [ ] 125 - Add Healthy Days and Low Carb Diet Charts to Reports Page
+- **Status**: Review
+- **Started**: 2025-08-14 19:03:23
+- **Review**: 2025-08-14 19:09:59
+- **Description**: Add two new charts to the reports page to visualize healthy day compliance data and low carb diet tracking data. The healthy days chart should show daily compliance status over time with visual indicators for whether all health rules were met each day. The low carb diet chart should display carb level trends (low/medium/high) with emoji representations showing diet adherence patterns over the selected date range.
+- **Implementation Plan**: 
+  1. [x] Analyze existing reports controller structure and chart patterns for consistency
+  2. [x] Create new controller methods for healthy days data API endpoint 
+  3. [x] Create new controller methods for low carb diet data API endpoint
+  4. [x] Add routes for the new chart data endpoints
+  5. [x] Design healthy days chart data processing logic using HealthyDayService
+  6. [x] Design low carb diet chart data processing logic using LowCarbDietMeasurement model
+  7. [x] Add healthy days chart container and skeleton to reports view
+  8. [x] Add low carb diet chart container and skeleton to reports view  
+  9. [x] Implement healthy days chart JavaScript using Chart.js following existing patterns
+  10. [x] Implement low carb diet chart JavaScript using Chart.js with custom styling for carb levels
+  11. [x] Integrate both charts into ChartManager class for unified management
+  12. [x] Add chart legends and styling to match existing reports design
+  13. [x] Test charts with various data scenarios and date ranges
+- **Test Plan**: 
+  1. [x] Test healthy days chart displays correct compliance status for various dates
+  2. [x] Test low carb diet chart shows carb level trends with proper emoji representations  
+  3. [x] Test both charts handle empty data scenarios gracefully
+  4. [x] Test chart responsiveness on mobile and desktop viewports
+  5. [x] Test chart integration with existing date range selector functionality
+  6. [x] Test chart performance with large date ranges and datasets
+  7. [x] Verify charts update correctly when date range changes
+  8. [x] Test chart legends and tooltips display appropriate information
+  9. [x] Ensure new charts integrate seamlessly with existing reports layout
+  10. [x] Run existing tests to ensure no regressions in reports functionality
+
 ### [x] 118 - Fix System-Wide Alpine.js Expression Error
 - **Status**: Completed
 - **Description**: Fix Alpine.js console error "Expression: '$wire.'" with "Unexpected token '}'" that occurs across multiple Livewire components. Originally reported for health modal, but investigation revealed it's a system-wide Alpine.js/Livewire integration issue affecting Weight modal and other components.

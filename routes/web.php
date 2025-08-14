@@ -35,6 +35,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('reports/weight-data', [App\Http\Controllers\ReportsController::class, 'weightData'])->name('reports.weight-data');
     Route::get('reports/exercise-data', [App\Http\Controllers\ReportsController::class, 'exerciseData'])->name('reports.exercise-data');
     Route::get('reports/nutrition-data', [App\Http\Controllers\ReportsController::class, 'nutritionData'])->name('reports.nutrition-data');
+    Route::get('reports/healthy-days-data', [App\Http\Controllers\ReportsController::class, 'healthyDaysData'])->name('reports.healthy-days-data');
+    Route::get('reports/low-carb-diet-data', [App\Http\Controllers\ReportsController::class, 'lowCarbDietData'])->name('reports.low-carb-diet-data');
     Route::get('reports/export', [App\Http\Controllers\ReportsController::class, 'export'])->name('reports.export');
     Route::post('reports/export/csv', [App\Http\Controllers\ReportsController::class, 'exportCsv'])->name('reports.export.csv');
     Route::post('reports/export/pdf', [App\Http\Controllers\ReportsController::class, 'exportPdf'])->name('reports.export.pdf');

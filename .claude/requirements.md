@@ -156,6 +156,8 @@ This document contains the requirements for the Logje health tracking web applic
   - Weight tracking charts with progress visualization
   - Exercise activity charts with duration tracking
   - Nutrition charts with daily calorie and carbohydrate consumption
+  - Healthy days compliance charts showing daily and weekly health rule adherence
+  - Low carb diet trend charts displaying carb level patterns with emoji indicators
 - **Data Export**: CSV and PDF export functionality for all measurement data
 - **Interactive Charts**: Responsive charts with date range selection and filtering
 
