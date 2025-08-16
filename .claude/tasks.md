@@ -72,8 +72,8 @@ This file tracks all tasks for the project following the workflow defined in `./
 
 ## Active Tasks
 
-### [ ] 128 - Add Glucose Chart Visual Enhancements with Color-Coded Line Segments
-- **Status**: Review
+### [x] 128 - Add Glucose Chart Visual Enhancements with Color-Coded Line Segments
+- **Status**: Completed
 - **Description**: Enhance the fasting glucose chart by adding a gray shaded area between 6.5 and 7 mmol/L values, and implement color-coded line segments based on glucose level ranges. Line segments ending below 6.5 should be colored green (healthy), segments ending between 6.5-7 should be colored orange (borderline), and segments ending above 7 should be colored red (elevated). This provides immediate visual feedback about glucose level categories.
 - **Implementation Plan**: 
   1. [x] Analyze current fasting glucose chart implementation in reports JavaScript
@@ -99,8 +99,8 @@ This file tracks all tasks for the project following the workflow defined in `./
   10. [x] Run existing chart tests to ensure no regressions
 - **Started**: 2025-08-16 19:15:22
 - **Review**: 2025-08-16 19:17:40
-- **Completed**: 
-- **Duration**:
+- **Completed**: 2025-08-16 19:34:57
+- **Duration**: 19 minutes 35 seconds
 - **Issues Found**: **GLUCOSE CHART VISUAL ENHANCEMENTS SUCCESSFULLY IMPLEMENTED**: Task completed successfully with comprehensive chart enhancement implementation:
   1. **✅ Gray Background Area**: Successfully added gray shaded area between 6.5 and 7 mmol/L using Chart.js custom plugin with beforeDatasetsDraw hook (fixed implementation)
   2. **✅ Color-Coded Line Segments**: Implemented dynamic line segment coloring based on glucose level thresholds:
@@ -185,8 +185,8 @@ This file tracks all tasks for the project following the workflow defined in `./
 - **Completed**: 2025-08-11 19:01:14
 - **Duration**: 18 minutes 59 seconds
 
-### [ ] 125 - Add Healthy Days and Low Carb Diet Charts to Reports Page
-- **Status**: Review
+### [x] 125 - Add Healthy Days and Low Carb Diet Charts to Reports Page
+- **Status**: Completed
 - **Started**: 2025-08-14 19:03:23
 - **Review**: 2025-08-14 19:09:59
 - **Description**: Add two new charts to the reports page to visualize healthy day compliance data and low carb diet tracking data. The healthy days chart should show daily compliance status over time with visual indicators for whether all health rules were met each day. The low carb diet chart should display carb level trends (low/medium/high) with emoji representations showing diet adherence patterns over the selected date range.
@@ -215,9 +215,11 @@ This file tracks all tasks for the project following the workflow defined in `./
   8. [x] Test chart legends and tooltips display appropriate information
   9. [x] Ensure new charts integrate seamlessly with existing reports layout
   10. [x] Run existing tests to ensure no regressions in reports functionality
+- **Completed**: 2025-08-16 19:34:57
+- **Duration**: 6 minutes 58 seconds
 
-### [ ] 126 - Add 2 Week and 3 Week Buttons to Reports Date Range Selection
-- **Status**: Review
+### [x] 126 - Add 2 Week and 3 Week Buttons to Reports Date Range Selection
+- **Status**: Completed
 - **Started**: 2025-08-14 21:26:38
 - **Review**: 2025-08-14 21:28:17
 - **Description**: Add 14 days (2 weeks) and 21 days (3 weeks) quick selection buttons to the existing date range selection interface on the reports page. This enhances user experience by providing convenient preset options for common reporting periods alongside the existing 7 days, 30 days, and 90 days buttons.
@@ -238,9 +240,11 @@ This file tracks all tasks for the project following the workflow defined in `./
   6. [x] Test button functionality with all existing chart types
   7. [x] Verify start and end date inputs update correctly when buttons are clicked
   8. [x] Test buttons integrate properly with existing chart loading states
+- **Completed**: 2025-08-16 19:34:57
+- **Duration**: 1 minute 39 seconds
 
-### [ ] 127 - Fix Low Carb Diet Chart No Data Display Bug  
-- **Status**: Review
+### [x] 127 - Fix Low Carb Diet Chart No Data Display Bug  
+- **Status**: Completed
 - **Started**: 2025-08-14 21:15:44
 - **Review**: 2025-08-14 21:19:02
 - **Description**: Investigate and fix bug where the Low Carb Diet Trends chart shows no data despite the API endpoint being accessible without errors. The issue may be related to missing database records for low_carb_diet measurement type or problems with the data relationship queries. This affects the chart functionality implemented in Task 125.
@@ -274,6 +278,8 @@ This file tracks all tasks for the project following the workflow defined in `./
   6. [x] Test emoji indicators display correctly for each carb level
   7. [x] Verify all existing low carb diet functionality still works
   8. [x] Test with various date ranges to ensure data filtering works
+- **Completed**: 2025-08-16 19:34:57
+- **Duration**: 3 minutes 58 seconds
 
 ### [x] 118 - Fix System-Wide Alpine.js Expression Error
 - **Status**: Completed
