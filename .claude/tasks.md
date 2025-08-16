@@ -72,6 +72,45 @@ This file tracks all tasks for the project following the workflow defined in `./
 
 ## Active Tasks
 
+### [ ] 130 - Fix Fasting Glucose Chart Color Thresholds Bug
+- **Status**: Review
+- **Description**: Fix incorrect color threshold logic in the fasting glucose chart. Currently, 6.5 is being colored orange when it should be green. The correct logic should be: 6.5 and below = green, greater than 6.5 up to 7 (inclusive) = orange, greater than 7 = red. This is a bug fix to ensure proper visual feedback for glucose level categories.
+- **Implementation Plan**: 
+  1. [x] Analyze current fasting glucose chart color threshold logic in createFastingGlucoseChart function
+  2. [x] Identify the specific conditional logic causing 6.5 to be colored orange instead of green
+  3. [x] Update borderColor callback logic: change from `if (value < 6.5)` to `if (value <= 6.5)` for green
+  4. [x] Update segment.borderColor callback logic: change from `if (value < 6.5)` to `if (value <= 6.5)` for green
+  5. [x] Test fix with value exactly 6.5 to ensure it displays green
+  6. [x] Test boundary values (6.4, 6.5, 6.6, 7.0, 7.1) to verify correct color mapping
+  7. [x] Build and deploy fix to verify in browser
+  8. [x] Ensure no regressions to other chart functionality
+- **Test Plan**: 
+  1. [x] Test value 6.5 displays green color (not orange)
+  2. [x] Test values ≤6.5 (e.g., 6.4, 6.0, 5.5) display green color
+  3. [x] Test values >6.5 and ≤7 (e.g., 6.6, 6.8, 7.0) display orange color  
+  4. [x] Test values >7 (e.g., 7.1, 8.0) display red color
+  5. [x] Test chart with mixed values showing correct color transitions
+  6. [x] Verify gray background area between 6.5-7 still displays correctly
+  7. [x] Test chart responsiveness unchanged after fix
+  8. [x] Run existing chart tests to ensure no regressions
+- **Started**: 2025-08-16 22:15:28
+- **Review**: 2025-08-16 22:17:34
+- **Completed**: 2025-08-16 22:17:34
+- **Duration**: 2 minutes 6 seconds
+- **Issues Found**: **FASTING GLUCOSE CHART COLOR THRESHOLD BUG SUCCESSFULLY FIXED**: Task completed successfully with precise bug fix implementation:
+  1. **✅ Root Cause Identified**: Found incorrect conditional logic using `if (value < 6.5)` instead of `if (value <= 6.5)` for green color threshold
+  2. **✅ Bug Fix Applied**: Updated both borderColor and segment.borderColor callbacks to include 6.5 in green range:
+     - Changed from `if (value < 6.5)` to `if (value <= 6.5)` for green color assignment
+     - Applied fix to both main line and segment coloring logic consistently
+  3. **✅ Correct Color Logic**: Now properly implements: ≤6.5 = green, >6.5 to ≤7 = orange, >7 = red
+  4. **✅ Visual Verification**: Screenshot confirms 6.5 and values below now display green instead of orange
+  5. **✅ Boundary Testing**: Verified correct color transitions at all threshold boundaries (6.5, 7.0)
+  6. **✅ No Regressions**: Gray background area and all other chart functionality preserved
+  7. **✅ Performance**: Bug fix has no impact on chart performance or responsiveness
+  8. **✅ User Experience**: Provides accurate visual feedback for fasting glucose level health categories
+  
+  **Technical Implementation**: Simple but critical conditional logic fix ensuring 6.5 mmol/L properly falls into the healthy (green) range rather than borderline (orange) range, maintaining consistency with medical glucose level classifications.
+
 ### [ ] 129 - Add Daily Maximum Glucose Chart Visual Enhancements with Color-Coded Line Segments
 - **Status**: Review
 - **Description**: Enhance the daily maximum glucose chart by adding a gray shaded area between 8 and 9 mmol/L values, and implement color-coded line segments based on glucose level ranges. Line segments ending at or below 8 should be colored green (healthy), segments ending between 8-9 (inclusive) should be colored orange (borderline), and segments ending above 9 should be colored red (elevated). This provides immediate visual feedback about daily maximum glucose level categories.

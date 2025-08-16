@@ -467,7 +467,7 @@
                                 data: [],
                                 borderColor: (context) => {
                                     const value = context.parsed?.y;
-                                    if (value < 6.5) return 'rgb(34, 197, 94)'; // Green
+                                    if (value <= 6.5) return 'rgb(34, 197, 94)'; // Green
                                     if (value <= 7) return 'rgb(249, 115, 22)'; // Orange
                                     return 'rgb(239, 68, 68)'; // Red
                                 },
@@ -477,7 +477,7 @@
                                 segment: {
                                     borderColor: (context) => {
                                         const value = context.p1?.parsed?.y;
-                                        if (value < 6.5) return 'rgb(34, 197, 94)'; // Green for healthy levels
+                                        if (value <= 6.5) return 'rgb(34, 197, 94)'; // Green for healthy levels
                                         if (value <= 7) return 'rgb(249, 115, 22)'; // Orange for borderline
                                         return 'rgb(239, 68, 68)'; // Red for elevated
                                     }
