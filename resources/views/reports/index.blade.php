@@ -430,6 +430,34 @@
 
             createFastingGlucoseChart() {
                 const ctx = document.getElementById('fasting-glucose-chart').getContext('2d');
+                
+                // Define custom plugin for gray area
+                const grayAreaPlugin = {
+                    id: 'grayArea',
+                    beforeDatasetsDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        const chartArea = chart.chartArea;
+                        const yScale = chart.scales.y;
+                        
+                        if (chartArea && yScale) {
+                            // Calculate pixel positions for 6.5 and 7 mmol/L
+                            const y65 = yScale.getPixelForValue(6.5);
+                            const y7 = yScale.getPixelForValue(7);
+                            
+                            // Draw gray background area between 6.5 and 7
+                            ctx.save();
+                            ctx.fillStyle = 'rgba(156, 163, 175, 0.2)'; // Gray with transparency
+                            ctx.fillRect(
+                                chartArea.left,
+                                y7,
+                                chartArea.right - chartArea.left,
+                                y65 - y7
+                            );
+                            ctx.restore();
+                        }
+                    }
+                };
+                
                 this.charts.fastingGlucose = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -437,10 +465,23 @@
                             {
                                 label: 'Fasting Glucose',
                                 data: [],
-                                borderColor: 'rgb(239, 68, 68)',
+                                borderColor: (context) => {
+                                    const value = context.parsed?.y;
+                                    if (value < 6.5) return 'rgb(34, 197, 94)'; // Green
+                                    if (value <= 7) return 'rgb(249, 115, 22)'; // Orange
+                                    return 'rgb(239, 68, 68)'; // Red
+                                },
                                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
                                 tension: 0.1,
-                                pointRadius: 4
+                                pointRadius: 4,
+                                segment: {
+                                    borderColor: (context) => {
+                                        const value = context.p1?.parsed?.y;
+                                        if (value < 6.5) return 'rgb(34, 197, 94)'; // Green for healthy levels
+                                        if (value <= 7) return 'rgb(249, 115, 22)'; // Orange for borderline
+                                        return 'rgb(239, 68, 68)'; // Red for elevated
+                                    }
+                                }
                             },
                             {
                                 label: 'Trend Line',
@@ -471,8 +512,14 @@
                                     text: 'mmol/L'
                                 }
                             }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
                         }
-                    }
+                    },
+                    plugins: [grayAreaPlugin]
                 });
             }
 
