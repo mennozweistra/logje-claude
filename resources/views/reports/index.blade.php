@@ -525,6 +525,34 @@
 
             createDailyMaxGlucoseChart() {
                 const ctx = document.getElementById('daily-max-glucose-chart').getContext('2d');
+                
+                // Define custom plugin for gray area (8-9 mmol/L)
+                const grayAreaPlugin = {
+                    id: 'grayAreaMax',
+                    beforeDatasetsDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        const chartArea = chart.chartArea;
+                        const yScale = chart.scales.y;
+                        
+                        if (chartArea && yScale) {
+                            // Calculate pixel positions for 8 and 9 mmol/L
+                            const y8 = yScale.getPixelForValue(8);
+                            const y9 = yScale.getPixelForValue(9);
+                            
+                            // Draw gray background area between 8 and 9
+                            ctx.save();
+                            ctx.fillStyle = 'rgba(156, 163, 175, 0.2)'; // Gray with transparency
+                            ctx.fillRect(
+                                chartArea.left,
+                                y9,
+                                chartArea.right - chartArea.left,
+                                y8 - y9
+                            );
+                            ctx.restore();
+                        }
+                    }
+                };
+                
                 this.charts.dailyMaxGlucose = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -532,10 +560,23 @@
                             {
                                 label: 'Daily Maximum',
                                 data: [],
-                                borderColor: 'rgb(249, 115, 22)',
+                                borderColor: (context) => {
+                                    const value = context.parsed?.y;
+                                    if (value <= 8) return 'rgb(34, 197, 94)'; // Green
+                                    if (value <= 9) return 'rgb(249, 115, 22)'; // Orange
+                                    return 'rgb(239, 68, 68)'; // Red
+                                },
                                 backgroundColor: 'rgba(249, 115, 22, 0.1)',
                                 tension: 0.1,
-                                pointRadius: 4
+                                pointRadius: 4,
+                                segment: {
+                                    borderColor: (context) => {
+                                        const value = context.p1?.parsed?.y;
+                                        if (value <= 8) return 'rgb(34, 197, 94)'; // Green for healthy levels
+                                        if (value <= 9) return 'rgb(249, 115, 22)'; // Orange for borderline
+                                        return 'rgb(239, 68, 68)'; // Red for elevated
+                                    }
+                                }
                             },
                             {
                                 label: 'Trend Line',
@@ -566,8 +607,14 @@
                                     text: 'mmol/L'
                                 }
                             }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true
+                            }
                         }
-                    }
+                    },
+                    plugins: [grayAreaPlugin]
                 });
             }
 
